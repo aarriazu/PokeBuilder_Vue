@@ -8,9 +8,31 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/home'
   },
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/Login.vue')
+  },
+  //Login root aaa
+  //Hacer tabs
+  {
     path: '/home',
     name: 'Home',
     component: HomePage
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('@/views/Profile.vue')
+  },
+  {
+    path: '/forum',
+    name: 'Forum',
+    component: () => import('@/views/Forum.vue')
+  },
+  {
+    path: '/teamBuilder',
+    name: 'TeamBuilder',
+    component: () => import('@/views/TeamBuilder.vue')
   }
 ]
 
