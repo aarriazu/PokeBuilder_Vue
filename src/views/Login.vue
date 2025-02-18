@@ -5,17 +5,17 @@
           <ion-buttons slot="start">
             <ion-back-button></ion-back-button>
           </ion-buttons>
-          <ion-title>Página 3</ion-title>
+          <ion-title>Login</ion-title>
         </ion-toolbar>
       </ion-header>
   
   
       <ion-content :fullscreen="true">
         <div style="text-align: center;">
-          <h2>Página 3</h2>
-          <ion-button router-link="/">Go 1</ion-button>
-          <ion-button router-link="/teamBuilder">Go 2</ion-button>
-          <ion-button router-link="/login">Go 3</ion-button>
+          <h2>Login</h2>
+          <ion-button router-link="/home/login">Login</ion-button>
+          <ion-button router-link="/home/profile">Profile</ion-button>
+          <ion-button router-link="/home/forum">Forum</ion-button>
         </div>
       </ion-content>
     </ion-page>
