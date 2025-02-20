@@ -13,7 +13,6 @@
       <ion-content :fullscreen="true">
         <div style="text-align: center;">
           <h2>Forum</h2>
-          <ion-button router-link="/home/login">Login</ion-button>
           <ion-button router-link="/home/profile">Profile</ion-button>
           <ion-button router-link="/home/forum">Forum</ion-button>
         </div>
