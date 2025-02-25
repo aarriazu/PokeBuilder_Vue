@@ -52,8 +52,17 @@
               </div>
             </ion-col>
             <ion-col size="12" size-md="10">
-              <img src="/src/assets/images/forum/forumPost.png">
-              <img src="/src/assets/images/forum/forumPostRespuesta.png">
+              <div style="width:90%">
+                <h3 style="text-align: center">Nuevo Post</h3>
+                <p>Titulo</p>
+                <textarea rows="1" cols="150" style="resize: none;"></textarea>
+                <p>Contenido</p>
+                <textarea rows="12" cols="150" style="resize: none;"></textarea>
+                <br>
+                <div style="float: right;">
+                  <ion-button router-link="/home/forumGeneral" shape="round">Publicar</ion-button>
+                </div>
+              </div>
             </ion-col>
           </ion-row>
         </ion-grid>

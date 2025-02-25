@@ -1,13 +1,5 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button></ion-back-button>
-        </ion-buttons>
-        <ion-title>Profile</ion-title>
-      </ion-toolbar>
-    </ion-header>
 
 
     <ion-content :fullscreen="true">
@@ -79,49 +71,60 @@
               <br>
               <br>
               <div class="forumCategory">
-                <a href="/home/forum">
-                <p style="float: right;">143 posts</p>
-                <div style="position: relative; bottom:20%;">
-                  <p style="font-size: 22px; color: #0cbeeb;">General</p>
-                  <p style="font-size: 16px; color: #0cbeeb;">Discute los juegos de pokemon principales</p>
-                </div>
-              </a>
+                <a href="/home/forumGeneral">
+                  <p style="float: right;">143 posts</p>
+                  <div style="position: relative; bottom:20%;">
+                    <p style="font-size: 22px; color: #0cbeeb;">General</p>
+                    <p style="font-size: 16px; color: #0cbeeb;">Discute los juegos de pokemon principales</p>
+                  </div>
+                </a>
               </div>
               <br>
               <div class="forumCategory">
-                <p style="float: right;">13 posts</p>
-                <div style="position: relative; bottom:20%;">
-                  <p style="font-size: 22px; color: #0cbeeb;">Torneos</p>
-                  <p style="font-size: 16px; color: #0cbeeb;">Organiza Torneos con otros jugadores</p>
-                </div>
+                <a href="/home/forumTorneos">
+                  <p style="float: right;">13 posts</p>
+                  <div style="position: relative; bottom:20%;">
+                    <p style="font-size: 22px; color: #0cbeeb;">Torneos</p>
+                    <p style="font-size: 16px; color: #0cbeeb;">Organiza Torneos con otros jugadores</p>
+                  </div>
+                </a>
               </div>
               <br>
               <div class="forumCategory">
-                <p style="float: right;">82 posts</p>
-                <div style="position: relative; bottom:20%;">
-                  <p style="font-size: 22px; color: #0cbeeb;">Ayuda</p>
-                  <p style="font-size: 16px; color: #0cbeeb;">Pide ayuda a otros jugadores</p>
-                </div>
+                <a href="/home/forumAyuda">
+                  <p style="float: right;">82 posts</p>
+                  <div style="position: relative; bottom:20%;">
+                    <p style="font-size: 22px; color: #0cbeeb;">Ayuda</p>
+                    <p style="font-size: 16px; color: #0cbeeb;">Pide ayuda a otros jugadores</p>
+                  </div>
+                </a>
               </div>
               <br>
               <div class="forumCategory">
-                <p style="float: right;">27 posts</p>
-                <div style="position: relative; bottom:20%;">
-                  <p style="font-size: 22px; color: #0cbeeb;">Spin Offs</p>
-                  <p style="font-size: 16px; color: #0cbeeb;">Discute spin offs de pokemon</p>
-                </div>
+                <a href="/home/forumSpinoff">
+                  <p style="float: right;">27 posts</p>
+                  <div style="position: relative; bottom:20%;">
+                    <p style="font-size: 22px; color: #0cbeeb;">Spin Offs</p>
+                    <p style="font-size: 16px; color: #0cbeeb;">Discute spin offs de pokemon</p>
+                  </div>
+                </a>
               </div>
               <br>
               <div class="forumCategory">
-                <p style="float: right;">53 posts</p>
-                <div style="position: relative; bottom:20%;">
-                  <p style="font-size: 22px; color: #0cbeeb;">Off Topic</p>
-                  <p style="font-size: 16px; color: #0cbeeb;">Discute aqui cualquier cosa que no tenga que ver con pokemon</p>
-                </div>
+                <a href="/home/forumOfftopic">
+                  <p style="float: right;">53 posts</p>
+                  <div style="position: relative; bottom:20%;">
+                    <p style="font-size: 22px; color: #0cbeeb;">Off Topic</p>
+                    <p style="font-size: 16px; color: #0cbeeb;">Discute aqui cualquier cosa que no tenga que ver con pokemon</p>                
+                  </div>
+                </a>
               </div>
             </ion-col>
           </ion-row>
         </ion-grid>
+        <br>
+        <br>
+        <br>
       </div>
     </ion-content>
   </ion-page>

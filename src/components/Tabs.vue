@@ -8,7 +8,7 @@
           <ion-label>Profile</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="forum" href="/home/forum">
+        <ion-tab-button tab="forum" href="/home/forumGeneral">
           <ion-icon :icon="square" />
           <ion-label>Forum</ion-label>
         </ion-tab-button>

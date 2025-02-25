@@ -30,6 +30,7 @@
               <p id="login-trigger" style="color:blue;">Creala aqui</p>
               <ion-modal trigger="login-trigger" trigger-action="click" alignment="center">
                 <ion-content class="ion-padding">
+                  <div style="text-align: center;">
                     <h2>Crear cuenta</h2>
                     <p>Nombre de usuario</p>
                     <input type="text" id="registerUserName" name="registerUserName" class="textBox">
@@ -41,6 +42,7 @@
                     <input type="password" id="registerPasswordConfirm" name="registerPasswordConfirm" class="textBox">
                     <br>
                     <ion-button router-link="/home/profile">Crear cuenta</ion-button>
+                  </div>
                 </ion-content>
               </ion-modal>
             </ion-col>

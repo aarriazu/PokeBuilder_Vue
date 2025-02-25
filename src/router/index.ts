@@ -13,13 +13,13 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Login.vue')
   },
   {
-    path: '/forumGuest',
-    name: 'ForumGuest',
-    component: () => import('@/views/ForumGuest.vue')
+    path: '/forumGuestGeneral',
+    name: 'ForumGuestGeneral',
+    component: () => import('@/views/ForumGuestGeneral.vue')
   },
   {
     path: '/postGuest',
-    name: 'PostTestGuest',
+    name: 'PostGuest',
     component: () => import('@/views/PostGuest.vue')
   },
   {
@@ -39,13 +39,33 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/TeamBuilder.vue')
       },
       {
-        path: 'forum',
-        component: () => import('@/views/Forum.vue')
+        path: 'forumGeneral',
+        component: () => import('@/views/ForumGeneral.vue')
+      },
+      {
+        path: 'forumAyuda',
+        component: () => import('@/views/ForumAyuda.vue')
+      },
+      {
+        path: 'forumTorneos',
+        component: () => import('@/views/ForumTorneos.vue')
+      },
+      {
+        path: 'forumSpinoff',
+        component: () => import('@/views/ForumSpinoff.vue')
+      },
+      {
+        path: 'forumOfftopic',
+        component: () => import('@/views/ForumOfftopic.vue')
       },
       {
         path: 'post',
         component: () => import('@/views/Post.vue')
-      }  
+      }, 
+      {
+        path: 'newPost',
+        component: () => import('@/views/NewPost.vue')
+      }, 
     ]
   }
 ]
