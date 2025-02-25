@@ -5,14 +5,14 @@
           <ion-buttons slot="start">
             <ion-back-button></ion-back-button>
           </ion-buttons>
-          <ion-title>Team Builder</ion-title>
+          <ion-title>Post test</ion-title>
         </ion-toolbar>
       </ion-header>
   
   
       <ion-content :fullscreen="true">
         <div style="text-align: center;">
-          <h2>Team Builder</h2>
+          <h2>Post test</h2>
         </div>
       </ion-content>
     </ion-page>

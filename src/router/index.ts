@@ -5,7 +5,22 @@ import Tabs from '@/components/Tabs.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/home/login'
+    redirect: '/login'
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/Login.vue')
+  },
+  {
+    path: '/forumGuest',
+    name: 'ForumGuest',
+    component: () => import('@/views/ForumGuest.vue')
+  },
+  {
+    path: '/postGuest',
+    name: 'PostTestGuest',
+    component: () => import('@/views/PostGuest.vue')
   },
   {
     path: '/home/',
@@ -13,20 +28,24 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        redirect: '/home/login',
-      },
-      {
-        path: 'login',
-        component: () => import('@/views/Login.vue')
+        redirect: '/home/profile',
       },
       {
         path: 'profile',
         component: () => import('@/views/Profile.vue')
       },
       {
+        path: 'teamBuilder',
+        component: () => import('@/views/TeamBuilder.vue')
+      },
+      {
         path: 'forum',
         component: () => import('@/views/Forum.vue')
-      }
+      },
+      {
+        path: 'post',
+        component: () => import('@/views/Post.vue')
+      }  
     ]
   }
 ]
