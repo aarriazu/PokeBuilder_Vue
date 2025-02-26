@@ -1,18 +1,49 @@
 <template>
     <ion-page>
-      <ion-header :translucent="true">
-        <ion-toolbar>
-          <ion-buttons slot="start">
-            <ion-back-button></ion-back-button>
-          </ion-buttons>
-          <ion-title>Team Builder</ion-title>
-        </ion-toolbar>
-      </ion-header>
-  
-  
       <ion-content :fullscreen="true">
-        <div style="text-align: center;">
-          <h2>Team Builder</h2>
+        <div >
+          <div class="profile">
+            <div style="float: left;">
+              <img class="profilePic" src="/src/assets/images/profile/profilePic.png">
+            </div>
+            <div>
+              <h5 style="color:blue;">Pokefan33</h5>
+              <h5>Miembro desde 10/02/2024</h5>
+            </div>
+            <a href="/login">Salir</a>
+          </div>
+          <div style="text-align: center;">
+            <h1>Pokebuilder</h1>
+          </div>
+
+          <ion-grid class="container">
+            <ion-row>
+              <ion-col size="24" size-md="1">
+                <img style="float:center; width: 50%; height: 50%;"src="/src/assets/images/general/addButton.png">
+              </ion-col>
+              <ion-col size="24" size-md="1">
+                <img style="float:center; width: 50%; height: 50%;"src="/src/assets/images/general/addButton.png">
+              </ion-col> 
+              <ion-col size="12" size-md="1">
+                <img style="float:center; width: 50%; height: 50%;"src="/src/assets/images/general/addButton.png">
+              </ion-col>
+              <ion-col size="24" size-md="3">
+
+              </ion-col>
+              <ion-col size="24" size-md="3">
+
+              </ion-col>
+              <ion-col size="24" size-md="3">
+
+              </ion-col>    
+              <ion-col size="24" size-md="3">
+
+              </ion-col>  
+              <ion-col size="24" size-md="3">
+
+              </ion-col>        
+            </ion-row>
+          </ion-grid>
         </div>
       </ion-content>
     </ion-page>
@@ -24,5 +55,5 @@
   </script>
   
   
-  <style scoped>
-  </style>
+<style scoped>
+</style>

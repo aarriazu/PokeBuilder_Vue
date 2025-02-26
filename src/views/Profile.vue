@@ -3,7 +3,7 @@
 
 
     <ion-content :fullscreen="true">
-      <div class="main">
+      <div class="root">
         <div class="profile">
           <div style="float: left;">
             <img class="profilePic" src="/src/assets/images/profile/profilePic.png">
@@ -138,47 +138,4 @@ import { star } from 'ionicons/icons';
 
 
 <style scoped>
-.main {
-  width: 100%;
-  height: 100%;
-  background-color: #bebebe;
-
-}
-
-.team {
-  width: 700px;
-  height: 220px;
-}
-
-.teamHolder {
-  border-radius: 30px;
-  padding: 10px;
-  border: 2px solid #2909dd;
-  background-color: #859ee4;
-  width: 700px;
-  height: 140px;
-}
-
-.forumCategory {
-  border-radius: 30px;
-  padding: 10px;
-  border: 2px solid #0cbeeb;
-  background-color: #ffffff;
-  width: 700px;
-  height: 100px;
-}
-
-.textBox {
-  border-radius: 15px;
-  padding: 10px;
-  border: 2px solid #ccc;
-  width: 250px
-}
-
-.profilePic {
-  border-radius: 15px;
-  padding: 10px;
-  height: 127px;
-  width: 98px
-}
 </style>

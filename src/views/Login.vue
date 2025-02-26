@@ -72,32 +72,4 @@ import { IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonPage, I
 
 
 <style scoped>
-.main {
-  width: 100%;
-  height: 100%;
-  background-color: #bebebe;
-}
-
-.textBox {
-  border-radius: 15px;
-  padding: 10px;
-  border: 2px solid #ccc;
-  width: 250px
-}
-
-.divProfile {
-  width: 50%;
-  float: left;
-  height: 300px;
-}
-
-.divForum {
-  width: 50%;
-  float: left;
-  height: 300px;
-}
-
-.clear {
-  clear: both;
-}
 </style>

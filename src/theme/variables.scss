@@ -1,0 +1,72 @@
+/* Definir variables */
+$app-background-color: #bebebe;
+$teamHolder-background-color: #859ee4;
+$forumCategory-background-color: #ffffff; 
+$font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Roboto', sans-serif;
+$font-size: 16px;
+$font-weight: 400;
+$color: #000;
+$border-radius: 5px;
+
+  /* Definir clases globales */
+  .main {
+    width: 100%;
+    height: 100%;
+    background-color: $app-background-color;
+  }
+
+  .divProfile {
+    width: 50%;
+    float: left;
+    height: 300px;
+  }
+  
+  .divForum {
+    width: 50%;
+    float: left;
+    height: 300px;
+  }
+  
+  .textBox {
+    border-radius: 15px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    width: 250px
+  }
+
+  .team {
+    width: 700px;
+    height: 220px;
+  }
+  
+  .teamHolder {
+    border-radius: 30px;
+    padding: 10px;
+    border: 2px solid #2909dd;
+    background-color: $teamHolder-background-color;
+    width: 700px;
+    height: 140px;
+  }
+  
+  .forumCategory {
+    border-radius: 30px;
+    padding: 10px;
+    border: 2px solid #0cbeeb;
+    background-color: $forumCategory-background-color;
+    width: 700px;
+    height: 100px;
+  }
+  
+  .textBox {
+    border-radius: 15px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    width: 250px
+  }
+  
+  .profilePic {
+    border-radius: 15px;
+    padding: 10px;
+    height: 127px;
+    width: 98px
+  }
