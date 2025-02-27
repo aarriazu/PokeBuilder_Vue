@@ -32,23 +32,6 @@
                 <ion-button router-link="/home/profile">Acceder</ion-button>
                 <p>No tienes cuenta?</p>
                 <p id="login-trigger" class="blueText">Creala aqui</p>
-                <ion-modal trigger="login-trigger" trigger-action="click" alignment="center">
-                  <ion-content class="ion-padding">
-                    <div class="registerModal">
-                      <h2>Crear cuenta</h2>
-                      <p>Nombre de usuario</p>
-                      <input type="text" id="registerUserName" name="registerUserName" class="textBox">
-                      <p>Correo electronico</p>
-                      <input type="text" id="registerEmail" name="registerEmail" class="textBox">
-                      <p>Contraseña</p>
-                      <input type="password" id="registerPassword" name="registerPassword" class="textBox">
-                      <p>Confirmar contraseña</p>
-                      <input type="password" id="registerPasswordConfirm" name="registerPasswordConfirm" class="textBox">
-                      <br>
-                      <ion-button router-link="/home/profile">Crear cuenta</ion-button>
-                    </div>
-                  </ion-content>
-                </ion-modal>
               </div>
             </ion-col>
             <ion-col size="12" size-md="6">
@@ -67,6 +50,24 @@
             </ion-col>           
           </ion-row>
         </ion-grid>
+
+        <ion-modal trigger="login-trigger" trigger-action="click" alignment="center">
+          <ion-content class="ion-padding">
+            <div class="registerModal">
+              <h2>Crear cuenta</h2>
+              <p>Nombre de usuario</p>
+              <input type="text" id="registerUserName" name="registerUserName" class="textBox">
+              <p>Correo electronico</p>
+              <input type="text" id="registerEmail" name="registerEmail" class="textBox">
+              <p>Contraseña</p>
+              <input type="password" id="registerPassword" name="registerPassword" class="textBox">
+              <p>Confirmar contraseña</p>
+              <input type="password" id="registerPasswordConfirm" name="registerPasswordConfirm" class="textBox">
+              <br>
+              <ion-button router-link="/home/profile">Crear cuenta</ion-button>
+            </div>
+          </ion-content>
+        </ion-modal>
       </div>
     </ion-content>
   </ion-page>
