@@ -19,6 +19,8 @@
           <h1>Pokebuilder</h1>
         </div>
 
+        <ion-button router-link="/home/stats">Stats</ion-button>
+
         <ion-grid class="container">
           <ion-row>
 
@@ -26,7 +28,7 @@
               <ion-button router-link="/home/teamBuilder" shape="round">Nuevo Equipo</ion-button>
               <br>
               <Team
-                v-for="(team, index) in teams"
+                v-for="(team, index) in dummyTeams"
                 :key="index"
                 :teamName="team.name"
                 :teamImage="team.image"
@@ -106,14 +108,27 @@ import { IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonPage, I
 import { ref } from 'vue';
 import Team from '@/components/Team.vue';
 
-const teams = ref([
+interface Pokemon {
+  name: string;
+  item: string;
+  ability: string;
+  nature: string;
+  moves: string[];
+}
+
+interface Team {
+  name: string;
+  pokemons: Pokemon[];
+}
+
+const dummyTeams = ref([
   { name: 'Equipo Eevee', image: '/src/assets/images/pokemon/teamEevee.png', link: '/home/teamBuilder' },
   { name: 'Equipo 2', image: '/src/assets/images/pokemon/team2.png', link: '/home/teamBuilder' },
   { name: 'Equipo Kanto', image: '/src/assets/images/pokemon/teamKanto.png', link: '/home/teamBuilder' }
 ]);
 
 const deleteTeam = (index: number) => {
-  teams.value.splice(index, 1);
+  dummyTeams.value.splice(index, 1);
 };
 
 </script>

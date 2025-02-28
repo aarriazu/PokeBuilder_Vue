@@ -1,15 +1,5 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button></ion-back-button>
-        </ion-buttons>
-        <ion-title>Login</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
-
     <ion-content :fullscreen="true">
       <div class="main">
         <br>
@@ -45,7 +35,7 @@
               </a>
               <p></p>
               <div class="loginForumGuestLink">
-                <a href="/forumGuest">Acceder al foro como invitado</a>
+                <a href="/forumGuestGeneral">Acceder al foro como invitado</a>
               </div>
             </ion-col>           
           </ion-row>

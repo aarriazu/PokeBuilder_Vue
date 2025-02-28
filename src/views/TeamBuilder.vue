@@ -1,8 +1,7 @@
 <template>
-    <ion-page>
-      <ion-content :fullscreen="true">
-        <div class="main">
-
+  <ion-page>
+    <ion-content :fullscreen="true">
+      <div class="main">
         <div class="profile">
           <img class="profilePic" src="/src/assets/images/profile/profilePic.png">
           <div class="profileBuffer"></div>
@@ -15,192 +14,103 @@
 
         <div class="title">
           <h1>Pokebuilder</h1>
-            <div style="float: right;">
-            <ion-button router-link="/home/profile">
-              Guardar
-            </ion-button>
-            <ion-button router-link="/home/profile">
-              Volver
-            </ion-button>
+          <div style="float: right;">
+            <ion-button router-link="/home/profile">Guardar</ion-button>
+            <ion-button @click="resetPokemons" router-link="/home/profile">Volver</ion-button>
           </div>
         </div>
 
-          <ion-grid class="custom-grid">
-            <ion-row>
-              <ion-col size="1">
+        <ion-grid class="custom-grid">
+          <ion-row>
+            <ion-col size="1"></ion-col>
+            <ion-col size="2" v-for="(pokemon, index) in pokemons" :key="index">
+              <div>
+                <ion-button color="light" size="large" class="addPokemonButton" @click="openModal(index)">
+                  Selecciona Pokemon
+                </ion-button>
+                <div v-if="pokemon.name">
+                  <img :src="`/src/assets/images/pokemon/${pokemon.name}.png`" :alt="pokemon.name">
+                  <p>Objeto</p>
+                  <input type="text" class="textBox" v-model="pokemon.item">
+                  <p>Habilidad</p>
+                  <input type="text" class="textBox" v-model="pokemon.ability">
+                  <p>Naturaleza</p>
+                  <input type="text" class="textBox" v-model="pokemon.nature">
+                  <p>Movimientos</p>
+                  <div v-for="(move, moveIndex) in pokemon.moves" :key="moveIndex">
+                    <input type="text" class="textBox" v-model="pokemon.moves[moveIndex]">
+                  </div>
+                </div>
+              </div>
+            </ion-col>
+            <ion-col size="1"></ion-col>
+          </ion-row>
+        </ion-grid>
 
-              </ion-col>
-              <ion-col size="2">
-                <div>
-                  <ion-button color="light" size="large" class="addPokemonButton" @click="showActionSheet()">
-                    Selecciona Pokemon
-                  </ion-button>
-                  <div v-html="pokemon1"></div>
-                </div>
-              </ion-col> 
-              <ion-col size="2">
-                <div>
-                  <ion-button color="light" size="large" class="addPokemonButton" >
-                    Selecciona Pokemon
-                  </ion-button>
-                  <div v-html="pokemon2"></div>
-                </div>
-              </ion-col>
-              <ion-col size="2">
-                <div>
-                  <ion-button color="light" size="large" class="addPokemonButton">
-                    Selecciona Pokemon
-                  </ion-button>
-                  <div v-html="pokemon3"></div>
-                </div>
-              </ion-col>
-              <ion-col size="2">
-                <div>
-                  <ion-button color="light" size="large" class="addPokemonButton">
-                    Selecciona Pokemon
-                  </ion-button>
-                  <div v-html="pokemon4"></div>
-                </div>
-              </ion-col>
-              <ion-col size="2">
-                <div>
-                  <ion-button color="light" size="large" class="addPokemonButton">
-                    Selecciona Pokemon
-                  </ion-button>
-                  <div v-html="pokemon5"></div>
-                </div>
-              </ion-col>    
-              <ion-col size="2">
-                <div>
-                  <ion-button color="light" size="large" class="addPokemonButton">
-                    Selecciona Pokemon
-                  </ion-button>
-                  <div v-html="pokemon6"></div>
-                </div>
-              </ion-col>  
-              <ion-col size="1">
+        <ion-modal :is-open="isModalOpen" @did-dismiss="closeModal">
+          <div class="modal-content">
+            <h2>Selecciona Pokemon</h2>
+            <ion-list>
+              <ion-item v-for="pokemon in availablePokemons" :key="pokemon" @click="selectPokemon(pokemon)">
+                {{ pokemon }}
+              </ion-item>
+            </ion-list>
+            <ion-button @click="closeModal">Cerrar</ion-button>
+          </div>
+        </ion-modal>
+      </div>
+    </ion-content>
+  </ion-page>
+</template>
 
-              </ion-col>        
-            </ion-row>
-          </ion-grid>
-
-          <ion-action-sheet
-            :is-open="actionSheet"
-            @did-dismiss="actionSheet = false"
-            header="Selecciona Pokemon"
-            :buttons="actionSheetButtons">
-          </ion-action-sheet>
-        </div>
-      </ion-content>
-    </ion-page>
-  </template>
-  
-  
 <script setup lang="ts">
-  import { Ref, ref } from 'vue';
-  import { IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonActionSheet  } from '@ionic/vue';
+import { ref } from 'vue';
+import { IonModal, IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonList, IonItem } from '@ionic/vue';
 
-  const pokemon1 = ref('');
-  const pokemon2 = ref('');
-  const pokemon3 = ref('');
-  const pokemon4 = ref('');
-  const pokemon5 = ref('');
-  const pokemon6 = ref('');
-
-  const chosenPokemon = ref('');
-
-  let pokemonStats:string = "";                 
-
-  const actionSheet = ref(false);
-
-  function showActionSheet() {
-    actionSheet.value = true;
-  }
-
-  function updatePokemonStats(){
-    pokemonStats = "<img src=\"/src/assets/images/pokemon/" + chosenPokemon.value + ".png\" alt=\"" + chosenPokemon.value + "\">" +
-                              "<p>Objeto</p>" +
-                              "<input type=\"text\" id=\"pokemon1Item\" name=\"pokemon1Item\" class=\"textBox\">" +
-                              "<p>Habilidad</p>" +
-                              "<input type=\"text\" id=\"pokemon1Ability\" name=\"pokemon1Ability\" class=\"textBox\">" +
-                              "<p>Naturaleza</p>" +
-                              "<input type=\"text\" id=\"pokemon1Nature\" name=\"pokemon1Nature\" class=\"textBox\">" +
-                              "<p>Movimientos</p>" +
-                              "<input type=\"text\" id=\"pokemon1Move1\" name=\"pokemon1Move1\" class=\"textBox\">" +
-                              "<input type=\"text\" id=\"pokemon1Move2\" name=\"pokemon1Move2\" class=\"textBox\">" +
-                              "<input type=\"text\" id=\"pokemon1Move3\" name=\"pokemon1Move3\" class=\"textBox\">" +
-                              "<input type=\"text\" id=\"pokemon1Move4\" name=\"pokemon1Move4\" class=\"textBox\">";
-  }
-
-  function updatePokemon(pokemon:Ref<string, string>){
-    updatePokemonStats();
-    pokemon.value = pokemonStats;  
-  }
-
-  const actionSheetButtons = [
-  {
-    text: 'Eevee',
-    handler: () => {
-      chosenPokemon.value = 'eevee';
-      updatePokemon(pokemon1);  
-    }
-  },
-  {
-    text: 'Flareon',
-    handler: () => {
-      chosenPokemon.value = 'flareon';
-      updatePokemonStats();
-      pokemon1.value = pokemonStats;    
-    }
-  },
-  {
-    text: 'Vaporeon',
-    handler: () => {
-      chosenPokemon.value = 'vaporeon';
-      updatePokemonStats();
-      pokemon1.value = pokemonStats;    
-    }
-  },
-  {
-    text: 'Jolteon',
-    handler: () => {
-      chosenPokemon.value = 'jolteon';
-      updatePokemonStats();
-      pokemon1.value = pokemonStats;    
-    }
-  },
-  {
-    text: 'Espeon',
-    handler: () => {
-      chosenPokemon.value = 'espeon';
-      updatePokemonStats();
-      pokemon1.value = pokemonStats;    
-    }
-  },
-  {
-    text: 'Umbreon',
-    handler: () => {
-      chosenPokemon.value = 'umbreon';
-      updatePokemonStats();
-      pokemon1.value = pokemonStats;    
-    }
-  },
-  {
-    text: 'Cancelar',
-    handler: () => {
-      pokemon1.value = '';
-      actionSheet.value = false;
-    },
-    //role: 'cancel'
-  }
+const blankPokemons = () => [
+  { name: '', item: '', ability: '', nature: '', moves: ['', '', '', ''] },
+  { name: '', item: '', ability: '', nature: '', moves: ['', '', '', ''] },
+  { name: '', item: '', ability: '', nature: '', moves: ['', '', '', ''] },
+  { name: '', item: '', ability: '', nature: '', moves: ['', '', '', ''] },
+  { name: '', item: '', ability: '', nature: '', moves: ['', '', '', ''] },
+  { name: '', item: '', ability: '', nature: '', moves: ['', '', '', ''] }
 ];
-</script>
-  
-  
-<style scoped>
 
+const pokemons = ref(blankPokemons());
+
+const availablePokemons = ['Eevee', 'Flareon', 'Vaporeon', 'Jolteon', 'Espeon', 'Umbreon'];
+
+const isModalOpen = ref(false);
+const selectedPokemonIndex = ref<number | null>(null);
+
+function openModal(index: number) {
+  selectedPokemonIndex.value = index;
+  isModalOpen.value = true;
+}
+
+function closeModal() {
+  isModalOpen.value = false;
+  selectedPokemonIndex.value = null;
+}
+
+function selectPokemon(pokemon: string) {
+  if (selectedPokemonIndex.value !== null) {
+    pokemons.value[selectedPokemonIndex.value].name = pokemon;
+  }
+  closeModal();
+}
+
+function resetPokemons() {
+  pokemons.value = blankPokemons();
+}
+</script>
+
+<style scoped>
 .custom-grid {
   --ion-grid-columns: 14;
 }
 
+.modal-content {
+  padding: 20px;
+}
 </style>

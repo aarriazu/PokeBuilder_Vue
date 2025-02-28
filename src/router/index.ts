@@ -18,6 +18,26 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/ForumGuestGeneral.vue')
   },
   {
+    path: '/forumGuestAyuda',
+    name: 'ForumGuestAyuda',
+    component: () => import('@/views/ForumGuestAyuda.vue')
+  },
+  {
+    path: '/forumGuestTorneos',
+    name: 'ForumGuestTorneos',
+    component: () => import('@/views/ForumGuestTorneos.vue')
+  },
+  {
+    path: '/forumGuestOfftopic',
+    name: 'ForumGuestOfftopic',
+    component: () => import('@/views/ForumGuestOfftopic.vue')
+  },
+  {
+    path: '/forumGuestSpinoff',
+    name: 'ForumGuestSpinoff',
+    component: () => import('@/views/ForumGuestSpinoff.vue')
+  },
+  {
     path: '/postGuest',
     name: 'PostGuest',
     component: () => import('@/views/PostGuest.vue')
@@ -37,6 +57,10 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'teamBuilder',
         component: () => import('@/views/TeamBuilder.vue')
+      },
+      {
+        path: 'stats',
+        component: () => import('@/views/Stats.vue')
       },
       {
         path: 'forumGeneral',
