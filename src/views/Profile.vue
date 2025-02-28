@@ -25,45 +25,14 @@
             <ion-col size="12" size-md="6">
               <ion-button router-link="/home/teamBuilder" shape="round">Nuevo Equipo</ion-button>
               <br>
-              <div class="teamDiv">
-                <p>Equipo Eevee</p>
-                <div class="teamBg">
-                  <img src="/src/assets/images/pokemon/teamEevee.png">
-                </div>
-                <ion-button router-link="/home/teamBuilder" shape="round">Modificar</ion-button>
-                <ion-button>
-                  <ion-icon slot="icon-only" :icon="star"></ion-icon>
-                </ion-button>
-                <div class="teamDeleteButton">
-                  <ion-button router-link="/home/teamBuilder" shape="round" color="danger">Eliminar</ion-button>
-                </div>
-              </div>
-              <div class="teamDiv">
-                <p>Equipo 2</p>
-                <div class="teamBg">
-                  <img src="/src/assets/images/pokemon/team2.png">
-                </div>
-                <ion-button router-link="/home/teamBuilder" shape="round">Modificar</ion-button>
-                <ion-button>
-                  <ion-icon slot="icon-only" :icon="star"></ion-icon>
-                </ion-button>
-                <div class="teamDeleteButton">
-                  <ion-button router-link="/home/teamBuilder" shape="round" color="danger">Eliminar</ion-button>
-                </div>
-              </div>
-              <div class="teamDiv">
-                <p>Equipo Kanto</p>
-                <div class="teamBg">
-                  <img src="/src/assets/images/pokemon/teamKanto.png">
-                </div>
-                <ion-button router-link="/home/teamBuilder" shape="round">Modificar</ion-button>
-                <ion-button>
-                  <ion-icon slot="icon-only" :icon="star"></ion-icon>
-                </ion-button>
-                <div class="teamDeleteButton">
-                  <ion-button router-link="/home/teamBuilder" shape="round" color="danger">Eliminar</ion-button>
-                </div>
-              </div>
+              <Team
+                v-for="(team, index) in teams"
+                :key="index"
+                :teamName="team.name"
+                :teamImage="team.image"
+                :teamLink="team.link"
+                @delete-team="deleteTeam(index)"
+              />
             </ion-col>
 
             <ion-col size="12" size-md="6">
@@ -134,7 +103,19 @@
 
 <script setup lang="ts">
 import { IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
-import { star } from 'ionicons/icons';
+import { ref } from 'vue';
+import Team from '@/components/Team.vue';
+
+const teams = ref([
+  { name: 'Equipo Eevee', image: '/src/assets/images/pokemon/teamEevee.png', link: '/home/teamBuilder' },
+  { name: 'Equipo 2', image: '/src/assets/images/pokemon/team2.png', link: '/home/teamBuilder' },
+  { name: 'Equipo Kanto', image: '/src/assets/images/pokemon/teamKanto.png', link: '/home/teamBuilder' }
+]);
+
+const deleteTeam = (index: number) => {
+  teams.value.splice(index, 1);
+};
+
 </script>
 
 

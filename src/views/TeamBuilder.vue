@@ -15,6 +15,14 @@
 
         <div class="title">
           <h1>Pokebuilder</h1>
+            <div style="float: right;">
+            <ion-button router-link="/home/profile">
+              Guardar
+            </ion-button>
+            <ion-button router-link="/home/profile">
+              Volver
+            </ion-button>
+          </div>
         </div>
 
           <ion-grid class="custom-grid">

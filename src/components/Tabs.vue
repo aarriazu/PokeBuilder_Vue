@@ -5,12 +5,12 @@
       <ion-tab-bar slot="bottom">
         <ion-tab-button tab="profile" href="/home/profile">
           <ion-icon :icon="triangle" />
-          <ion-label>Profile</ion-label>
+          <ion-label>Perfil</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="forum" href="/home/forumGeneral">
           <ion-icon :icon="square" />
-          <ion-label>Forum</ion-label>
+          <ion-label>Foro</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>
