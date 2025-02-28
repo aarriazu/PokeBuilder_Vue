@@ -20,10 +20,12 @@
         <ion-grid class="container">
           <ion-row>
             <ion-col size="12" size-md="6">
+              <h2>Pokemon mas usados</h2>
               <canvas id="myChart"></canvas>
             </ion-col>
 
             <ion-col size="12" size-md="6">
+              <h2>Pokemon favoritos</h2>
               <div class="swiper-container">
                 <div class="swiper-wrapper">
                   <div class="swiper-slide"><img src="/src/assets/images/pokemon/flareon.png" alt="Pokemon 1"></div>

@@ -41,7 +41,7 @@
           </ion-row>
         </ion-grid>
 
-        <ion-modal trigger="login-trigger" trigger-action="click" alignment="center">
+        <ion-modal ref="registerModal" trigger="login-trigger" trigger-action="click" alignment="center">
           <ion-content class="ion-padding">
             <div class="registerModal">
               <h2>Crear cuenta</h2>
@@ -54,7 +54,7 @@
               <p>Confirmar contraseña</p>
               <input type="password" id="registerPasswordConfirm" name="registerPasswordConfirm" class="textBox">
               <br>
-              <ion-button router-link="/home/profile">Crear cuenta</ion-button>
+              <ion-button href="/home/profile" @click="createAccount">Crear cuenta</ion-button>
             </div>
           </ion-content>
         </ion-modal>
@@ -63,11 +63,16 @@
   </ion-page>
 </template>
 
-
 <script setup lang="ts">
+import { ref } from 'vue';
 import { IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonGrid, IonCol } from '@ionic/vue';
-</script>
 
+const registerModal = ref();
+
+const createAccount = () => {
+  registerModal.value.dismiss();
+};
+</script>
 
 <style scoped>
 </style>
