@@ -63,6 +63,24 @@
           </ion-col>
         </ion-row>
       </ion-grid>
+
+      <ion-modal ref="registerModal" trigger="login-trigger" trigger-action="click" alignment="center">
+          <ion-content class="ion-padding">
+            <div class="registerModal">
+              <h2>Crear cuenta</h2>
+              <p>Nombre de usuario</p>
+              <input type="text" id="registerUserName" name="registerUserName" class="textBox">
+              <p>Correo electronico</p>
+              <input type="text" id="registerEmail" name="registerEmail" class="textBox">
+              <p>Contraseña</p>
+              <input type="password" id="registerPassword" name="registerPassword" class="textBox">
+              <p>Confirmar contraseña</p>
+              <input type="password" id="registerPasswordConfirm" name="registerPasswordConfirm" class="textBox">
+              <br>
+              <ion-button href="/home/profile" @click="createAccount">Crear cuenta</ion-button>
+            </div>
+          </ion-content>
+        </ion-modal>
       
       <!-- Footer -->
       <footerCustom/>
