@@ -1,32 +1,30 @@
 <template>
   <ion-page>
-
-
+    <navbarCustom/>
     <ion-content :fullscreen="true">
       <div class="main">
-
-        <div class="profile">
-          <img class="profilePic" src="/src/assets/images/profile/profilePic.png">
-          <div class="profileBuffer"></div>
-          <div class="profileTextDiv">
-            <h5 class="blueText">Pokefan33</h5>
-            <h5>Miembro desde 10/02/2024</h5>
-            <a href="/login">Salir</a>
+        <!-- Perfil -->
+        <div class="flex items-center mt-6 ml-6">
+          <img class="w-20 h-20 rounded-lg object-cover mr-4 border-2 border-gray-200" 
+               src="/src/assets/images/profile/profilePic.png">
+          <div>
+            <h5 class="text-blue-600 font-semibold text-lg">Pokefan33</h5>
+            <h5 class="text-gray-600 text-sm mt-1">Miembro desde 10/02/2024</h5>
+            <a href="/login" class="text-red-500 hover:text-red-700 text-sm mt-1 inline-block">Salir</a>
           </div>
         </div>
 
-        <div class="title">
-          <h1>Pokebuilder</h1>
-        </div>
-
-        <ion-button router-link="/home/stats">Stats</ion-button>
-
-        <ion-grid class="container">
+        <!-- Grid principal -->
+        <ion-grid class="container px-4">
           <ion-row>
-
-            <ion-col size="12" size-md="6">
-              <ion-button router-link="/home/teamBuilder" shape="round">Nuevo Equipo</ion-button>
-              <br>
+            <!-- Columna Equipos -->
+            <ion-col size="12" size-md="6" class="pr-0 md:pr-4">
+              <div class="max-w-[50%] mb-4">
+                <div class="grid grid-cols-2 gap-2">
+                  <ion-button router-link="/home/teamBuilder" class="w-full">Crear nuevo equipo</ion-button>
+                  <ion-button router-link="/home/stats" class="w-full">Tus estadísticas</ion-button>
+                </div>
+              </div>
               <Team
                 v-for="(team, index) in dummyTeams"
                 :key="index"
@@ -37,76 +35,87 @@
               />
             </ion-col>
 
-            <ion-col size="12" size-md="6">
-              <br>
-              <br>
-              <br>
-              <br>
-              <div class="forumCategory_Profile">
-                <a href="/home/forumGeneral">
-                  <p class="forumCategory_Profile_postCount">143 posts</p>
-                  <div class="forumCategory_Profile_textDiv">
-                    <p class="forumCategory_Profile_title">General</p>
-                    <p class="forumCategory_Profile_desc">Discute los juegos de pokemon principales</p>
-                  </div>
-                </a>
-              </div>
-              <br>
-              <div class="forumCategory_Profile">
-                <a href="/home/forumTorneos">
-                  <p class="forumCategory_Profile_postCount">13 posts</p>
-                  <div class="forumCategory_Profile_textDiv">
-                    <p class="forumCategory_Profile_title">Torneos</p>
-                    <p class="forumCategory_Profile_desc">Organiza Torneos con otros jugadores</p>
-                  </div>
-                </a>
-              </div>
-              <br>
-              <div class="forumCategory_Profile">
-                <a href="/home/forumAyuda">
-                  <p class="forumCategory_Profile_postCount">82 posts</p>
-                  <div class="forumCategory_Profile_textDiv">
-                    <p class="forumCategory_Profile_title">Ayuda</p>
-                    <p class="forumCategory_Profile_desc">Pide ayuda a otros jugadores</p>
-                  </div>
-                </a>
-              </div>
-              <br>
-              <div class="forumCategory_Profile">
-                <a href="/home/forumSpinoff">
-                  <p class="forumCategory_Profile_postCount">27 posts</p>
-                  <div class="forumCategory_Profile_textDiv">
-                    <p class="forumCategory_Profile_title">Spin Offs</p>
-                    <p class="forumCategory_Profile_desc">Discute spin offs de pokemon</p>
-                  </div>
-                </a>
-              </div>
-              <br>
-              <div class="forumCategory_Profile">
-                <a href="/home/forumOfftopic">
-                  <p class="forumCategory_Profile_postCount">53 posts</p>
-                  <div class="forumCategory_Profile_textDiv">
-                    <p class="forumCategory_Profile_title">Off Topic</p>
-                    <p class="forumCategory_Profile_desc">Discute aqui cualquier cosa que no tenga que ver con pokemon</p>                
-                  </div>
-                </a>
+            <!-- Columna Foros -->
+            <ion-col size="12" size-md="6" class="pl-0 md:pl-4">
+              <div class="space-y-4">
+                <!-- Categoría General -->
+                <div class="bg-white rounded-lg shadow-sm border-2 border-blue-300 p-4 hover:shadow-md transition-shadow">
+                  <a href="/home/forumGeneral" class="block">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <h3 class="text-lg font-semibold text-gray-800">General</h3>
+                        <p class="text-gray-600 text-sm">Discute los juegos de pokemon principales</p>
+                      </div>
+                      <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">143 posts</span>
+                    </div>
+                  </a>
+                </div>
+
+                <!-- Categoría Torneos -->
+                <div class="bg-white rounded-lg shadow-sm border-2 border-blue-300 p-4 hover:shadow-md transition-shadow">
+                  <a href="/home/forumTorneos" class="block">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Torneos</h3>
+                        <p class="text-gray-600 text-sm">Organiza Torneos con otros jugadores</p>
+                      </div>
+                      <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">13 posts</span>
+                    </div>
+                  </a>
+                </div>
+
+                <!-- Categoría Ayuda -->
+                <div class="bg-white rounded-lg shadow-sm border-2 border-blue-300 p-4 hover:shadow-md transition-shadow">
+                  <a href="/home/forumAyuda" class="block">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Ayuda</h3>
+                        <p class="text-gray-600 text-sm">Pide ayuda a otros jugadores</p>
+                      </div>
+                      <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">82 posts</span>
+                    </div>
+                  </a>
+                </div>
+
+                <!-- Categoría Spin Offs -->
+                <div class="bg-white rounded-lg shadow-sm border-2 border-blue-300 p-4 hover:shadow-md transition-shadow">
+                  <a href="/home/forumSpinoff" class="block">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Spin Offs</h3>
+                        <p class="text-gray-600 text-sm">Discute spin offs de pokemon</p>
+                      </div>
+                      <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">27 posts</span>
+                    </div>
+                  </a>
+                </div>
+
+                <!-- Categoría Off Topic -->
+                <div class="bg-white rounded-lg shadow-sm border-2 border-blue-300 p-4 hover:shadow-md transition-shadow">
+                  <a href="/home/forumOfftopic" class="block">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Off Topic</h3>
+                        <p class="text-gray-600 text-sm">Discute aqui cualquier cosa que no tenga que ver con pokemon</p>
+                      </div>
+                      <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">53 posts</span>
+                    </div>
+                  </a>
+                </div>
               </div>
             </ion-col>
           </ion-row>
         </ion-grid>
-        <br>
-        <br>
-        <br>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
-
 <script setup lang="ts">
-import { IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol } from '@ionic/vue';
 import { ref } from 'vue';
 import Team from '@/components/Team.vue';
+import navbarCustom from '@/components/navbarComponent.vue';
 
 interface Pokemon {
   name: string;
@@ -130,9 +139,8 @@ const dummyTeams = ref([
 const deleteTeam = (index: number) => {
   dummyTeams.value.splice(index, 1);
 };
-
 </script>
 
-
 <style scoped>
+/* Mantén tus estilos existentes aquí */
 </style>

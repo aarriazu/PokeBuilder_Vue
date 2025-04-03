@@ -1,15 +1,19 @@
 <template>
   <ion-page>
+    <navbarCustom/>
     <ion-content :fullscreen="true">
       <!-- Título principal -->
-      <div class="absolute top-0 w-full text-center mt-4">
-        <h1 class="text-7xl font-bold text-black">Pokebuilder</h1>
+      <div class="absolute top-0 w-full text-center mt-16">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-black">
+          Pokebuilder
+        </h1>
       </div>
-      <div class="flex items-center justify-center min-h-screen bg-gray-100">
+      
+      <ion-grid class="flex items-center justify-center min-h-screen bg-white m-2">
         <!-- Contenedor principal dividido en dos columnas -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl">
+        <ion-row class="w-full max-w-6xl">
           <!-- Sección de Login -->
-          <div class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-center">
+          <ion-col size="12" size-md="6" class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-center">
             <h2 class="text-2xl font-semibold text-gray-800 mb-4">Acceder</h2>
             <p class="text-gray-600 mb-2">Nombre de usuario o correo electrónico</p>
             <input 
@@ -37,10 +41,10 @@
                 Regístrate aquí
               </span>
             </p>
-          </div>
+          </ion-col>
 
           <!-- Sección de Actividad Reciente -->
-          <div class="flex flex-col justify-center">
+          <ion-col size="12" size-md="6" class="flex flex-col justify-center">
             <h2 class="text-2xl font-semibold text-gray-800 mb-4">Actividad reciente</h2>
             <a href="/postGuest" class="block mb-4">
               <img 
@@ -56,16 +60,21 @@
                 class="w-full rounded-lg shadow-md"
               >
             </a>
-          </div>
-        </div>
-      </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      
+      <!-- Footer -->
+      <footerCustom/>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { IonButton, IonContent, IonPage } from '@ionic/vue';
+import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol } from '@ionic/vue';
+import navbarCustom from '@/components/navbarComponent.vue';
+import footerCustom from '@/components/footerComponent.vue';
 
 const registerModal = ref();
 
@@ -75,4 +84,5 @@ const createAccount = () => {
 </script>
 
 <style scoped>
+
 </style>
