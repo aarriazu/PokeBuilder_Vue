@@ -65,22 +65,73 @@
       </ion-grid>
 
       <ion-modal ref="registerModal" trigger="login-trigger" trigger-action="click" alignment="center">
-          <ion-content class="ion-padding">
-            <div class="registerModal">
-              <h2>Crear cuenta</h2>
-              <p>Nombre de usuario</p>
-              <input type="text" id="registerUserName" name="registerUserName" class="textBox">
-              <p>Correo electronico</p>
-              <input type="text" id="registerEmail" name="registerEmail" class="textBox">
-              <p>Contraseña</p>
-              <input type="password" id="registerPassword" name="registerPassword" class="textBox">
-              <p>Confirmar contraseña</p>
-              <input type="password" id="registerPasswordConfirm" name="registerPasswordConfirm" class="textBox">
-              <br>
-              <ion-button href="/home/profile" @click="createAccount">Crear cuenta</ion-button>
-            </div>
-          </ion-content>
-        </ion-modal>
+  <ion-content class="ion-padding">
+    <div class="bg-white rounded-lg p-6 max-w-md mx-auto">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Crear cuenta</h2>
+      
+      <form class="space-y-4">
+        <!-- Nombre de usuario -->
+        <div>
+          <label for="registerUserName" class="block text-gray-800 font-semibold mb-2">Nombre de usuario</label>
+          <input 
+            type="text" 
+            id="registerUserName" 
+            name="registerUserName" 
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Escribe tu nombre de usuario"
+          >
+        </div>
+
+        <!-- Correo electrónico -->
+        <div>
+          <label for="registerEmail" class="block text-gray-800 font-semibold mb-2">Correo electrónico</label>
+          <input 
+            type="email" 
+            id="registerEmail" 
+            name="registerEmail" 
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Escribe tu correo electrónico"
+          >
+        </div>
+
+        <!-- Contraseña -->
+        <div>
+          <label for="registerPassword" class="block text-gray-800 font-semibold mb-2">Contraseña</label>
+          <input 
+            type="password" 
+            id="registerPassword" 
+            name="registerPassword" 
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Escribe tu contraseña"
+          >
+        </div>
+
+        <!-- Confirmar contraseña -->
+        <div>
+          <label for="registerPasswordConfirm" class="block text-gray-800 font-semibold mb-2">Confirmar contraseña</label>
+          <input 
+            type="password" 
+            id="registerPasswordConfirm" 
+            name="registerPasswordConfirm" 
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Confirma tu contraseña"
+          >
+        </div>
+
+        <!-- Botón para crear cuenta -->
+        <div class="text-center">
+          <ion-button 
+            href="/home/profile" 
+            @click="createAccount" 
+            class="text-white font-semibold py-2 px-4 rounded-lg transition"
+          >
+            Crear cuenta
+          </ion-button>
+        </div>
+      </form>
+    </div>
+  </ion-content>
+</ion-modal>
       
       <!-- Footer -->
       <footerCustom/>

@@ -13,6 +13,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Login.vue')
   },
   {
+    path: '/pokedex',
+    name: 'Pokedex',
+    component: () => import('@/views/Pokedex.vue')
+  },
+  {
     path: '/forumGuestGeneral',
     name: 'ForumGuestGeneral',
     component: () => import('@/views/ForumGuestGeneral.vue')
