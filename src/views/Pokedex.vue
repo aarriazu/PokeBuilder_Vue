@@ -16,6 +16,7 @@
                                 <p class="text-gray-600 text-sm mb-4">
                                     Aquí puedes ver la lista de Pokémon disponibles.
                                 </p>
+                                <PokeCard :pokemonName="selectedPokemon" @select-pokemon="handleSelectPokemon" />
                             </div>
                         </IonCol>
                     </IonRow>
@@ -27,10 +28,17 @@
 
 <script setup lang="ts">
 
-import { Ref } from 'vue';
+import { ref } from 'vue';
 import { IonContent, IonPage, IonGrid, IonRow, IonCol } from '@ionic/vue';
+import PokeCard from '@/components/pokeCard.vue';
 
+// Variable para el Pokémon seleccionado
+const selectedPokemon = ref('jolteon');
 
+// Manejar el evento de selección de un Pokémon
+function handleSelectPokemon(pokemonName: string) {
+  selectedPokemon.value = pokemonName;
+}
 </script>
 
 <style scoped>
