@@ -10,10 +10,10 @@
       <!-- Menú normal para desktop -->
       <ion-buttons slot="end" class="hidden md:flex space-x-2">
         <ion-button 
-          @click="navigateTo('/about')" 
+          @click="navigateTo('/pokedex')" 
           class="text-gray-700 hover:text-indigo-600 transition-colors duration-300 font-medium"
         >
-          About Us
+          Pokemons
         </ion-button>
         <ion-button 
           @click="navigateTo('/contact')" 

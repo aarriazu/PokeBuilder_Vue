@@ -38,10 +38,16 @@
       </div>
   
       <div class="mt-4">
-        <h3 class="font-semibold mb-1">Movimientos</h3>
-        <p class="text-sm text-gray-700">
-          {{ pokemon!.moves.join(', ') }}
-        </p>
+        <h3 class="font-semibold mb-2">Movimientos</h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm text-gray-700">
+          <span 
+            v-for="move in pokemon!.moves" 
+            :key="move" 
+            class="bg-gray-200 rounded px-2 py-1 capitalize"
+          >
+            {{ move }}
+          </span>
+        </div>
       </div>
   
       <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
@@ -95,4 +101,7 @@ function handlePreEvolutionClick() {
 //-------------------------------------------
 
 </script>
+
+<style scoped>
+</style>
   
