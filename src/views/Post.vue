@@ -2,22 +2,18 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div class="main">
-        <!-- Perfil -->
+        <!-- Perfil del usuario en la parte superior izquierda -->
         <div class="flex items-center mt-6 ml-6">
           <img 
             class="w-20 h-20 rounded-lg object-cover mr-4 border-2 border-gray-200" 
             src="/src/assets/images/profile/profilePic.png"
+            alt="User Icon"
           >
           <div>
             <h5 class="text-blue-600 font-semibold text-lg">Pokefan33</h5>
             <h5 class="text-gray-600 text-sm mt-1">Miembro desde 10/02/2024</h5>
             <a href="/login" class="text-red-500 hover:text-red-700 text-sm mt-1 inline-block">Salir</a>
           </div>
-        </div>
-
-        <!-- Título -->
-        <div class="text-center mt-8">
-          <h1 class="text-4xl font-bold text-indigo-600">Pokebuilder</h1>
         </div>
 
         <!-- Grid principal -->
@@ -57,11 +53,28 @@
             <!-- Contenido principal -->
             <ion-col size="12" size-md="9" class="pl-0 md:pl-4">
               <div class="bg-white rounded-lg shadow-sm border-2 border-gray-300 p-6">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Duda PTCG</h2> <!-- Titulo del post -->
-                <div class="border-2 border-gray-200 p-4 rounded-lg mb-4">
-                  <p class="text-gray-600 text-sm"> <!-- Contenido/ TODO que se puedan añadir imagenes -->
-                    Este es el contenido del post. Aquí puedes leer los detalles y comentarios relacionados con este tema.
-                  </p>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Duda PTCG</h2> <!-- Título del post -->
+
+                <!-- Contenedor del contenido principal -->
+                <div class="flex items-start border-2 border-gray-200 p-4 rounded-lg mb-4">
+                  <!-- Icono de usuario y nombre -->
+                  <div class="flex-shrink-0 mr-4 text-center">
+                    <img 
+                      src="/src/assets/images/profile/otherProfile.png" 
+                      alt="User Icon" 
+                      class="w-16 h-16 rounded-lg"
+                    />
+                    <p class="text-sm font-semibold text-blue-600 mt-2">Pokefan43</p>
+                  </div>
+
+                  <!-- Contenido del post -->
+                  <div>
+                    <p class="text-gray-600 text-sm">
+                      Este es el contenido del post. Aquí puedes leer los detalles y comentarios relacionados con este tema.
+                    </p>
+                    <!-- Fecha del post -->
+                    <p class="text-gray-500 text-xs mt-4">Publicado el: 10/02/2024</p>
+                  </div>
                 </div>
 
                 <!-- Botón para responder -->
