@@ -23,7 +23,7 @@
             :key="type"
             class="inline-block bg-gray-200 rounded px-2 py-1 mr-1 text-sm capitalize"
           >
-            {{ type }}
+            {{ typeTranslate(type, lang) }}
           </span>
         </p>
       </div>
@@ -39,7 +39,7 @@
             :key="eggGroup" 
             class="bg-gray-200 rounded px-2 py-1 capitalize"
           >
-            {{ eggGroup.replace('-', ' ') }}
+            {{ eggGroupTranslate(eggGroup, lang) }}
           </span>
         </div>
       </div>
@@ -50,7 +50,7 @@
             :key="ability" 
             class="bg-gray-200 rounded px-2 py-1 capitalize"
           >
-            {{ ability.replace('-', ' ') }}
+            {{ abilityTranslate(ability, lang) }}
           </span>
         </div>
       </div>
@@ -77,7 +77,7 @@
           :key="move" 
           class="bg-gray-200 rounded px-2 py-1 capitalize"
         >
-          {{ move.replace('-', ' ') }}
+          {{ moveTranslate(move, lang) }}
         </span>
       </div>
     </div>
@@ -123,11 +123,18 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import pokemonData from '@/assets/data/pokemonData.json';
+import pokemonData from '@/assets/json/pokemonData.json';
+//import translation from '@/classes/translationClass.ts';
+import moveData from '@/assets/json/moveData.json';
+import abilityData from '@/assets/json/abilityData.json';
+import typeData from '@/assets/json/typeData.json';
+import eggGroupData from '@/assets/json/eggGroupData.json';
 import { defineProps, defineEmits } from 'vue';
 import { IonButton } from '@ionic/vue';
 
 const props = defineProps<{ pokemonName: string }>();
+
+const lang: string = 'es';
 
 const pokemon = ref(
   pokemonData.find(p => p.name === props.pokemonName)
@@ -153,6 +160,61 @@ const prevPokemon = ref(
 const nextPokemon = ref(
   pokemonData.find(p => p.id === pokemon.value?.id! + 1)
 );
+
+//-------------------------- Esto se mueve al archivo de traducciones cuando sepa como hacerlo sin que pete ------------------
+function typeTranslate(type: string, lang: string): string | undefined{
+  const typeRef = ref(
+    typeData.find(p => p.name === type)
+  );
+  if (lang === 'en'){
+    return type.replace('-', ' ');
+  }
+  else {
+    const type_es = typeRef!.value?.name_es;
+    return type_es;
+  }
+}
+
+function abilityTranslate(ability: string, lang: string): string | undefined{
+  const abilityRef = ref(
+    abilityData.find(p => p.name === ability)
+  );
+  if (lang === 'en'){
+    return ability.replace('-', ' ');
+  }
+  else {
+    const ability_es = abilityRef!.value?.name_es;
+    return ability_es;
+  }
+}
+
+function moveTranslate(move: string, lang: string): string | undefined{
+  const moveRef = ref(
+    moveData.find(p => p.name === move)
+  );
+  if (lang === 'en'){
+    return move.replace('-', ' ');
+  }
+  else {
+    const move_es = moveRef!.value?.name_es;
+    return move_es;
+  }
+}
+
+function eggGroupTranslate(eggGroup: string, lang: string): string | undefined{
+  const eggGroupRef = ref(
+    eggGroupData.find(p => p.name === eggGroup)
+  );
+  if (lang === 'en'){
+    const eggGroup_en = eggGroupRef!.value?.name_en;
+    return eggGroup_en;
+  }
+  else {
+    const eggGroup_es = eggGroupRef!.value?.name_es;
+    return eggGroup_es;
+  }
+}
+//-------------------------------------------------------------------------------------------------------------------
 
 // Definir los eventos emitidos
 const emit = defineEmits<{

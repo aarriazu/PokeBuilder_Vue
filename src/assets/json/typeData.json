@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "name": "normal",
+    "name_es": "Normal"
+  },
+  {
+    "id": 2,
+    "name": "fire",
+    "name_es": "Fuego"
+  },
+  {
+    "id": 3,
+    "name": "water",
+    "name_es": "Agua"
+  },
+  {
+    "id": 4,
+    "name": "grass",
+    "name_es": "Planta"
+  },
+  {
+    "id": 5,
+    "name": "electric",
+    "name_es": "Electrico"
+  },
+  {
+    "id": 6,
+    "name": "flying",
+    "name_es": "Volador"
+  },
+  {
+    "id": 7,
+    "name": "fighting",
+    "name_es": "Lucha"
+  },
+  {
+    "id": 8,
+    "name": "poison",
+    "name_es": "Veneno"
+  },
+  {
+    "id": 9,
+    "name": "psychic",
+    "name_es": "Psíquico"
+  },
+  {
+    "id": 10,
+    "name": "ground",
+    "name_es": "Tierra"
+  },
+  {
+    "id": 11,
+    "name": "rock",
+    "name_es": "Roca"
+  },
+  {
+    "id": 12,
+    "name": "ice",
+    "name_es": "Hielo"
+  },
+  {
+    "id": 13,
+    "name": "bug",
+    "name_es": "Bicho"
+  },
+  {
+    "id": 14,
+    "name": "dragon",
+    "name_es": "Dragón"
+  },
+  {
+    "id": 15,
+    "name": "ghost",
+    "name_es": "Fantasma"
+  },
+  {
+    "id": 16,
+    "name": "dark",
+    "name_es": "Siniestro"
+  },
+  {
+    "id": 17,
+    "name": "steel",
+    "name_es": "Acero"
+  },
+  {
+    "id": 18,
+    "name": "fairy",
+    "name_es": "Hada"
+  },
+  {
+    "id": 19,
+    "name": "stellar",
+    "name_es": "Astral"
+  },
+  {
+    "id": 20,
+    "name": "???",
+    "name_es": "???"
+  }
+]
