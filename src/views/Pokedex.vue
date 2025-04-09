@@ -82,11 +82,8 @@
 import { ref, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { IonContent, IonPage, IonGrid, IonRow, IonCol, IonButton, IonInput, IonSelect, IonSelectOption } from '@ionic/vue';
-import pokemonData from '@/assets/json/pokemonData.json';
+import * as dataController from '@/controllers/dataController';
 import navbarComponent from '@/components/navbarComponent.vue';
-
-// Cargar los datos de Pokémon
-const pokemonDataRef = ref(pokemonData);
 
 // Configuración de la paginación
 const itemsPerPage = 40; // Número de elementos por página
@@ -122,7 +119,7 @@ const pokemonGenerations = ['1', '2', '3', '4', '5', '6', '7', '8'];
 
 // Filtrar los Pokémon según el término de búsqueda, tipo y generación
 const filteredPokemon = computed(() => {
-  return pokemonDataRef.value.filter(pokemon => {
+  return dataController.pokemonArray.filter(pokemon => {
     const matchesSearch = pokemon.name.toLowerCase().includes((searchQuery.value ?? '').toLowerCase());
     const matchesType = selectedType.value ? pokemon.types.includes(selectedType.value) : true;
     const matchesGeneration = selectedGeneration.value ? pokemon.generation === Number(selectedGeneration.value) : true;

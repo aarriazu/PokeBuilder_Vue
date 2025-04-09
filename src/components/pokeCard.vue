@@ -123,12 +123,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import pokemonData from '@/assets/json/pokemonData.json';
 import * as dataController from '@/controllers/dataController';
-import moveData from '@/assets/json/moveData.json';
-import abilityData from '@/assets/json/abilityData.json';
-import typeData from '@/assets/json/typeData.json';
-import eggGroupData from '@/assets/json/eggGroupData.json';
 import { defineProps, defineEmits } from 'vue';
 import { IonButton } from '@ionic/vue';
 
@@ -136,30 +131,17 @@ const props = defineProps<{ pokemonName: string }>();
 
 const lang: string = 'es';
 
-const pokemon = ref(
-  pokemonData.find(p => p.name === props.pokemonName)
-);
-const preEvolutionName = ref(
-  pokemon.value?.preEvolution
-    ? [pokemon.value.preEvolution.name] // Convertir a un array con un único elemento
+const pokemon = dataController.pokemonArray.find(p => p.name === props.pokemonName);
+const preEvolutionName = pokemon!.preEvolution
+    ? [pokemon!.preEvolution.name] // Convertir a un array con un único elemento
     : [] // Valor predeterminado si no hay preevolución
-);
-const preEvolutionData = ref(
-  preEvolutionName.value.map(name => pokemonData.find(p => p.name === name) || { name: '-', sprite: '' })
-);
-const evolutionName = ref(
-  pokemon.value?.evolutions?.map(evo => evo.name) || []
-);
-const evolutionData = ref(
-  evolutionName.value.map(name => pokemonData.find(p => p.name === name) || { name: '-', sprite: '' })
-);
+;
+const preEvolutionData = preEvolutionName.map(name => dataController.pokemonArray.find(p => p.name === name) || { name: '-', sprite: '' });
+const evolutionName = pokemon!.evolutions?.map(evo => evo.name || []);
+const evolutionData = evolutionName.map(name => dataController.pokemonArray.find(p => p.name === name) || { name: '-', sprite: '' });
 
-const prevPokemon = ref(
-  pokemonData.find(p => p.id === pokemon.value?.id! - 1)
-);
-const nextPokemon = ref(
-  pokemonData.find(p => p.id === pokemon.value?.id! + 1)
-);
+const prevPokemon = dataController.pokemonArray.find(p => p.id === pokemon!.id! - 1);
+const nextPokemon = dataController.pokemonArray.find(p => p.id === pokemon!.id! + 1);
 
 // Definir los eventos emitidos
 const emit = defineEmits<{
