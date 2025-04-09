@@ -7,7 +7,9 @@ export interface Move {
     power: number | null;
     accuracy: number | null;
     pp: number | null;
-    //priority: number;
+    priority: number;
     effect: string;
     effect_es: string;
+    short_effect: string;
+    short_effect_es: string;
 }

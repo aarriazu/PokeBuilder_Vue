@@ -1,90 +1,90 @@
 [
   {
-    "id": 1,
+    "id": 0,
     "name": "monster",
     "name_en": "Monster",
     "name_es": "Monstruo"
   },
   {
-    "id": 2,
+    "id": 1,
     "name": "humanshape",
     "name_en": "Human-Like",
     "name_es": "Humanoide"
   },
   {
-    "id": 3,
+    "id": 2,
     "name": "water1",
     "name_en": "Water 1",
     "name_es": "Agua 1"
   },
   {
-    "id": 4,
+    "id": 3,
     "name": "water2",
     "name_en": "Water 2",
     "name_es": "Agua 2"
   },
   {
-    "id": 5,
+    "id": 4,
     "name": "water3",
     "name_en": "Water 3",
     "name_es": "Agua 3"
   },
   {
-    "id": 6,
+    "id": 5,
     "name": "bug",
     "name_en": "Bug",
     "name_es": "Bicho"
   },
   {
-    "id": 7,
+    "id": 6,
     "name": "mineral",
     "name_en": "Mineral",
     "name_es": "Mineral"
   },
   {
-    "id": 8,
+    "id": 7,
     "name": "flying",
     "name_en": "Flying",
     "name_es": "Volador"
   },
   {
-    "id": 9,
+    "id": 8,
     "name": "indeterminate",
     "name_en": "Amorphous",
     "name_es": "Amorfo"
   },
   {
-    "id": 10,
+    "id": 9,
     "name": "ground",
     "name_en": "Field",
     "name_es": "Campo"
   },
   {
-    "id": 11,
+    "id": 10,
     "name": "fairy",
     "name_en": "Fairy",
     "name_es": "Hada"
   },
   {
-    "id": 12,
+    "id": 11,
     "name": "plant",
     "name_en": "Grass",
     "name_es": "Planta"
   },
   {
-    "id": 13,
+    "id": 12,
     "name": "dragon",
     "name_en": "Dragon",
     "name_es": "Dragón"
   },
   {
-    "id": 14,
+    "id": 13,
     "name": "ditto",
     "name_en": "Ditto",
     "name_es": "Ditto"
   },
   {
-    "id": 15,
+    "id": 14,
     "name": "no-eggs",
     "name_en": "No Eggs",
     "name_es": "Desconocido"

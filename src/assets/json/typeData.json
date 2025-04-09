@@ -1,102 +1,242 @@
 [
   {
-    "id": 1,
+    "id": 0,
     "name": "normal",
-    "name_es": "Normal"
+    "name_es": "Normal",
+    "color": "#9FA19F",
+    "advantages": [],
+    "disadvantages": ["rock", "steel"],
+    "noEffect": ["ghost"],
+    "resistances": [],
+    "weaknesses": ["fighting"],
+    "immunities": ["ghost"]
+  },
+  {
+    "id": 1,
+    "name": "fire",
+    "name_es": "Fuego",
+    "color": "#E62829",
+    "advantages": ["bug", "grass", "ice", "steel"],
+    "disadvantages": ["rock", "fire", "water", "dragon"],
+    "noEffect": [],
+    "resistances": ["bug", "fire", "grass", "steel", "ice", "fairy"],
+    "weaknesses": ["ground", "rock", "water"],
+    "immunities": []
   },
   {
     "id": 2,
-    "name": "fire",
-    "name_es": "Fuego"
+    "name": "water",
+    "name_es": "Agua",
+    "color": "#2980EF",
+    "advantages": ["ground", "rock", "fire"],
+    "disadvantages": ["water", "grass", "dragon"],
+    "noEffect": [],
+    "resistances": ["fire", "water", "ice", "steel"],
+    "weaknesses": ["grass", "electric"],
+    "immunities": []
   },
   {
     "id": 3,
-    "name": "water",
-    "name_es": "Agua"
+    "name": "grass",
+    "name_es": "Planta",
+    "color": "#3FA129",
+    "advantages": ["ground", "rock", "water"],
+    "disadvantages": ["flying", "poison", "bug", "fire", "grass", "dragon", "steel"],
+    "noEffect": [],
+    "resistances": ["ground", "water", "grass", "electric"],
+    "weaknesses": ["flying", "poison", "bug", "fire", "ice"],
+    "immunities": []
   },
   {
     "id": 4,
-    "name": "grass",
-    "name_es": "Planta"
+    "name": "electric",
+    "name_es": "Electrico",
+    "color": "#FAC000",
+    "advantages": ["flying", "water"],
+    "disadvantages": ["grass", "electric", "dragon"],
+    "noEffect": ["ground"],
+    "resistances": ["flying", "electric", "steel"],
+    "weaknesses": ["ground"],
+    "immunities": []
   },
   {
     "id": 5,
-    "name": "electric",
-    "name_es": "Electrico"
+    "name": "flying",
+    "name_es": "Volador",
+    "color": "#81B9EF",
+    "advantages": ["fighting", "bug", "grass"],
+    "disadvantages": ["rock", "electric", "steel"],
+    "noEffect": [],
+    "resistances": ["fighting", "bug", "grass"],
+    "weaknesses": ["rock", "electric", "ice"],
+    "immunities": ["ground"]
   },
   {
     "id": 6,
-    "name": "flying",
-    "name_es": "Volador"
+    "name": "fighting",
+    "name_es": "Lucha",
+    "color": "#FF8000",
+    "advantages": ["normal", "rock", "ice", "steel", "dark"],
+    "disadvantages": ["flying", "poison", "bug", "psychic", "fairy"],
+    "noEffect": ["ghost"],
+    "resistances": ["rock", "bug", "dark"],
+    "weaknesses": ["flying", "psychic", "fairy"],
+    "immunities": []
   },
   {
     "id": 7,
-    "name": "fighting",
-    "name_es": "Lucha"
+    "name": "poison",
+    "name_es": "Veneno",
+    "color": "#9141CB",
+    "advantages": ["grass", "fairy"],
+    "disadvantages": ["poison", "ground", "rock", "ghost"],
+    "noEffect": ["steel"],
+    "resistances": ["fighting", "poison", "grass", "bug", "fairy"],
+    "weaknesses": ["ground", "psychic"],
+    "immunities": []
   },
   {
     "id": 8,
-    "name": "poison",
-    "name_es": "Veneno"
+    "name": "psychic",
+    "name_es": "Psíquico",
+    "color": "#EF4179",
+    "advantages": ["fighting", "poison"],
+    "disadvantages": ["psychic", "steel"],
+    "noEffect": ["dark"],
+    "resistances": ["fighting", "psychic"],
+    "weaknesses": ["bug", "ghost", "dark"],
+    "immunities": []
   },
   {
     "id": 9,
-    "name": "psychic",
-    "name_es": "Psíquico"
+    "name": "ground",
+    "name_es": "Tierra",
+    "color": "#915121",
+    "advantages": ["poison", "rock", "bug", "fire", "electric", "steel"],
+    "disadvantages": ["bug", "grass"],
+    "noEffect": ["flying"],
+    "resistances": ["poison", "rock"],
+    "weaknesses": ["water", "grass", "ice"],
+    "immunities": ["electric"]
   },
   {
     "id": 10,
-    "name": "ground",
-    "name_es": "Tierra"
+    "name": "rock",
+    "name_es": "Roca",
+    "color": "#AFA981",
+    "advantages": ["flying", "bug", "fire", "ice"],
+    "disadvantages": ["fighting", "ground", "steel"],
+    "noEffect": [],
+    "resistances": ["normal", "flying", "poison", "fire"],
+    "weaknesses": ["fighting", "ground", "water", "grass", "steel"],
+    "immunities": []
   },
   {
     "id": 11,
-    "name": "rock",
-    "name_es": "Roca"
+    "name": "ice",
+    "name_es": "Hielo",
+    "color": "#3DCEF3",
+    "advantages": ["flying", "ground", "grass", "dragon"],
+    "disadvantages": ["water", "ice", "steel", "fire"],
+    "noEffect": [],
+    "resistances": ["ice"],
+    "weaknesses": ["fighting", "rock", "fire", "steel"],
+    "immunities": []
   },
   {
     "id": 12,
-    "name": "ice",
-    "name_es": "Hielo"
+    "name": "bug",
+    "name_es": "Bicho",
+    "color": "#91A119",
+    "advantages": ["grass", "psychic", "dark"],
+    "disadvantages": ["fighting", "flying", "poison", "ghost", "steel", "fire", "fairy"],
+    "noEffect": [],
+    "resistances": ["fighting", "ground", "grass"],
+    "weaknesses": ["flying", "rock", "fire"],
+    "immunities": []
   },
   {
     "id": 13,
-    "name": "bug",
-    "name_es": "Bicho"
+    "name": "dragon",
+    "name_es": "Dragón",
+    "color": "#5060E1",
+    "advantages": ["dragon"],
+    "disadvantages": ["steel"],
+    "noEffect": ["fairy"],
+    "resistances": ["fire", "water", "grass", "electric"],
+    "weaknesses": ["ice", "dragon", "fairy"],
+    "immunities": []
   },
   {
     "id": 14,
-    "name": "dragon",
-    "name_es": "Dragón"
+    "name": "ghost",
+    "name_es": "Fantasma",
+    "color": "#704170",
+    "advantages": ["ghost", "psychic"],
+    "disadvantages": ["dark"],
+    "noEffect": ["normal"],
+    "resistances": ["poison", "bug"],
+    "weaknesses": ["ghost", "dark"],
+    "immunities": ["normal", "fighting"]
   },
   {
     "id": 15,
-    "name": "ghost",
-    "name_es": "Fantasma"
+    "name": "dark",
+    "name_es": "Siniestro",
+    "color": "#624D4E",
+    "advantages": ["ghost", "psychic"],
+    "disadvantages": ["fighting", "dark", "fairy"],
+    "noEffect": [],
+    "resistances": ["ghost", "dark"],
+    "weaknesses": ["fighting", "bug", "fairy"],
+    "immunities": ["psychic"]
   },
   {
     "id": 16,
-    "name": "dark",
-    "name_es": "Siniestro"
+    "name": "steel",
+    "name_es": "Acero",
+    "color": "#60A1B8",
+    "advantages": ["rock", "ice", "fairy"],
+    "disadvantages": ["steel", "fire", "water", "electric"],
+    "noEffect": [],
+    "resistances": ["normal", "flying", "rock", "bug", "steel", "grass", "psychic", "ice", "dragon", "fairy"],
+    "weaknesses": ["fighting", "ground", "fire"],
+    "immunities": ["poison"]
   },
   {
     "id": 17,
-    "name": "steel",
-    "name_es": "Acero"
+    "name": "fairy",
+    "name_es": "Hada",
+    "color": "#EF70EF",
+    "advantages": ["fighting", "dragon", "dark"],
+    "disadvantages": ["poison", "steel", "fire"],
+    "noEffect": [],
+    "resistances": ["fighting", "bug", "dark"],
+    "weaknesses": ["poison", "steel"],
+    "immunities": ["dragon"]
   },
   {
     "id": 18,
-    "name": "fairy",
-    "name_es": "Hada"
+    "name": "stellar",
+    "name_es": "Astral",
+    "color": "#40B5A5",
+    "advantages": ["stellar"],
+    "disadvantages": [],
+    "noEffect": [],
+    "resistances": [],
+    "weaknesses": ["stellar"],
+    "immunities": []
   },
   {
     "id": 19,
-    "name": "stellar",
-    "name_es": "Astral"
-  },
-  {
-    "id": 20,
     "name": "???",
-    "name_es": "???"
+    "name_es": "???",
+    "color": "#68A090",
+    "advantages": [],
+    "disadvantages": [],
+    "noEffect": [],
+    "resistances": [],
+    "weaknesses": [],
+    "immunities": []
   }
 ]
