@@ -17,7 +17,7 @@ export const moveArray: Move[] = moveData;
 export const abilityArray: Ability[] = abilityData;
 export const typeArray: Type[] = typeData;
 export const eggGroupArray: EggGroup[] = eggGroupData;
-//export const ItemArray: EggGroup[] = itemData;
+//export const ItemArray: Item[] = itemData;
 
 export function typeTranslate(type: string, lang: string): string | undefined{
   const typeRef: Type | undefined = typeArray.find(p => p.name === type);

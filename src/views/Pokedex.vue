@@ -18,7 +18,7 @@
           <!-- Filtro por tipo -->
           <IonSelect v-model="selectedType" placeholder="Filtrar por tipo" class="w-1/2">
             <IonSelectOption v-for="type in pokemonTypes" :key="type" :value="type">
-              {{ type }}
+              {{ dataController.typeTranslate(type, 'es') }}
             </IonSelectOption>
           </IonSelect>
 

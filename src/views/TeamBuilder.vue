@@ -23,13 +23,13 @@
         <ion-grid class="custom-grid">
           <ion-row>
             <ion-col size="1"></ion-col>
-            <ion-col size="2" v-for="(pokemon, index) in pokemons" :key="index">
+            <ion-col size="2" v-for="(pokemon, index) in team" :key="index">
               <div>
                 <ion-button color="light" size="large" class="addPokemonButton" @click="openModal(index)">
                   Selecciona Pokemon
                 </ion-button>
                 <div v-if="pokemon.name">
-                  <img :src="`/src/assets/images/pokemon/${pokemon.name}.png`" :alt="pokemon.name">
+                  <img :src="pokemon!.species.sprite || ''" :alt="pokemon!.name" class="w-24 h-24" />
                   <p>Objeto</p>
                   <input type="text" class="textBox" v-model="pokemon.item">
                   <p>Habilidad</p>
@@ -51,7 +51,7 @@
           <div class="modal-content">
             <h2>Selecciona Pokemon</h2>
             <ion-list>
-              <ion-item v-for="pokemon in availablePokemons" :key="pokemon" @click="selectPokemon(pokemon)">
+              <ion-item class="text-2xl capitalize" v-for="pokemon in availablePokemons" :key="pokemon" @click="selectPokemon(pokemon)">
                 {{ pokemon }}
               </ion-item>
             </ion-list>
@@ -66,19 +66,22 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { IonModal, IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonList, IonItem } from '@ionic/vue';
+import { Pokemon } from '@/interfaces/pokemonInterface';
+import { TeamPokemon } from '@/classes/TeamPokemon';
+import { Team } from '@/interfaces/teamInterface';
+import * as dataController from '@/controllers/dataController';
 
 const blankPokemons = () => [
-  { name: '', item: '', ability: '', nature: '', moves: ['', '', '', ''] },
-  { name: '', item: '', ability: '', nature: '', moves: ['', '', '', ''] },
-  { name: '', item: '', ability: '', nature: '', moves: ['', '', '', ''] },
-  { name: '', item: '', ability: '', nature: '', moves: ['', '', '', ''] },
-  { name: '', item: '', ability: '', nature: '', moves: ['', '', '', ''] },
-  { name: '', item: '', ability: '', nature: '', moves: ['', '', '', ''] }
-];
+  new TeamPokemon(dataController.pokemonArray[0]),
+  new TeamPokemon(),  
+  new TeamPokemon(),
+  new TeamPokemon(), 
+  new TeamPokemon(), 
+  new TeamPokemon()]
 
-const pokemons = ref(blankPokemons());
+const team = ref(blankPokemons());
 
-const availablePokemons = ['Eevee', 'Flareon', 'Vaporeon', 'Jolteon', 'Espeon', 'Umbreon'];
+const availablePokemons: string[] = dataController.pokemonArray.map(pokemon => pokemon.name);
 
 const isModalOpen = ref(false);
 const selectedPokemonIndex = ref<number | null>(null);
@@ -93,15 +96,22 @@ function closeModal() {
   selectedPokemonIndex.value = null;
 }
 
-function selectPokemon(pokemon: string) {
+function selectPokemon(pokemonName: string) {
   if (selectedPokemonIndex.value !== null) {
-    pokemons.value[selectedPokemonIndex.value].name = pokemon;
+    const selectedSpecies = dataController.pokemonArray.find(
+      pokemon => pokemon.name.toLowerCase() === pokemonName.toLowerCase()
+    );
+    if (selectedSpecies) {
+      team.value[selectedPokemonIndex.value].species = selectedSpecies;
+    } else {
+      console.error(`No se encontró un Pokémon con el nombre: ${pokemonName}`);
+    }
   }
   closeModal();
 }
 
 function resetPokemons() {
-  pokemons.value = blankPokemons();
+  team.value = blankPokemons();
 }
 </script>
 
