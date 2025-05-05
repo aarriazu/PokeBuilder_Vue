@@ -20,14 +20,14 @@
               type="text" 
               id="userName" 
               name="userName" 
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-white"
+              class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-black"
             >
             <p class="text-gray-600 mb-2">Contraseña</p>
             <input 
               type="password" 
               id="password" 
               name="password" 
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-white"
+              class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-black"
             >
             <ion-button 
               router-link="/home/profile" 
@@ -77,7 +77,7 @@
             type="text" 
             id="registerUserName" 
             name="registerUserName" 
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="Escribe tu nombre de usuario"
           >
         </div>
@@ -89,7 +89,7 @@
             type="email" 
             id="registerEmail" 
             name="registerEmail" 
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="Escribe tu correo electrónico"
           >
         </div>
@@ -101,7 +101,7 @@
             type="password" 
             id="registerPassword" 
             name="registerPassword" 
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="Escribe tu contraseña"
           >
         </div>
@@ -113,7 +113,7 @@
             type="password" 
             id="registerPasswordConfirm" 
             name="registerPasswordConfirm" 
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="Confirma tu contraseña"
           >
         </div>

@@ -71,7 +71,7 @@
                       type="text" 
                       id="postTitle" 
                       name="postTitle" 
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                       placeholder="Escribe el título aquí"
                     >
                   </div>
@@ -83,7 +83,7 @@
                       id="postContent" 
                       name="postContent" 
                       rows="6" 
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                       placeholder="Escribe el contenido aquí"
                     ></textarea>
                   </div>
