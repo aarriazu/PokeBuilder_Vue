@@ -130,6 +130,7 @@
                 <div class="prose max-w-none text-gray-700 mb-6">
                   <p>Este es el contenido del post. Aquí puedes leer los detalles y comentarios relacionados con este tema.</p>
                   <p>Puede incluir múltiples párrafos, imágenes o cualquier otro contenido relevante para la discusión.</p>
+                  
                 </div>
                 
                 <!-- Acciones del post -->
