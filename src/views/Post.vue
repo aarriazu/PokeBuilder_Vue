@@ -185,7 +185,7 @@
                       <div class="flex space-x-1">
                         <button 
                           type="button" 
-                          @click="$refs.fileInput.click()"
+                          @click="getFileInput()?.click()"
                           class="inline-flex justify-center items-center p-2 text-gray-500 rounded-sm cursor-pointer hover:text-gray-900 hover:bg-gray-100"
                         >
                           <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 20">
@@ -195,7 +195,7 @@
                         </button>
                         <button 
                           type="button" 
-                          @click="$refs.imageInput.click()"
+                          @click="imageInput?.click()"
                           class="inline-flex justify-center items-center p-2 text-gray-500 rounded-sm cursor-pointer hover:text-gray-900 hover:bg-gray-100"
                         >
                           <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
@@ -322,7 +322,13 @@ const currentForum = ref('general');
 const showReplyForm = ref(false);
 const replyContent = ref('');
 const fileInput = ref<HTMLInputElement | null>(null);
+
+// Ensure $refs.fileInput is typed correctly
+const getFileInput = (): HTMLInputElement | null => fileInput.value;
 const imageInput = ref<HTMLInputElement | null>(null);
+
+// Ensure $refs.imageInput is typed correctly
+const getImageInput = (): HTMLInputElement | null => imageInput.value;
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
