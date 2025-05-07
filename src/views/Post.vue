@@ -91,21 +91,13 @@
           <div class="p-4 md:p-6">
             <div class="max-w-4xl mx-auto">
               <!-- Inputs de archivo ocultos -->
-              <input 
-                type="file" 
-                id="file-upload" 
-                ref="fileInput"
-                class="hidden" 
-                accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx"
-                @change="handleFileUpload"
-              >
-              
+        
               <input 
                 type="file" 
                 id="image-upload" 
                 ref="imageInput"
                 class="hidden" 
-                accept="image/*"
+                accept="image/png , image/jpg, image/jpeg"
                 @change="handleImageUpload"
               >
 
@@ -185,16 +177,6 @@
                       <div class="flex space-x-1">
                         <button 
                           type="button" 
-                          @click="getFileInput()?.click()"
-                          class="inline-flex justify-center items-center p-2 text-gray-500 rounded-sm cursor-pointer hover:text-gray-900 hover:bg-gray-100"
-                        >
-                          <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 20">
-                            <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M1 6v8a5 5 0 1 0 10 0V4.5a3.5 3.5 0 1 0-7 0V13a2 2 0 0 0 4 0V6"/>
-                          </svg>
-                          <span class="sr-only">Adjuntar archivo</span>
-                        </button>
-                        <button 
-                          type="button" 
                           @click="imageInput?.click()"
                           class="inline-flex justify-center items-center p-2 text-gray-500 rounded-sm cursor-pointer hover:text-gray-900 hover:bg-gray-100"
                         >
@@ -203,6 +185,9 @@
                           </svg>
                           <span class="sr-only">Subir imagen</span>
                         </button>
+                        <span v-if="selectedFileName" class="text-xs self-center text-gray-500 ml-2 truncate max-w-xs">
+                          {{ selectedFileName }}
+                        </span>
                       </div>
                       <button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 hover:bg-blue-800">
                         Publicar respuesta
@@ -322,6 +307,7 @@ const currentForum = ref('general');
 const showReplyForm = ref(false);
 const replyContent = ref('');
 const fileInput = ref<HTMLInputElement | null>(null);
+  const selectedFileName = ref(''); // Nueva variable para almacenar el nombre del archivo
 
 // Ensure $refs.fileInput is typed correctly
 const getFileInput = (): HTMLInputElement | null => fileInput.value;
@@ -338,24 +324,15 @@ const submitReply = () => {
   console.log('Respuesta enviada:', replyContent.value);
   replyContent.value = '';
   showReplyForm.value = false;
-};
-
-const handleFileUpload = (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files.length > 0) {
-    const file = input.files[0];
-    console.log('Archivo seleccionado:', file);
-    // Aquí puedes manejar el archivo
-  }
+  selectedFileName.value = ''; // Limpiar el nombre del archivo al enviar
 };
 
 const handleImageUpload = (event: Event) => {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files.length > 0) {
     const image = input.files[0];
-    console.log('Imagen seleccionada:', image);
-    // Aquí puedes manejar la imagen
-  }
+    selectedFileName.value = image.name; // Almacenar el nombre del archivo
+    console.log('Imagen seleccionada:', image);  }
 };
 </script>
 
