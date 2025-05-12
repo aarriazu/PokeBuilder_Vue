@@ -97,9 +97,9 @@
                   Aquí puedes discutir temas relacionados con torneos de Pokémon. Participa en las conversaciones y comparte tus estrategias con otros entrenadores.
                 </p>
                 
-                <!-- Botón Crear Post -->
+                <!-- Botón Crear Toreno -->
                 <router-link 
-                  to="/home/newPost" 
+                  to="/home/torneoBracket" 
                   class="inline-flex items-center bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">

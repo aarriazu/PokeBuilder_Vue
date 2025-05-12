@@ -28,7 +28,7 @@ if ($password !== $passwordConfirm) {
     exit;
 }
 
-// Verifica si el usuario o email ya existen
+// Verifico si el usuario o email ya existen
 $exists = $collection->findOne([
     '$or' => [
         ['username' => $username],
@@ -36,7 +36,7 @@ $exists = $collection->findOne([
     ]
 ]);
 if ($exists) {
-    echo json_encode(['success' => false, 'message' => 'El usuario o correo ya existe']);
+    echo json_encode(['success' => false, 'message' => 'El usuario o correo ya están registrados']);
     exit;
 }
 
