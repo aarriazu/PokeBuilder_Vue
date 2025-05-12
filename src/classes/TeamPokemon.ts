@@ -8,9 +8,10 @@ export class TeamPokemon  implements TeamPokemonInterface {
   name: string;
   ability: string;
   nature: string;
-  item: Item;
+  item: string | Item;
   iv: { name: string; amount: number }[];
   ev: { name: string; amount: number }[];
+  evTotal: number;
   moves: string[];
 
   constructor();
@@ -20,9 +21,10 @@ export class TeamPokemon  implements TeamPokemonInterface {
     name: string,
     ability: string,
     nature: string,
-    item: Item,
+    item: string | Item,
     iv: { name: string; amount: number }[],
     ev: { name: string; amount: number }[],
+    evTotal: number,
     moves: string[]
   );
 
@@ -32,9 +34,10 @@ export class TeamPokemon  implements TeamPokemonInterface {
     name?: string,
     ability?: string,
     nature?: string,
-    item?: Item,
+    item?: string | Item,
     iv?: { name: string; amount: number }[],
     ev?: { name: string; amount: number }[],
+    evTotal?: number,
     moves?: string[]
   ) {
     this.species = species || dataController.pokemonArray[0];
@@ -58,6 +61,7 @@ export class TeamPokemon  implements TeamPokemonInterface {
       { name: 'special-defense', amount: 0 },
       { name: 'speed', amount: 0 },
     ];
+    this.evTotal = evTotal || 0; // Valor por defecto si no se proporciona
     this.moves = moves || ['', '', '', '']; // Array vacío por defecto
   }
 
@@ -122,6 +126,15 @@ export class TeamPokemon  implements TeamPokemonInterface {
 
   set setEV(ev: { name: string; amount: number }[]) {
     this.ev = ev;
+  }
+
+  // Getter y Setter para ev_total
+  get getEVTotal(): number {
+    return this.evTotal;
+  }
+
+  set setEVTotal(evTotal: number) {
+    this.evTotal = evTotal;
   }
 
   // Getter y Setter para moves

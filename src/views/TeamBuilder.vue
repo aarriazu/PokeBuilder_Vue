@@ -6,11 +6,11 @@
           <h1>Pokebuilder</h1>
           <div style="float: right;">
             <ion-button @click="saveTeam">Guardar</ion-button>
-            <ion-button @click="resetPokemons">Volver</ion-button>
+            <ion-button @click="resetPokemons">Reset</ion-button>
+            <ion-button>Volver</ion-button>
           </div>
         </div>
 
-        <!-- Input para el nombre del equipo -->
         <div class="team-name">
           <p>Nombre del equipo:</p>
           <input type="text" class="textBox bg-white" v-model="teamName" placeholder="Escribe el nombre del equipo" />
@@ -25,17 +25,65 @@
                 </ion-button>
                 <div v-if="pokemon.name">
                   <img :src="pokemon!.species.sprite || ''" :alt="pokemon!.name" class="w-24 h-24" />
+
                   <p>Name</p>
                   <input type="text" class="textBox bg-white" v-model="pokemon.name">
+
                   <p>Objeto</p>
                   <input type="text" class="textBox bg-white" v-model="pokemon.item">
+
                   <p>Habilidad</p>
-                  <input type="text" class="textBox bg-white" v-model="pokemon.ability">
+                  <select class="textBox bg-white" v-model="pokemon.ability">
+                    <option v-for="ability in pokemon.species.abilities" :key="ability" :value="ability">
+                      {{ ability }}
+                    </option>
+                  </select>
+
                   <p>Naturaleza</p>
-                  <input type="text" class="textBox bg-white" v-model="pokemon.nature">
+                  <select class="textBox bg-white" v-model="pokemon.nature">
+                    <option v-for="nature in dataController.natureArray" :key="nature.id" :value="nature.name">
+                      {{ nature.name }}
+                    </option>
+                  </select>
+
                   <p>Movimientos</p>
                   <div v-for="(move, moveIndex) in pokemon.moves" :key="moveIndex">
-                    <input type="text" class="textBox bg-white" v-model="pokemon.moves[moveIndex]">
+                    <select class="textBox bg-white" v-model="pokemon.moves[moveIndex]">
+                      <option v-for="availableMove in pokemon.species.moves" :key="availableMove" :value="availableMove">
+                        {{ availableMove }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <p>IVs</p>
+                  <div class="stat-container">
+                    <div class="stat-subsection" v-for="(iv, stat) in pokemon.iv" :key="stat">
+                      <p>{{ iv.name }}</p>
+                      <input
+                        type="range"
+                        class="stat-slider"
+                        v-model="iv.amount"
+                        min="0"
+                        max="31"
+                      />
+                      <span class="stat-value">{{ iv.amount }}</span>
+                    </div>
+                  </div>  
+
+                  <p>EVs</p>
+                  <div class="stat-container">
+                    <div class="stat-subsection" v-for="(ev, statIndex) in pokemon.ev" :key="statIndex">
+                      <p>{{ ev.name }}</p>
+                      <input
+                        type="range"
+                        class="stat-slider"
+                        v-model="ev.amount"
+                        :min="0"
+                        :max="calculateRemainingEVs(ev.amount, pokemon)"
+                        @input="updateEVTotal(pokemon)"
+                      />
+                      <span class="stat-value">{{ ev.amount }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -57,18 +105,35 @@ import * as dataController from '@/controllers/dataController';
 import { modalController } from '@ionic/vue';
 import SelectPokemonModal from '@/components/SelectPokemonModal.vue';
 
-// Función para inicializar un equipo vacío
-const blankPokemons = () => [
-  new TeamPokemon(dataController.pokemonArray[0]),
-  new TeamPokemon(dataController.pokemonArray[0]),
-  new TeamPokemon(dataController.pokemonArray[0]),
-  new TeamPokemon(dataController.pokemonArray[0]),
-  new TeamPokemon(dataController.pokemonArray[0]),
-  new TeamPokemon(dataController.pokemonArray[0]),
-];
+// Inicializar un Pokémon vacio con valores predeterminados
+const blankPokemon = () => new TeamPokemon(
+  '' as unknown as Pokemon,
+  '',
+  '',
+  '',
+  '',
+  [
+    { name: 'HP', amount: 31 },
+    { name: 'Attack', amount: 31 },
+    { name: 'Defense', amount: 31 },
+    { name: 'Special Attack', amount: 31 },
+    { name: 'Special Defense', amount: 31 },
+    { name: 'Speed', amount: 31 },
+  ],
+  [
+    { name: 'HP', amount: 0 },
+    { name: 'Attack', amount: 0 },
+    { name: 'Defense', amount: 0 },
+    { name: 'Special Attack', amount: 0 },
+    { name: 'Special Defense', amount: 0 },
+    { name: 'Speed', amount: 0 },
+  ],
+  0,
+  ['', '', '', '']
+);
 
-// Variables reactivas
-const team = ref(blankPokemons());
+const team = ref([blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()]);
+
 const teamName = ref('');
 const availablePokemons = dataController.pokemonArray.map(pokemon => ({
   name: pokemon.name,
@@ -77,6 +142,19 @@ const availablePokemons = dataController.pokemonArray.map(pokemon => ({
   generation: pokemon.generation || 0,
 }));
 const selectedPokemonIndex = ref<number | null>(null);
+
+// Función para calcular el total de EVs de un Pokémon y poner topes a los sliders
+function calculateRemainingEVs(currentEV: number, pokemon: TeamPokemon) {
+  const remainingEVs = 510 - (pokemon.evTotal - currentEV);
+  return Math.min(remainingEVs, 252); // El máximo permitido por stat es 252
+}
+
+function updateEVTotal(pokemon: TeamPokemon) {
+  console.log('Valores de EV:', pokemon.ev.map(stat => stat.amount));
+  pokemon.evTotal = Number(pokemon.ev[0].amount) + Number(pokemon.ev[1].amount) + Number(pokemon.ev[2].amount) + Number(pokemon.ev[3].amount) + Number(pokemon.ev[4].amount) + Number(pokemon.ev[5].amount);
+  console.log('Total de EVs:', pokemon.evTotal);
+}
+
 
 // Función para abrir el modal de selección de Pokémon
 async function openModal(index: number) {
@@ -96,6 +174,26 @@ async function openModal(index: number) {
       );
       if (selectedSpecies) {
         team.value[selectedPokemonIndex.value].species = selectedSpecies;
+        team.value[selectedPokemonIndex.value].name = selectedSpecies.name;
+        team.value[selectedPokemonIndex.value].ability = selectedSpecies.abilities[0];
+        team.value[selectedPokemonIndex.value].nature = dataController.natureArray[0].name;
+        team.value[selectedPokemonIndex.value].moves[0] = selectedSpecies.moves[0];
+        team.value[selectedPokemonIndex.value].moves[1] = selectedSpecies.moves[1];
+        team.value[selectedPokemonIndex.value].moves[2] = selectedSpecies.moves[2];
+        team.value[selectedPokemonIndex.value].moves[3] = selectedSpecies.moves[3];
+        team.value[selectedPokemonIndex.value].iv[0].amount = 31;
+        team.value[selectedPokemonIndex.value].iv[1].amount = 31;
+        team.value[selectedPokemonIndex.value].iv[2].amount = 31;
+        team.value[selectedPokemonIndex.value].iv[3].amount = 31;
+        team.value[selectedPokemonIndex.value].iv[4].amount = 31;
+        team.value[selectedPokemonIndex.value].iv[5].amount = 31;
+        team.value[selectedPokemonIndex.value].ev[0].amount = 0;
+        team.value[selectedPokemonIndex.value].ev[1].amount = 0;
+        team.value[selectedPokemonIndex.value].ev[2].amount = 0;
+        team.value[selectedPokemonIndex.value].ev[3].amount = 0;
+        team.value[selectedPokemonIndex.value].ev[4].amount = 0;
+        team.value[selectedPokemonIndex.value].ev[5].amount = 0;
+        team.value[selectedPokemonIndex.value].evTotal = 0;
       } else {
         console.error(`No se encontró un Pokémon con el nombre: ${data}`);
       }
@@ -117,6 +215,7 @@ function saveTeam() {
   localStorage.setItem('teamCopy', JSON.stringify(teamCopy));
 
   const newTeam = new Team(teamCopy, teamName.value, "1", 1);
+  localStorage.removeItem('teamCopy');
 
   // Guardar el equipo en localStorage
   const savedTeams = JSON.parse(localStorage.getItem('teams') || '[]');
@@ -128,7 +227,7 @@ function saveTeam() {
 
 // Función para reiniciar el equipo
 function resetPokemons() {
-  team.value = blankPokemons();
+  team.value = [blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()];
   teamName.value = '';
 }
 </script>
@@ -144,5 +243,27 @@ function resetPokemons() {
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+.stat-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Dos columnas */
+  gap: 10px; /* Espaciado entre los subapartados */
+}
+
+.stat-subsection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-slider {
+  width: 100%; /* Ajustar el slider al ancho del contenedor */
+}
+
+.stat-value {
+  font-size: 0.9rem;
+  margin-top: 5px;
 }
 </style>

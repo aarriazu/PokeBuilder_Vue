@@ -9,14 +9,18 @@ import eggGroupData from '@/assets/json/eggGroupData.json';
 import { EggGroup } from '@/interfaces/eggGroupInterface';
 import abilityData from '@/assets/json/abilityData.json';
 import { Ability } from '@/interfaces/abilityInterface';
+import natureData from '@/assets/json/natureData.json';
+import { Nature } from '@/interfaces/natureInterface';
 //import itemData from '@/assets/json/itemData.json';
 import { Item } from '@/interfaces/itemInterface';
+
 
 export const pokemonArray: Pokemon[] = pokemonData;
 export const moveArray: Move[] = moveData;
 export const abilityArray: Ability[] = abilityData;
 export const typeArray: Type[] = typeData;
 export const eggGroupArray: EggGroup[] = eggGroupData;
+export const natureArray: Nature[] = natureData;
 //export const ItemArray: Item[] = itemData;
 
 export function typeTranslate(type: string, lang: string): string | undefined{

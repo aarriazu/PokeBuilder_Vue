@@ -1,0 +1,152 @@
+[
+    {
+      "id": 0,
+      "name": "adamant",
+      "stat_increase": "attack",
+      "stat_decrease": "special-attack"
+    },
+    {
+      "id": 1,
+      "name": "bashful",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 2,
+      "name": "bold",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 3,
+      "name": "brave",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 4,
+      "name": "calm",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 5,
+      "name": "careful",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 6,
+      "name": "docile",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 7,
+      "name": "gentle",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 8,
+      "name": "hardy",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 9,
+      "name": "hasty",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 10,
+      "name": "impish",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 11,
+      "name": "jolly",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 12,
+      "name": "lax",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 13,
+      "name": "lonely",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 14,
+      "name": "mild",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 15,
+      "name": "modest",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 16,
+      "name": "naive",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 17,
+      "name": "naughty",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 18,
+      "name": "quiet",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 19,
+      "name": "quirky",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 20,
+      "name": "rash",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 21,
+      "name": "relaxed",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 22,
+      "name": "sassy",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id": 23,
+      "name": "serious",
+      "stat_increase": "",
+      "stat_decrease": ""
+    },
+    {
+      "id" : 24,
+      "name" : "timid",
+      "stat_increase" : "",
+      "stat_decrease" : ""
+    }
+  ]
