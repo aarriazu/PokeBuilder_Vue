@@ -220,7 +220,7 @@ async function saveTeam() {
   };
 
   try {
-    const response = await fetch('http://localhost:3000', {
+    const response = await fetch('http://localhost:3000/api/teams', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

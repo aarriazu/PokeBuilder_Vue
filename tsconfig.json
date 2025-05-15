@@ -22,5 +22,8 @@
     "src/**/*.tsx", 
     "src/**/*.vue"
   ],
+  "exclude": [
+    "src/controllers/dbController.ts" // Excluir dbController.ts
+  ],
   "references": [{ "path": "./tsconfig.server.json" }]
 }

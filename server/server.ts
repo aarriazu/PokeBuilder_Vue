@@ -1,6 +1,7 @@
 import express from 'express';
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import cors from 'cors';
+import * as dbController from '../src/controllers/dbController';
 
 const app = express();
 const port = 3000;
@@ -17,6 +18,7 @@ const client = new MongoClient(uri, {
 app.use(cors());
 app.use(express.json());
 
+/*
 app.post('/api/teams', async (req, res) => {
   try {
     await client.connect();
@@ -31,6 +33,19 @@ app.post('/api/teams', async (req, res) => {
     await client.close();
   }
 });
+*/
+
+app.post('/api/teams', async (req, res) => {
+  try {
+    const team = req.body; // Datos enviados desde el cliente
+    const insertedId = await dbController.insertTeam(team); // Llama a la función insertTeam
+    res.status(201).send({ insertedId }); // Devuelve el ID del equipo insertado
+  } catch (error) {
+    console.error("Error al guardar el equipo:", error);
+    res.status(500).send("Error al guardar el equipo");
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);

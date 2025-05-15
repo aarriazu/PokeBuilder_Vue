@@ -1,9 +1,14 @@
 {
-    "extends": "./tsconfig.json",
-    "compilerOptions": {
-      "noEmit": false, // Permitir la generación de archivos .js
-      "outDir": "./dist/", // Directorio de salida para los archivos compilados del backend
-      "composite": true
-    },
-    "include": ["server/server.ts"] // Solo incluir server.ts
-  }
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false, // Permitir la generación de archivos .js
+    "outDir": "./dist/", // Directorio de salida para los archivos compilados del backend
+    "rootDir": "./", // Carpeta raíz para mantener la estructura
+    "baseUrl": "./",
+    "composite": true
+  },
+  "include": [
+    "server/server.ts", // Incluir el archivo principal del backend
+    "src/controllers/dbController.ts" // Incluir dbController.ts explícitamente
+  ]
+}

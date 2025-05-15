@@ -15,7 +15,7 @@ async function connectToDatabase() {
   try {
     await client.connect();
     console.log("Conectado a MongoDB Atlas");
-    return client.db("PokeBuilderDB"); // Nombre de la base de datos
+    return client.db("PokeBuilderDB"); 
   } catch (error) {
     console.error("Error al conectar a MongoDB:", error);
     throw error;
@@ -26,14 +26,14 @@ async function connectToDatabase() {
 export async function insertTeam(team: any) {
   try {
     const db = await connectToDatabase();
-    const collection = db.collection("test"); // Nombre de la colección
+    const collection = db.collection("test"); 
     const result = await collection.insertOne(team);
     console.log("Equipo guardado en la base de datos:", result.insertedId);
-    return result.insertedId; // Devuelve el ID del equipo insertado
+    return result.insertedId; 
   } catch (error) {
     console.error("Error al guardar el equipo en la base de datos:", error);
     throw error;
   } finally {
-    await client.close(); // Cierra la conexión después de la operación
+    await client.close();
   }
 }
