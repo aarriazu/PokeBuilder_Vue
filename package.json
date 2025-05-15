@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "vite",
-    "build:backend": "tsc",
-    "dev:backend": "node dist/server/server.js",
+    "build:backend": "tsc && mv dist/server/server.js dist/server/server.cjs",
+    "dev:backend": "node dist/server/server.cjs",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "test:e2e": "cypress run",
@@ -39,6 +39,7 @@
     "@vue/eslint-config-typescript": "^12.0.0",
     "@vue/test-utils": "^2.3.0",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^9.1.2",
     "cypress": "^13.5.0",
     "eslint": "^8.35.0",
     "eslint-plugin-vue": "^9.9.0",
