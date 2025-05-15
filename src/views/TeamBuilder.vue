@@ -104,7 +104,6 @@ import { Team } from '@/classes/Team';
 import * as dataController from '@/controllers/dataController';
 import { modalController } from '@ionic/vue';
 import SelectPokemonModal from '@/components/SelectPokemonModal.vue';
-//import dbController from '@/controllers/dbController.ts';
 
 // Inicializar un Pokémon vacio con valores predeterminados
 const blankPokemon = () => new TeamPokemon(
@@ -221,8 +220,20 @@ async function saveTeam() {
   };
 
   try {
-    //const response = await axios.post('http://localhost:3000/api/teams', newTeam);
-    //alert(`Equipo guardado correctamente con ID: ${response.data.insertedId}`);
+    const response = await fetch('http://localhost:3000', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newTeam),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error al guardar el equipo: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    alert(`Equipo guardado correctamente con ID: ${data.insertedId}`);
   } catch (error) {
     console.error("Error al guardar el equipo:", error);
     alert("Hubo un error al guardar el equipo. Por favor, inténtalo de nuevo.");
@@ -250,6 +261,7 @@ function saveTeam() {
   alert('Equipo guardado correctamente.');
 }
 */
+
 // Función para reiniciar el equipo
 function resetPokemons() {
   team.value = [blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()];

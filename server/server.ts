@@ -1,5 +1,6 @@
 import express from 'express';
 import { MongoClient, ServerApiVersion } from 'mongodb';
+import cors from 'cors';
 
 const app = express();
 const port = 3000;
@@ -13,6 +14,7 @@ const client = new MongoClient(uri, {
   },
 });
 
+app.use(cors());
 app.use(express.json());
 
 app.post('/api/teams', async (req, res) => {
