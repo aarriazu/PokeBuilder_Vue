@@ -99,7 +99,11 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'newPost',
         component: () => import('@/views/NewPost.vue')
-      }, 
+      },
+      {
+        path: 'torneoBracket',
+        component: () => import('@/views/TorneoBracket.vue')
+      } 
     ]
   }
 ]
