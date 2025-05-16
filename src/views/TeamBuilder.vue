@@ -104,6 +104,7 @@ import { Team } from '@/classes/Team';
 import * as dataController from '@/controllers/dataController';
 import { modalController } from '@ionic/vue';
 import SelectPokemonModal from '@/components/SelectPokemonModal.vue';
+import axios from 'axios';
 
 // Inicializar un Pokémon vacio con valores predeterminados
 const blankPokemon = () => new TeamPokemon(
@@ -219,21 +220,17 @@ async function saveTeam() {
     pokemon: teamCopy,
   };
 
+  console.log("Datos enviados al backend:", newTeam);
+
   try {
-    const response = await fetch('http://localhost:3000/api/teams', {
-      method: 'POST',
+    // Envía los datos al backend usando axios
+    const response = await axios.post<{ insertedId: string }>('http://localhost:3000/api/teams', newTeam, {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(newTeam),
     });
 
-    if (!response.ok) {
-      throw new Error(`Error al guardar el equipo: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    alert(`Equipo guardado correctamente con ID: ${data.insertedId}`);
+    alert(`Equipo guardado correctamente con ID: ${response.data.insertedId}`);
   } catch (error) {
     console.error("Error al guardar el equipo:", error);
     alert("Hubo un error al guardar el equipo. Por favor, inténtalo de nuevo.");

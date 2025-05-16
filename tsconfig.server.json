@@ -9,6 +9,6 @@
   },
   "include": [
     "server/server.ts", // Incluir el archivo principal del backend
-    "src/controllers/dbController.ts" // Incluir dbController.ts explícitamente
+    "server/DB.ts" // Incluir DB.ts explícitamente
   ]
 }

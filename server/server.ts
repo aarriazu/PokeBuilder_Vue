@@ -1,8 +1,7 @@
 import express from 'express';
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import cors from 'cors';
-import * as dbController from '../src/controllers/dbController';
-
+import * as db from './DB.js';
 const app = express();
 const port = 3000;
 
@@ -38,7 +37,7 @@ app.post('/api/teams', async (req, res) => {
 app.post('/api/teams', async (req, res) => {
   try {
     const team = req.body; // Datos enviados desde el cliente
-    const insertedId = await dbController.insertTeam(team); // Llama a la función insertTeam
+    const insertedId = await db.insertTeam(team); // Llama a la función insertTeam
     res.status(201).send({ insertedId }); // Devuelve el ID del equipo insertado
   } catch (error) {
     console.error("Error al guardar el equipo:", error);
