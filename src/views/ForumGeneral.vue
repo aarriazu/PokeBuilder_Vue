@@ -252,7 +252,7 @@ import { ref } from 'vue';
 import { IonContent, IonPage } from '@ionic/vue';
 
 const sidebarOpen = ref(false);
-const currentForum = ref('general'); // Puedes cambiar esto según la ruta actual
+const currentForum = ref('general'); // Rutas
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;

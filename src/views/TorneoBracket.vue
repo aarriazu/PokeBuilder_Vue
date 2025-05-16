@@ -1,8 +1,8 @@
 <template>
-  <ion-page class="p-4">
+  <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Generador de Torneos</ion-title>
+        <ion-title class="text-center">Tournament bracket generator</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -10,9 +10,31 @@
         <!-- Zona izquierda: Configuración -->
         <div class="md:w-1/2">
           <div class="bg-white p-4 rounded-xl shadow-md">
-            <h2 class="text-xl font-bold mb-4">Configuración del Torneo</h2>
+            <!-- Input para el nombre del torneo -->
             <div class="mb-4">
-              <label class="block mb-1 font-medium ">Número de Participantes (par)</label>
+              <h2 class="text-xl font-bold mb-4">Tournament settings</h2>
+              <label class="block mb-1 font-medium">Tournament name</label>
+              <input
+                type="text"
+                v-model="tournamentName"
+                placeholder="Introduce el nombre del torneo"
+                class="w-full p-2 border rounded bg-white"
+              />
+            </div>
+
+            <!-- Textarea para la descripción del torneo -->
+            <div class="mb-4">
+              <label class="block mb-1 font-medium">Tournament description</label>
+              <textarea
+                v-model="tournamentDescription"
+                placeholder="Introduce la descripción del torneo, normas, modalidad, etc."
+                rows="4"
+                class="w-full p-2 border rounded bg-white resize-none"
+              ></textarea>
+            </div>
+
+            <div class="mb-4">
+              <label class="block mb-1 font-medium ">Number of participants (Must be pair)</label>
               <input
                 type="number"
                 min="2"
@@ -32,14 +54,14 @@
               />
             </div>
 
-            <ion-button expand="block" @click="generateBracket" class="mt-4">Generar Emparejamientos</ion-button>
+            <ion-button expand="block" @click="generateBracket" class="mt-4">Crear Bracket</ion-button>
           </div>
         </div>
 
         <!-- Zona derecha: Bracket generado -->
         <div class="md:w-1/2">
           <div class="bg-white p-4 rounded-xl shadow-md">
-            <h2 class="text-xl font-bold mb-4">Emparejamientos</h2>
+            <h2 class="text-xl font-bold mb-4">Bracket</h2>
             <div v-if="bracket.length === 0">
               <p class="text-gray-500">No se han generado emparejamientos.</p>
             </div>
@@ -47,13 +69,14 @@
               <li
                 v-for="(pair, index) in bracket"
                 :key="index"
-                class="p-3 border rounded flex justify-between"
+                class="p-3 border rounded flex justify-around"
               >
                 <span>{{ pair[0] }}</span>
                 <span>vs</span>
                 <span>{{ pair[1] }}</span>
               </li>
             </ul>
+            <ion-button expand="block" @click="saveBracket":disabled="bracket.length === 0" class="mt-4">Guardar Bracket</ion-button>
           </div>
         </div>
       </div>
@@ -73,9 +96,11 @@ import {
 } from '@ionic/vue'
 
 // Estado y tipos
-const numParticipants = ref<number>(2)
-const participants = ref<string[]>(['', ''])
-const bracket = ref<[string, string][]>([])
+const tournamentName = ref(''); // Nombre del torneo
+const tournamentDescription = ref(''); // Descripción del torneo
+const numParticipants = ref<number>(2) // Número de participantes (debe ser par y mínimo 2)
+const participants = ref<string[]>(['', '']) // Array de participantes
+const bracket = ref<[string, string][]>([]) // Array de emparejamientos
 
 // Actualizar cantidad de inputs según número de participantes
 const updateParticipants = (): void => {
@@ -98,7 +123,7 @@ const generateBracket = (): void => {
     return
   }
 
-  const shuffled = [...participants.value].sort(() => Math.random() - 0.5)
+  const shuffled = [...participants.value].sort(() => Math.random() - 0.5) 
   const pairs: [string, string][] = []
 
   for (let i = 0; i < shuffled.length; i += 2) {
@@ -106,9 +131,24 @@ const generateBracket = (): void => {
   }
 
   bracket.value = pairs
+  alert(`Bracket creado para el torneo: ${tournamentName.value}`);
+}
+
+// Guardar el bracket
+const saveBracket = (): void => {
+  alert('Bracket guardado exitosamente.')
+  // Aquí hay que añadir la lógica para guardar el bracket en mongoDB para crear el post.
+  // Hacer comprobación de que no se deje nada en blanco, y no exista un torneo con el mismo nombre.
+  // Una vez guardado, se redirigirá a la pagina del foro de torneos.
 }
 </script>
 
 <style scoped>
 
+input {
+  margin: 5px 0;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 </style>

@@ -29,24 +29,15 @@
     <!-- Categorías del foro -->
     <div class="p-4 space-y-2">
       <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categorías</h3>
-      
-      <router-link 
-        v-for="category in categories" 
-        :key="category.id"
-        :to="category.route" 
-        class="flex items-center p-3 rounded-lg transition-colors"
-        :class="getCategoryClasses(category.id)"
-      >
-        <div :class="`bg-${category.color}-100 p-2 rounded-lg mr-3`">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" :class="`text-${category.color}-600`" viewBox="0 0 20 20" fill="currentColor">
-            <path :d="category.icon" />
-          </svg>
-        </div>
-        <span class="font-medium">{{ category.name }}</span>
-        <span :class="`ml-auto bg-${category.color}-100 text-${category.color}-800 text-xs px-2 py-1 rounded-full`">
-          {{ category.postCount }}
-        </span>
-      </router-link>
+      <ul>
+        <li
+          v-for="category in categories"
+          :key="category.id"
+          class="flex items-center p-3 rounded-lg transition-colors text-gray-700 hover:bg-gray-100"
+        >
+          <span :class="`text-${category.color}-800 font-medium`">{{ category.name }}</span>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -54,7 +45,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { getForumStats } from '@/api/forumApi'; // Asume que tienes un servicio API
+import { getUserData } from '@/api/userApi'; // Asume que tienes un servicio API para cargar datos del usuario
 
 const props = defineProps({
   sidebarOpen: Boolean,
@@ -65,34 +56,18 @@ const emit = defineEmits(['toggle-sidebar']);
 
 const router = useRouter();
 
-const user = ref({
-  username: 'Cargando...',
-  joinDate: new Date(),
-  profilePic: ''
-});
+const user = ref(null);
 
 const categories = ref([
-  {
-    id: 'general',
-    name: 'General',
-    route: '/home/forumGeneral',
-    color: 'blue',
-    icon: 'M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z',
-    postCount: 0
-  },
-  // ... otras categorías con estructura similar
+  { id: 1, name: 'General', color: 'blue' },
+  { id: 2, name: 'Ayuda', color: 'green' },
+  { id: 3, name: 'Torneos', color: 'red' },
+  { id: 4, name: 'Spinoff', color: 'purple' },
+  { id: 5, name: 'Offtopic', color: 'yellow' }
 ]);
 
 const toggleSidebar = () => {
   emit('toggle-sidebar');
-};
-
-const getCategoryClasses = (categoryId: string) => {
-  return {
-    [`bg-${categories.value.find(c => c.id === categoryId)?.color}-100`]: props.currentForum === categoryId,
-    [`text-${categories.value.find(c => c.id === categoryId)?.color}-800`]: props.currentForum === categoryId,
-    'text-gray-700 hover:bg-gray-100': props.currentForum !== categoryId
-  };
 };
 
 const formatDate = (date: Date) => {
@@ -108,21 +83,13 @@ const logout = async () => {
   }
 };
 
-// Cargar datos del usuario y estadísticas del foro
+// Cargar datos del usuario
 onMounted(async () => {
   try {
-    const stats = await getForumStats();
-    user.value = stats.user;
-    
-    // Actualizar conteos de posts
-    categories.value.forEach(category => {
-      const categoryStats = stats.categories.find((c: any) => c.id === category.id);
-      if (categoryStats) {
-        category.postCount = categoryStats.postCount;
-      }
-    });
+    const userData = await getUserData();
+    user.value = userData;
   } catch (error) {
-    console.error('Error al cargar estadísticas del foro:', error);
+    console.error('Error al cargar datos del usuario:', error);
   }
 });
 </script>
