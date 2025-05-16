@@ -22,7 +22,7 @@ async function connectToDatabase() {
   }
 }
 
-// Función para insertar un equipo en la colección "teams"
+// Función para insertar un equipo en la colección "teams", pero de momento inserta a "test"
 export async function insertTeam(team: any) {
   try {
     const db = await connectToDatabase();

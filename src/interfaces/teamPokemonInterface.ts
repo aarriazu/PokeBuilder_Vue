@@ -1,8 +1,8 @@
-import { Pokemon } from '@/interfaces/pokemonInterface';
+import { PokemonInterface } from '@/interfaces/pokemonInterface';
 import { Item } from '@/interfaces/itemInterface';
 
 export interface TeamPokemonInterface {
-    species: Pokemon;
+    species: PokemonInterface;
     name: string;
     ability: string;
     nature: string;

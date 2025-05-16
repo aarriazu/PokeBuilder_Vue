@@ -61,11 +61,8 @@
   
   <script setup lang="ts">
   import { modalController, IonList, IonItem, IonButton, IonContent, IonPage, IonInput, IonSelect, IonSelectOption } from '@ionic/vue';
-  import { defineProps, ref, computed } from 'vue';
-  
-  const props = defineProps<{
-    availablePokemons: { name: string; sprite: string; types: string[]; generation: number }[];
-  }>();
+  import { defineProps, ref, computed, onMounted } from 'vue';
+  import * as dataController from '@/controllers/dataController';
   
   // Barra de búsqueda
   const searchQuery = ref('');
@@ -78,10 +75,19 @@
   // Tipos y generaciones disponibles
   const pokemonTypes = ['grass', 'fire', 'water', 'electric', 'rock', 'ground', 'psychic', 'dark', 'fairy', 'steel', 'flying', 'bug', 'poison', 'ghost', 'dragon', 'ice', 'fighting', 'normal'];
   const pokemonGenerations = [1, 2, 3, 4, 5, 6, 7, 8];
+
+  const pokemonList = ref<{id: number; name: string; sprite: string; types: string[]; generation: number }[]>([]);
+  onMounted(async () => {
+    try {
+        pokemonList.value = await dataController.getAllPokemon() as {id: number; name: string; sprite: string , types: string[], generation: number;}[];
+    } catch (error) {
+        console.error("Error al cargar la lista de Pokémon:", error);
+    }
+  });
   
   // Filtrar Pokémon en tiempo real
   const filteredPokemons = computed(() =>
-    props.availablePokemons.filter(pokemon => {
+      pokemonList.value.filter(pokemon => {
       const matchesSearch = pokemon.name.toLowerCase().includes(searchQuery.value.toLowerCase());
       const matchesType1 = selectedType1.value ? pokemon.types.includes(selectedType1.value) : true;
       const matchesType2 = selectedType2.value ? pokemon.types.includes(selectedType2.value) : true;
@@ -89,6 +95,7 @@
       return matchesSearch && matchesType1 && matchesType2 && matchesGeneration;
     })
   );
+
   
   function selectPokemon(pokemonName: string) {
     modalController.dismiss(pokemonName, 'select');
@@ -120,8 +127,8 @@
   }
   
   .pokemon-list {
-    max-height: 400px; /* Altura máxima para la lista */
-    overflow-y: auto; /* Habilitar scroll vertical */
+    max-height: 400px;
+    overflow-y: auto;
   }
   
   .pokemon-sprite {

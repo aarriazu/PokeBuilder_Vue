@@ -1,11 +1,12 @@
 <template>
-  <ion-page :key="pokemonName"> <!--Se recarga el componente cuando cambia pokemonName-->
-    <navbarComponent/>
-    <ion-content :fullscreen="true">
-      <pokeCard :pokemonName="pokemonName" @selectPokemon="handleSelectPokemon"></pokeCard>
-    </ion-content>
-  </ion-page>
-  
+  <Suspense>
+    <ion-page :key="pokemonName"> <!--Se recarga el componente cuando cambia pokemonName-->
+      <navbarComponent/>
+      <ion-content :fullscreen="true">
+        <pokeCard :pokemonName="pokemonName" @selectPokemon="handleSelectPokemon"></pokeCard>
+      </ion-content>
+    </ion-page>
+  </Suspense>
 </template>
 
 <script setup lang="ts">

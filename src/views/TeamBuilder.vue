@@ -96,9 +96,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { IonModal, IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonList, IonItem } from '@ionic/vue';
-import { Pokemon } from '@/interfaces/pokemonInterface';
+import { PokemonInterface } from '@/interfaces/pokemonInterface';
 import { TeamPokemon } from '@/classes/TeamPokemon';
 import { Team } from '@/classes/Team';
 import * as dataController from '@/controllers/dataController';
@@ -108,7 +108,7 @@ import axios from 'axios';
 
 // Inicializar un Pokémon vacio con valores predeterminados
 const blankPokemon = () => new TeamPokemon(
-  '' as unknown as Pokemon,
+  '' as unknown as PokemonInterface,
   '',
   '',
   '',
@@ -134,14 +134,8 @@ const blankPokemon = () => new TeamPokemon(
 );
 
 const team = ref([blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()]);
-
 const teamName = ref('');
-const availablePokemons = dataController.pokemonArray.map(pokemon => ({
-  name: pokemon.name,
-  sprite: pokemon.sprite || '',
-  types: pokemon.types || [],
-  generation: pokemon.generation || 0,
-}));
+
 const selectedPokemonIndex = ref<number | null>(null);
 
 // Función para calcular el total de EVs de un Pokémon y poner topes a los sliders
@@ -156,26 +150,20 @@ function updateEVTotal(pokemon: TeamPokemon) {
   console.log('Total de EVs:', pokemon.evTotal);
 }
 
-
 // Función para abrir el modal de selección de Pokémon
 async function openModal(index: number) {
   selectedPokemonIndex.value = index;
 
-  const modal = await modalController.create({
-    component: SelectPokemonModal,
-    componentProps: {
-      availablePokemons,
-    },
-  });
+  const modal = await modalController.create({ component: SelectPokemonModal });
 
   modal.onDidDismiss().then(({ data, role }) => {
+    console.log('Modal dismissed with data:', data);
     if (role === 'select' && data && selectedPokemonIndex.value !== null) {
-      const selectedSpecies = dataController.pokemonArray.find(
-        pokemon => pokemon.name.toLowerCase() === data.toLowerCase(),
-      );
+      const selectedSpecies = dataController.getPokemon(data) as unknown as PokemonInterface;
       if (selectedSpecies) {
         team.value[selectedPokemonIndex.value].species = selectedSpecies;
         team.value[selectedPokemonIndex.value].name = selectedSpecies.name;
+        /*
         team.value[selectedPokemonIndex.value].ability = selectedSpecies.abilities[0];
         team.value[selectedPokemonIndex.value].nature = dataController.natureArray[0].name;
         team.value[selectedPokemonIndex.value].moves[0] = selectedSpecies.moves[0];
@@ -195,6 +183,7 @@ async function openModal(index: number) {
         team.value[selectedPokemonIndex.value].ev[4].amount = 0;
         team.value[selectedPokemonIndex.value].ev[5].amount = 0;
         team.value[selectedPokemonIndex.value].evTotal = 0;
+        */
       } else {
         console.error(`No se encontró un Pokémon con el nombre: ${data}`);
       }
@@ -212,18 +201,17 @@ async function saveTeam() {
     return;
   }
 
-  const teamCopy = JSON.parse(JSON.stringify(team.value)); // Copia del equipo actual
   const newTeam = {
     name: teamName.value,
     format: "1",
     rating: 1,
-    pokemon: teamCopy,
+    pokemon: JSON.parse(JSON.stringify(team.value)),
   };
 
   console.log("Datos enviados al backend:", newTeam);
 
+  //enviar datos al backend con axios
   try {
-    // Envía los datos al backend usando axios
     const response = await axios.post<{ insertedId: string }>('http://localhost:3000/api/teams', newTeam, {
       headers: {
         'Content-Type': 'application/json',

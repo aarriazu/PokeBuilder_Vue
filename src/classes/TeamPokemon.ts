@@ -1,10 +1,10 @@
-import { Pokemon } from '@/interfaces/pokemonInterface';
+import { PokemonInterface } from '@/interfaces/pokemonInterface';
 import { Item } from '@/interfaces/itemInterface';
 import { TeamPokemonInterface } from '@/interfaces/teamPokemonInterface';
 import * as dataController from '@/controllers/dataController';
 
 export class TeamPokemon  implements TeamPokemonInterface {
-  species: Pokemon;
+  species: PokemonInterface;
   name: string;
   ability: string;
   nature: string;
@@ -15,9 +15,9 @@ export class TeamPokemon  implements TeamPokemonInterface {
   moves: string[];
 
   constructor();
-  constructor(species: Pokemon);
+  constructor(species: PokemonInterface);
   constructor(
-    species: Pokemon,
+    species: PokemonInterface,
     name: string,
     ability: string,
     nature: string,
@@ -30,7 +30,7 @@ export class TeamPokemon  implements TeamPokemonInterface {
 
   // Implementación del constructor
   constructor(
-    species?: Pokemon,
+    species?: PokemonInterface,
     name?: string,
     ability?: string,
     nature?: string,
@@ -40,7 +40,23 @@ export class TeamPokemon  implements TeamPokemonInterface {
     evTotal?: number,
     moves?: string[]
   ) {
-    this.species = species || dataController.pokemonArray[0];
+    this.species = species || { 
+      id: 0, 
+      name: '', 
+      sprite: '', 
+      height: 0, 
+      weight: 0, 
+      types: [], 
+      abilities: [], 
+      eggGroups: [],
+      preEvolution: null,
+      evolutions: [],
+      generation: 0,
+      region: '',
+      stats: [],
+      moves: [], 
+      
+    }; // Default object for species
     this.name = name || (species ? species.name : ''); // Valor por defecto si no se proporciona
     this.ability = ability || '';
     this.nature = nature || '';
@@ -66,11 +82,11 @@ export class TeamPokemon  implements TeamPokemonInterface {
   }
 
   // Getter y Setter para species
-  get getSpecies(): Pokemon {
+  get getSpecies(): PokemonInterface {
     return this.species;
   }
 
-  set setSpecies(species: Pokemon) {
+  set setSpecies(species: PokemonInterface) {
     this.species = species;
   }
 
