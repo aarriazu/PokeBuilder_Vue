@@ -1,146 +1,123 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true">
-      <div class="main">
-        <div class="profile">
-          <img class="profilePic" src="/src/assets/images/profile/profilePic.png">
-          <div class="profileBuffer"></div>
-          <div class="profileTextDiv">
-            <h5 class="blueText">Pokefan33</h5>
-            <h5>Miembro desde 10/02/2024</h5>
-            <a href="/login">Salir</a>
+      <div class="main flex flex-col md:flex-row h-full">
+        <!-- Sidebar -->
+        <div class="sidebar md:w-64 bg-gray-50 border-r border-gray-200 md:block transition-all duration-300">
+          <!-- Perfil en sidebar -->
+          <div class="flex items-center p-4 border-b border-gray-200">
+            <img
+              class="w-12 h-12 rounded-lg object-cover mr-3 border-2 border-gray-200"
+              src="/src/assets/images/profile/profilePic.png"
+            >
+            <div>
+              <h5 class="text-blue-600 font-semibold text-sm">Pokefan33</h5>
+              <p class="text-gray-500 text-xs">Miembro desde 10/02/2024</p>
+              <a href="/login" class="text-red-500 hover:text-red-700 text-xs mt-1 inline-block">Salir</a>
+            </div>
+          </div>
+
+          <!-- Opciones del perfil -->
+          <div class="p-4 space-y-2">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Opciones</h3>
+            <router-link
+              to="/home/profile"
+              class="flex items-center p-3 rounded-lg transition-colors text-gray-700 hover:bg-gray-100"
+            >
+              <span class="font-medium">Volver al perfil</span>
+            </router-link>
           </div>
         </div>
 
-        <div class="title">
-          <h1>Pokebuilder</h1>
-        </div>
-        <ion-button router-link="/home/profile">Atras</ion-button>
-
-        <ion-grid class="container">
-          <ion-row>
-            <ion-col size="12" size-md="6">
-              <h2>Pokemon mas usados</h2>
-              <canvas id="myChart"></canvas>
-            </ion-col>
-
-            <ion-col size="12" size-md="6">
-              <h2>Pokemon favoritos</h2>
-              <div class="swiper-container">
-                <div class="swiper-wrapper">
-                  <div class="swiper-slide"><img src="/src/assets/images/pokemon/flareon.png" alt="Pokemon 1"></div>
-                  <div class="swiper-slide"><img src="/src/assets/images/pokemon/vaporeon.png" alt="Pokemon 2"></div>
-                  <div class="swiper-slide"><img src="/src/assets/images/pokemon/jolteon.png" alt="Pokemon 3"></div>
+        <!-- Contenido principal -->
+        <div class="content flex-1 overflow-auto">
+          <div class="p-4 md:p-6">
+            <div class="max-w-4xl mx-auto">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Gráfico de Pokémon más usados -->
+                <div>
+                  <h2 class="text-lg font-semibold text-gray-800 mb-4">Pokémon más usados</h2>
+                  <div class="relative w-full h-64">
+                    <canvas id="myChart" class="w-full h-full"></canvas>
+                  </div>
                 </div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-pagination"></div>
+
+                <!-- Pokémon favoritos -->
+                <div>
+                  <h2 class="text-lg font-semibold text-gray-800 mb-4">Pokémon favoritos</h2>
+                  <div class="grid grid-cols-3 gap-4">
+                    <div class="flex flex-col items-center">
+                      <img class="w-16 h-16 rounded-lg object-cover" src="/src/assets/images/pokemon/jolteon.png" alt="Jolteon">
+                      <span class="text-sm text-gray-600 mt-2">Jolteon</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                      <img class="w-16 h-16 rounded-lg object-cover" src="/src/assets/images/pokemon/umbreon.png" alt="Umbreon">
+                      <span class="text-sm text-gray-600 mt-2">Umbreon</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                      <img class="w-16 h-16 rounded-lg object-cover" src="/src/assets/images/pokemon/vaporeon.png" alt="Vaporeon">
+                      <span class="text-sm text-gray-600 mt-2">Vaporeon</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-        <br>
-        <br>
-        <br>
+            </div>
+          </div>
+        </div>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
-import Swiper from 'swiper';
-import 'swiper/swiper-bundle.css';
+import { IonContent, IonPage } from '@ionic/vue';
+import { onMounted } from 'vue';
 import Chart from 'chart.js/auto';
 
 onMounted(() => {
-
   const ctx = document.getElementById('myChart') as HTMLCanvasElement;
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Flareon', 'Vaporeon', 'Jolteon', 'Espeon', 'Umbreon', 'Eevee'],
-      datasets: [{
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)'
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Pikachu', 'Charizard', 'Bulbasaur', 'Squirtle', 'Eevee'],
+        datasets: [
+          {
+            label: 'Usos',
+            data: [12, 19, 3, 5, 2],
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+          },
         ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
-        ],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
-
-
-  new Swiper('.swiper-container', {
-    loop: true,
-    slidesPerView: 1, 
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev'
-    },
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true
-    }
-  });
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
+        },
+      },
+    });
+  }
 });
 </script>
 
 <style scoped>
-.swiper-container {
-  width: 60%; 
-  height: auto; 
-  margin: auto; 
-  overflow: 'hidden';
+.main {
+  min-height: 100vh;
 }
 
-.swiper-wrapper {
-  overflow: 'hidden';
-}
+@media (min-width: 768px) {
+  .sidebar {
+    height: calc(100vh - 60px);
+    position: sticky;
+    top: 0;
+  }
 
-.swiper-slide {
-  text-align: center;
-  font-size: 18px;
-
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-}
-
-.swiper-slide img {
-  display: block;
-  width: 100%;
-  height: auto;
+  .content {
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
 }
 </style>
