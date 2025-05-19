@@ -2,6 +2,7 @@ import express from 'express';
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import cors from 'cors';
 import * as db from './DB.js';
+import { insertTorneoPost } from './DB.js';
 const app = express();
 const port = 3000;
 
