@@ -17,23 +17,6 @@ const client = new MongoClient(uri, {
 app.use(cors());
 app.use(express.json());
 
-/*
-app.post('/api/teams', async (req, res) => {
-  try {
-    await client.connect();
-    const db = client.db("PokeBuilderDB");
-    const collection = db.collection("teams");
-    const result = await collection.insertOne(req.body);
-    res.status(201).send({ insertedId: result.insertedId });
-  } catch (error) {
-    console.error("Error al guardar el equipo:", error);
-    res.status(500).send("Error al guardar el equipo");
-  } finally {
-    await client.close();
-  }
-});
-*/
-
 // Ruta para obtener todos los Pokémon
 app.get('/api/pokemon', async (req, res) => {
   try {
@@ -103,7 +86,7 @@ app.get('/api/posts/:name', async (req, res) => {
     const db = client.db("PokeBuilderDB");
     const collection = db.collection("posts");
 
-    // Busca directamente por nombre
+    // Buscar el post por nombre
     const post = await collection.findOne({ name: name.toLowerCase() });
 
     if (!post) {
@@ -119,8 +102,8 @@ app.get('/api/posts/:name', async (req, res) => {
   }
 });
 
-// Recibir llamada para insertar un post en la base de datos
-app.post('/api/posts', async (req, res) => {
+// Recibir llamada para insertar un post en la base de datos (RECORDAR LA PRMOMISE <ANY>)
+app.post('/api/posts', async (req, res): Promise <any> => {
   try {
     const post = req.body;
     await client.connect();
@@ -141,6 +124,30 @@ app.post('/api/posts', async (req, res) => {
     res.status(500).send("Error al guardar el post");
   } finally {
     await client.close();
+  }
+});
+
+app.post('/api/postsTorneo', async (req,res): Promise<any> => {
+  try {
+    console.log("Datos recibidos:", req.body);
+    const post = req.body;
+
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("postsTorneo");
+
+    // Validar que no haya un post con el mismo nombre
+    const existingPost = await collection.findOne({ name: post.title.toLowerCase() });
+    if (existingPost) {
+      return res.status(400).json({ error: "Ya existe un torneo con este nombre." });
+    }
+
+    // Insertar el nuevo post
+    const insertedId = await insertTorneoPost(post);
+    res.status(201).json({ insertedId }); // Respuesta JSON válida
+  } catch (error) {
+    console.error("Error al guardar el post:", error);
+    res.status(500).json({ error: "Error al guardar el post" }); // Respuesta JSON válida en caso de error
   }
 });
 

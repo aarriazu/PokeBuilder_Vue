@@ -146,23 +146,38 @@ const generateBracket = (): void => {
   }
 
   try {
-    const response = await fetch('/api/posts', {
+    const response = await fetch('/api/postsTorneo', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         title: tournamentName.value,
-        author: 'USER',   // Hay que recoger el nickName del user de la session.
+        author: 'USER', 
         subforum: 'torneos',      
         description: tournamentDescription.value,
-        bracket:bracket.value,
-        createdAt: new Date().toISOString(), // Fecha de creación
-        editedAt: new Date().toISOString(), // Fecha de edición (Al inicio siempre será la misma de creación)
+        participants: participants.value,
+        bracket: bracket.value,
+        answers: 0,
+        createdAt: new Date().toISOString(),
+        editedAt: new Date().toISOString(),
       }),
     });
 
+    // Leer texto de la respuesta
+    const text = await response.text();
+
+    // Intentar parsear solo si el texto no está vacío
+    let data = null;
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        console.warn('Respuesta no es JSON:', text);
+      }
+    }
+
     if (!response.ok) {
-      const error = await response.json();
-      alert(`Error: ${error.error}`);
+      const errorMsg = data?.error || 'Error desconocido';
+      alert(`Error: ${errorMsg}`);
       return;
     }
 
@@ -173,6 +188,7 @@ const generateBracket = (): void => {
     alert('Hubo un error al guardar el post, disculpa las molestias.');
   }
 };
+
 </script>
 
 <style scoped>

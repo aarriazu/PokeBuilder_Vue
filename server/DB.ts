@@ -54,6 +54,22 @@ export async function insertPost(post: any) {
   }
 }
 
+// Función para insertar un post en la colección "postsTorneo"
+export async function insertTorneoPost(post: any) {
+  try {
+    const db = await connectToDatabase();
+    const collection = db.collection("postsTorneo"); // Usamos la colección "postsTorneo"
+    const result = await collection.insertOne(post);
+    console.log("Post de torneo guardado en la base de datos:", result.insertedId);
+    return result.insertedId;
+  } catch (error) {
+    console.error("Error al guardar el post de torneo en la base de datos:", error);
+    throw error;
+  } finally {
+    await client.close();
+  }
+}
+
 export function findPostByName(name: any) {
   throw new Error('Function not implemented.');
 }
