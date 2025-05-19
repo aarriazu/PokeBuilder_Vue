@@ -95,6 +95,55 @@ app.post('/api/teams', async (req, res) => {
   }
 });
 
+// Ruta para buscar un post por nombre
+app.get('/api/posts/:name', async (req, res) => {  
+  try {
+    const name = req.params.name; 
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("posts");
+
+    // Busca directamente por nombre
+    const post = await collection.findOne({ name: name.toLowerCase() });
+
+    if (!post) {
+      res.status(404).send({ error: "Post no encontrado" });
+    } else {
+      res.status(200).send(post);
+    }
+  } catch (error) {
+    console.error("Error al obtener el post:", error);
+    res.status(500).send({ error: "Error al obtener el post" });
+  } finally {
+    await client.close();
+  }
+});
+
+// Recibir llamada para insertar un post en la base de datos
+app.post('/api/posts', async (req, res) => {
+  try {
+    const post = req.body;
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("posts");
+
+    // Validar que no haya un post con el mismo nombre de torneo
+    const existingPost = await collection.findOne({ name: post.name.toLowerCase() });
+    if (existingPost) {
+      return res.status(400).send({ error: "Ya existe un torneo con este nombre." });
+    }
+
+    // Insertar el nuevo post
+    const result = await collection.insertOne(post);
+    res.status(201).send({ insertedId: result.insertedId });
+  } catch (error) {
+    console.error("Error al guardar el post:", error);
+    res.status(500).send("Error al guardar el post");
+  } finally {
+    await client.close();
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);

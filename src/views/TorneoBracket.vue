@@ -86,6 +86,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   IonPage,
   IonHeader,
@@ -101,6 +102,9 @@ const tournamentDescription = ref(''); // Descripción del torneo
 const numParticipants = ref<number>(2) // Número de participantes (debe ser par y mínimo 2)
 const participants = ref<string[]>(['', '']) // Array de participantes
 const bracket = ref<[string, string][]>([]) // Array de emparejamientos
+
+// Obtener instancia del router
+const router = useRouter();
 
 // Actualizar cantidad de inputs según número de participantes
 const updateParticipants = (): void => {
@@ -134,13 +138,41 @@ const generateBracket = (): void => {
   alert(`Bracket creado para el torneo: ${tournamentName.value}`);
 }
 
-// Guardar el bracket
-const saveBracket = (): void => {
-  alert('Bracket guardado exitosamente.')
-  // Aquí hay que añadir la lógica para guardar el bracket en mongoDB para crear el post.
-  // Hacer comprobación de que no se deje nada en blanco, y no exista un torneo con el mismo nombre.
-  // Una vez guardado, se redirigirá a la pagina del foro de torneos.
-}
+  // Guardar el bracket en mongoDB como un post.
+  const saveBracket = async (): Promise<void> => {
+  if (!tournamentName.value || !tournamentDescription.value || participants.value.some(p => !p)) {
+    alert('Por favor, completa todos los campos antes de guardar.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: tournamentName.value,
+        author: 'USER',   // Hay que recoger el nickName del user de la session.
+        subforum: 'torneos',      
+        description: tournamentDescription.value,
+        bracket:bracket.value,
+        createdAt: new Date().toISOString(), // Fecha de creación
+        editedAt: new Date().toISOString(), // Fecha de edición (Al inicio siempre será la misma de creación)
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      alert(`Error: ${error.error}`);
+      return;
+    }
+
+    alert('Torneo guardado exitosamente.');
+    router.push('/home/forumTorneos');
+  } catch (error) {
+    console.error('Error al guardar el post:', error);
+    alert('Hubo un error al guardar el post, disculpa las molestias.');
+  }
+};
 </script>
 
 <style scoped>
