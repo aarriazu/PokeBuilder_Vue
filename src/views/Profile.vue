@@ -10,7 +10,7 @@
           <div>
             <h5 class="text-blue-600 font-semibold text-lg">Pokefan33</h5>
             <h5 class="text-gray-600 text-sm mt-1">Miembro desde 10/02/2024</h5>
-            <a href="/login" class="text-red-500 hover:text-red-700 text-sm mt-1 inline-block">Salir</a>
+            <a @click.prevent="logout" class="text-red-500 hover:text-red-700 text-sm mt-1 inline-block">Exit</a>
           </div>
         </div>
 
@@ -21,8 +21,8 @@
             <ion-col size="12" size-md="6" class="pr-0 md:pr-4">
               <div class="max-w-[50%] mb-4">
                 <div class="grid grid-cols-2 gap-2">
-                  <ion-button router-link="/home/teamBuilder" class="w-full">Crear nuevo equipo</ion-button>
-                  <ion-button router-link="/home/stats" class="w-full">Tus estadísticas</ion-button>
+                  <ion-button router-link="/home/teamBuilder" class="w-full">New Team</ion-button>
+                  <ion-button router-link="/home/stats" class="w-full">Stats</ion-button>
                 </div>
               </div>
               <Team
@@ -116,6 +116,7 @@ import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol } from '@ionic/
 import { ref } from 'vue';
 import Team from '@/components/Team.vue';
 import navbarCustom from '@/components/navbarComponent.vue';
+import { useRouter } from 'vue-router';
 
 interface Pokemon {
   name: string;
@@ -129,6 +130,13 @@ interface Team {
   name: string;
   pokemons: Pokemon[];
 }
+
+const router = useRouter();
+
+const logout = () => {
+  sessionStorage.removeItem('token');
+  router.push('/login');
+};
 
 const dummyTeams = ref([
   { name: 'Equipo Eevee', image: '/src/assets/images/pokemon/teamEevee.png', link: '/home/teamBuilder' },

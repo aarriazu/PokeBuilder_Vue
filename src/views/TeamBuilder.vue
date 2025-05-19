@@ -1,18 +1,18 @@
 <template>
   <ion-page>
+    <navbar-custom/>
     <ion-content :fullscreen="true">
       <div class="main">
         <div class="title">
-          <h1>Pokebuilder</h1>
           <div style="float: right;">
-            <ion-button @click="saveTeam">Guardar</ion-button>
+            <ion-button @click="saveTeam">Save</ion-button>
             <ion-button @click="resetPokemons">Reset</ion-button>
-            <ion-button>Volver</ion-button>
+            <ion-button router-link="/home">Back</ion-button>
           </div>
         </div>
 
         <div class="team-name">
-          <p>Nombre del equipo:</p>
+          <p>Team Name:</p>
           <input type="text" class="textBox bg-white" v-model="teamName" placeholder="Escribe el nombre del equipo" />
         </div>
 
@@ -21,7 +21,7 @@
             <ion-col size="2" v-for="(pokemon, index) in team" :key="index">
               <div>
                 <ion-button color="light" size="large" class="addPokemonButton" @click="openModal(index)">
-                  Selecciona Pokemon
+                  Select Pokemon
                 </ion-button>
                 <div v-if="pokemon.name">
                   <img :src="pokemon!.species.sprite || ''" :alt="pokemon!.name" class="w-24 h-24" />
@@ -29,28 +29,28 @@
                   <p>Name</p>
                   <input type="text" class="textBox bg-white" v-model="pokemon.name">
 
-                  <p>Objeto</p>
+                  <p>Item</p>
                   <input type="text" class="textBox bg-white" v-model="pokemon.item">
 
-                  <p>Habilidad</p>
+                  <p>Ability</p>
                   <select class="textBox bg-white" v-model="pokemon.ability">
                     <option v-for="ability in pokemon.species.abilities" :key="ability" :value="ability">
-                      {{ ability }}
+                      {{ dataController.formatText(ability) }}
                     </option>
                   </select>
 
-                  <p>Naturaleza</p>
+                  <p>Nature</p>
                   <select class="textBox bg-white" v-model="pokemon.nature">
                     <option v-for="nature in dataController.natureArray" :key="nature.id" :value="nature.name">
-                      {{ nature.name }}
+                      {{ dataController.formatText(nature.name) }}
                     </option>
                   </select>
 
-                  <p>Movimientos</p>
+                  <p>Moves</p>
                   <div v-for="(move, moveIndex) in pokemon.moves" :key="moveIndex">
                     <select class="textBox bg-white" v-model="pokemon.moves[moveIndex]">
                       <option v-for="availableMove in pokemon.species.moves" :key="availableMove" :value="availableMove">
-                        {{ availableMove }}
+                        {{ dataController.formatText(availableMove) }}
                       </option>
                     </select>
                   </div>
@@ -104,6 +104,7 @@ import { Team } from '@/classes/Team';
 import * as dataController from '@/controllers/dataController';
 import { modalController } from '@ionic/vue';
 import SelectPokemonModal from '@/components/SelectPokemonModal.vue';
+import navbarCustom from '@/components/navbarComponent.vue';
 import axios from 'axios';
 
 // Inicializar un Pokémon vacio con valores predeterminados
@@ -156,14 +157,16 @@ async function openModal(index: number) {
 
   const modal = await modalController.create({ component: SelectPokemonModal });
 
-  modal.onDidDismiss().then(({ data, role }) => {
-    console.log('Modal dismissed with data:', data);
-    if (role === 'select' && data && selectedPokemonIndex.value !== null) {
-      const selectedSpecies = dataController.getPokemon(data) as unknown as PokemonInterface;
+  modal.onDidDismiss().then(async ({ data, role }) => {
+  console.log('Modal dismissed with data:', data);
+  if (role === 'select' && data && selectedPokemonIndex.value !== null) {
+    try {
+      const selectedSpecies = await dataController.getPokemon(data) as PokemonInterface;
+      console.log('Pokemon seleccionado:', selectedSpecies.name);
+
       if (selectedSpecies) {
         team.value[selectedPokemonIndex.value].species = selectedSpecies;
-        team.value[selectedPokemonIndex.value].name = selectedSpecies.name;
-        /*
+        team.value[selectedPokemonIndex.value].name = dataController.formatText(selectedSpecies.name);
         team.value[selectedPokemonIndex.value].ability = selectedSpecies.abilities[0];
         team.value[selectedPokemonIndex.value].nature = dataController.natureArray[0].name;
         team.value[selectedPokemonIndex.value].moves[0] = selectedSpecies.moves[0];
@@ -176,17 +179,10 @@ async function openModal(index: number) {
         team.value[selectedPokemonIndex.value].iv[3].amount = 31;
         team.value[selectedPokemonIndex.value].iv[4].amount = 31;
         team.value[selectedPokemonIndex.value].iv[5].amount = 31;
-        team.value[selectedPokemonIndex.value].ev[0].amount = 0;
-        team.value[selectedPokemonIndex.value].ev[1].amount = 0;
-        team.value[selectedPokemonIndex.value].ev[2].amount = 0;
-        team.value[selectedPokemonIndex.value].ev[3].amount = 0;
-        team.value[selectedPokemonIndex.value].ev[4].amount = 0;
-        team.value[selectedPokemonIndex.value].ev[5].amount = 0;
-        team.value[selectedPokemonIndex.value].evTotal = 0;
-        */
-      } else {
-        console.error(`No se encontró un Pokémon con el nombre: ${data}`);
       }
+    } catch (error) {
+      console.error('Error al obtener el Pokémon seleccionado:', error);
+    }
     }
     selectedPokemonIndex.value = null;
   });
@@ -224,28 +220,6 @@ async function saveTeam() {
     alert("Hubo un error al guardar el equipo. Por favor, inténtalo de nuevo.");
   }
 }
-/*
-// Función para guardar el equipo en memoria
-function saveTeam() {
-  if (!teamName.value) {
-    alert('Por favor, ingresa un nombre para el equipo.');
-    return;
-  }
-
-  const teamCopy = JSON.parse(JSON.stringify(team.value)); //Copia del valor actual de team para que pueda ser guardado correctamente
-  localStorage.setItem('teamCopy', JSON.stringify(teamCopy));
-
-  const newTeam = new Team(teamCopy, teamName.value, "1", 1);
-  localStorage.removeItem('teamCopy');
-
-  // Guardar el equipo en localStorage
-  const savedTeams = JSON.parse(localStorage.getItem('teams') || '[]');
-  savedTeams.push(newTeam);
-  localStorage.setItem('teams', JSON.stringify(savedTeams));
-
-  alert('Equipo guardado correctamente.');
-}
-*/
 
 // Función para reiniciar el equipo
 function resetPokemons() {

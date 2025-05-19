@@ -37,3 +37,47 @@ export async function insertTeam(team: any) {
     await client.close();
   }
 }
+
+export async function getUserByUsernameOrEmail(identifier: string) {
+  try {
+    const db = await connectToDatabase();
+    const collection = db.collection("users");
+
+    // Buscar por username o email
+    const user = await collection.findOne({
+      $or: [{ username: identifier }, { email: identifier }]
+    });
+
+    return user;
+  } catch (error) {
+    console.error("Error al buscar el usuario:", error);
+    throw error;
+  } finally {
+    await client.close();
+  }
+}
+
+// Función para obtener los datos de un usuario por su ID o nombre de usuario
+export async function getUserData(identifier: string) {
+  try {
+    const db = await connectToDatabase();
+    const collection = db.collection("users"); // Asegúrate de que la colección sea la correcta
+
+    // Buscar por nombre de usuario o email
+    const query = typeof identifier === "string" && identifier.includes("@")
+      ? { email: identifier }
+      : { username: identifier };
+
+    const user = await collection.findOne(query);
+
+    if (!user) {
+      throw new Error("Usuario no encontrado");
+    }
+
+    console.log("Usuario encontrado:", user);
+    return user;
+  } catch (error) {
+    console.error("Error al obtener los datos del usuario:", error);
+    throw error;
+  }
+}
