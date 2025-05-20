@@ -87,6 +87,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios';
 import {
   IonPage,
   IonHeader,
@@ -102,6 +103,17 @@ const tournamentDescription = ref(''); // Descripción del torneo
 const numParticipants = ref<number>(2) // Número de participantes (debe ser par y mínimo 2)
 const participants = ref<string[]>(['', '']) // Array de participantes
 const bracket = ref<[string, string][]>([]) // Array de emparejamientos
+const postTorneo = ref({
+  title: '',
+  author: '', 
+  subforum: '',      
+  description: '',
+  participants: [''],
+  bracket: [['', '']],
+  answers: 0,
+  createdAt: new Date().toISOString(),
+  editedAt: new Date().toISOString(),
+}); // Post torneo
 
 // Obtener instancia del router
 const router = useRouter();
@@ -144,12 +156,8 @@ const generateBracket = (): void => {
     alert('Por favor, completa todos los campos antes de guardar.');
     return;
   }
-
-  try {
-    const response = await fetch('/api/postsTorneo', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+  else {
+    postTorneo.value = {
         title: tournamentName.value,
         author: 'USER', 
         subforum: 'torneos',      
@@ -159,27 +167,21 @@ const generateBracket = (): void => {
         answers: 0,
         createdAt: new Date().toISOString(),
         editedAt: new Date().toISOString(),
-      }),
-    });
+      };
+      console.log('Post torneo:', postTorneo.value);
+  }
 
-    // Leer texto de la respuesta
-    const text = await response.text();
+  try {
+    
+    const response = await axios.post<{ insertedId: string }>('http://localhost:3000/api/postsTorneo', postTorneo.value, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
     // Intentar parsear solo si el texto no está vacío
     let data = null;
-    if (text) {
-      try {
-        data = JSON.parse(text);
-      } catch (e) {
-        console.warn('Respuesta no es JSON:', text);
-      }
-    }
 
-    if (!response.ok) {
-      const errorMsg = data?.error || 'Error desconocido';
-      alert(`Error: ${errorMsg}`);
-      return;
-    }
 
     alert('Torneo guardado exitosamente.');
     router.push('/home/forumTorneos');

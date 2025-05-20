@@ -113,7 +113,8 @@
               <div class="space-y-6">
                 <h3 class="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2">Publicaciones recientes</h3>
                 
-                <!-- Post 1 -->
+                <!-- Mostrar los post de la DB con el component-->
+                
                 <router-link to="/home/post" class="block">
                   <div class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6">
                     <div class="flex items-center mb-4">
@@ -217,6 +218,8 @@
                     </div>
                   </div>
                 </router-link>
+                
+                
               </div>
             </div>
           </div>
@@ -229,9 +232,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { IonContent, IonPage } from '@ionic/vue';
+import PostItem from '@/components/PostItem.vue'; // Importar el componente PostItem
 
 const sidebarOpen = ref(false);
 const currentForum = ref('torneos');
+const posts = ref([]);
+
+
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;

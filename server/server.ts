@@ -1,8 +1,7 @@
 import express from 'express';
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import cors from 'cors';
-import * as db from './DB.js';
-import { insertTorneoPost } from './DB.js';
+import * as dbClass from './DB.js';
 const app = express();
 const port = 3000;
 
@@ -71,7 +70,7 @@ app.get('/api/pokemon/:identifier', async (req, res) => {
 app.post('/api/teams', async (req, res) => {
   try {
     const team = req.body; 
-    const insertedId = await db.insertTeam(team);
+    const insertedId = await dbClass.insertTeam(team);
     res.status(201).send({ insertedId });
   } catch (error) {
     console.error("Error al guardar el equipo:", error);
@@ -128,23 +127,35 @@ app.post('/api/posts', async (req, res): Promise <any> => {
   }
 });
 
+app.get('/api/postsTorneo', async (req, res): Promise<any> => {
+  try {
+    // Conectar a la base de datos
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("posts");
+
+    // Obtener todos los posts del subforo "Torneo"
+    const postsTorneo = await collection.find({ subforum: "torneos" }).toArray();
+
+    // Enviar los posts como respuesta
+    res.status(200).json(postsTorneo);
+  } catch (error) {
+    console.error("Error al obtener los posts:", error);
+    res.status(500).json({ error: "Error al obtener los posts" });
+  } finally {
+    // Cerrar la conexión con la base de datos
+    await client.close();
+  }
+});
+
+
 app.post('/api/postsTorneo', async (req,res): Promise<any> => {
   try {
     console.log("Datos recibidos:", req.body);
     const post = req.body;
 
-    await client.connect();
-    const db = client.db("PokeBuilderDB");
-    const collection = db.collection("postsTorneo");
-
-    // Validar que no haya un post con el mismo nombre
-    const existingPost = await collection.findOne({ name: post.title.toLowerCase() });
-    if (existingPost) {
-      return res.status(400).json({ error: "Ya existe un torneo con este nombre." });
-    }
-
-    // Insertar el nuevo post
-    const insertedId = await insertTorneoPost(post);
+    // Insertar el nuevo post de torneo
+    const insertedId = await dbClass.insertTorneoPost(post);
     res.status(201).json({ insertedId }); // Respuesta JSON válida
   } catch (error) {
     console.error("Error al guardar el post:", error);

@@ -145,7 +145,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol } from '@ionic/vue';
+import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonModal } from '@ionic/vue';
 import navbarCustom from '@/components/navbarComponent.vue';
 import footerCustom from '@/components/footerComponent.vue';
 import { useRouter } from 'vue-router';
