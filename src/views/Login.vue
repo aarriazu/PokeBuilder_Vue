@@ -31,7 +31,7 @@
               class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-black"
             >
             <ion-button 
-              @click="login"
+              @click="userController.login(userName, password, router)"
               :disabled="loading"
               class="w-full text-white py-2 px-4 rounded-lg"
             >
@@ -149,6 +149,7 @@ import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol } from '@ionic/
 import navbarCustom from '@/components/navbarComponent.vue';
 import footerCustom from '@/components/footerComponent.vue';
 import { useRouter } from 'vue-router';
+import * as userController from '@/controllers/userController';
 
 const userName = ref('');
 const password = ref('');
@@ -185,7 +186,7 @@ const login = async () => {
     const data = await response.json();
 
     // Guarda el token en localStorage o sessionStorage
-    sessionStorage.setItem('token', data.token);
+    sessionStorage.setItem('session', data.token);
 
     // Redirige al perfil del usuario
     router.push('/home/profile');

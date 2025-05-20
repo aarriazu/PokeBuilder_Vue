@@ -2,7 +2,7 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 import cors from 'cors';
 import express, { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import * as db from './DB.js';
+import * as dbClass from './DB.js';
 
 const app = express();
 const port = 3000;
@@ -30,12 +30,13 @@ interface CustomJwtPayload extends JwtPayload {
 }
 
 // Interfaz para el usuario
-interface User {
+export interface User {
   id: number;
   username: string;
   password: string;
   profilePicture: string;
   email: string;
+  isMod: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -46,7 +47,7 @@ app.post('/login', async (req: Request, res: Response): Promise<any> => {
 
   try {
     // Buscar al usuario por username o email
-    const user = await db.getUserByUsernameOrEmail(username);
+    const user = await dbClass.getUserByUsernameOrEmail(username);
 
     if (!user) {
       return res.status(401).send('Usuario no encontrado');
@@ -155,7 +156,7 @@ app.get('/api/pokemon/:identifier', async (req, res) => {
 app.post('/api/teams', async (req: Request, res: Response) => {
   try {
     const team = req.body; 
-    const insertedId = await db.insertTeam(team);
+    const insertedId = await dbClass.insertTeam(team);
     res.status(201).send({ insertedId });
   } catch (error) {
     console.error("Error al guardar el equipo:", error);
