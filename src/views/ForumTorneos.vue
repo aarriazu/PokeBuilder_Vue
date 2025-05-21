@@ -113,9 +113,14 @@
               <div class="space-y-6">
                 <h3 class="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2">Publicaciones recientes</h3>
                 
+                <router-link 
+                  v-for="post in posts" 
+                  :key="post._id" 
+                  :to="`/home/post/${post._id}`" 
+                  class="block no-underline"
+                >
                     <!-- Mostrar los post de la DB con el component-->
                     <PostItem 
-                    v-for="post in posts" 
                     :key="post._id" 
                     :title="post.title" 
                     :author="post.author" 
@@ -126,7 +131,8 @@
                     :answers="post.answers"
                     :createdAt="post.createdAt"
                     :editedAt="post.editedAt"
-                  />   
+                  />  
+                </router-link>   
               </div>
             </div>
           </div>

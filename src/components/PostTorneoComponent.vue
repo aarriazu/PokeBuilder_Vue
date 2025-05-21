@@ -59,7 +59,6 @@
       createdAt: '2025-05-01T12:34:00',
       editedAt: '2025-05-10T09:21:00',
     },
-    // ... más hilos
   ]
   
   const formatDate = (dateStr: string): string => {
