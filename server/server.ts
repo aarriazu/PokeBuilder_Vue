@@ -132,10 +132,10 @@ app.get('/api/postsTorneo', async (req, res): Promise<any> => {
     // Conectar a la base de datos
     await client.connect();
     const db = client.db("PokeBuilderDB");
-    const collection = db.collection("posts");
+    const collection = db.collection("postsTorneo");
 
-    // Obtener todos los posts del subforo "Torneo"
-    const postsTorneo = await collection.find({ subforum: "torneos" }).toArray();
+    // Obtener todos los posts de subforo de torneos
+    const postsTorneo = await collection.find({}).toArray();
 
     // Enviar los posts como respuesta
     res.status(200).json(postsTorneo);

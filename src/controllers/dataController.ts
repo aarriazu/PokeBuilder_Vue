@@ -48,6 +48,16 @@ export async function getAllPokemon() {
   }
 }
 
+export async function getPostsTorneo() {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/postsTorneo`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener los posts de torneo:", error);
+    throw error;
+  }
+}
+
 export function typeTranslate(type: string, lang: string): string | undefined{
   const typeRef: Type | undefined = typeArray.find(p => p.name === type);
   if (lang === 'en'){

@@ -113,113 +113,20 @@
               <div class="space-y-6">
                 <h3 class="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2">Publicaciones recientes</h3>
                 
-                <!-- Mostrar los post de la DB con el component-->
-                
-                <router-link to="/home/post" class="block">
-                  <div class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6">
-                    <div class="flex items-center mb-4">
-                      <img src="/src/assets/images/profile/otherProfile.png" 
-                          alt="User Icon" 
-                          class="w-10 h-10 rounded-full mr-3">
-                      <div>
-                        <h3 class="font-semibold text-gray-800">OrganizadorTorneos</h3>
-                        <p class="text-xs text-gray-500">Publicado el 15/02/2024</p>
-                      </div>
-                    </div>
-                    
-                    <div class="prose max-w-none text-gray-700 mb-4">
-                      <h4 class="text-lg font-medium text-indigo-600">Torneo Regional de Valencia - Febrero 2024</h4>
-                      <p>¡Anunciamos el próximo torneo regional en Valencia! Fecha límite de inscripción: 25/02/2024.</p>
-                    </div>
-                    
-                    <div class="flex items-center text-sm text-gray-500">
-                      <span class="flex items-center mr-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                        </svg>
-                        24 comentarios
-                      </span>
-                      <span class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                        </svg>
-                        56 votos
-                      </span>
-                    </div>
-                  </div>
-                </router-link>
-
-                <!-- Post 2 -->
-                <router-link to="/home/post" class="block">
-                  <div class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6">
-                    <div class="flex items-center mb-4">
-                      <img src="/src/assets/images/profile/otherProfile.png" 
-                          alt="User Icon" 
-                          class="w-10 h-10 rounded-full mr-3">
-                      <div>
-                        <h3 class="font-semibold text-gray-800">MaestroPokemon</h3>
-                        <p class="text-xs text-gray-500">Publicado el 12/02/2024</p>
-                      </div>
-                    </div>
-                    
-                    <div class="prose max-w-none text-gray-700 mb-4">
-                      <h4 class="text-lg font-medium text-indigo-600">Estrategias para torneos con formato actual</h4>
-                      <p>Comparto mi mazo ganador del último torneo local y algunas estrategias clave para el meta actual.</p>
-                    </div>
-                    
-                    <div class="flex items-center text-sm text-gray-500">
-                      <span class="flex items-center mr-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                        </svg>
-                        18 comentarios
-                      </span>
-                      <span class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                        </svg>
-                        42 votos
-                      </span>
-                    </div>
-                  </div>
-                </router-link>
-
-                <!-- Post 3 -->
-                <router-link to="/home/post" class="block">
-                  <div class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6">
-                    <div class="flex items-center mb-4">
-                      <img src="/src/assets/images/profile/otherProfile.png" 
-                          alt="User Icon" 
-                          class="w-10 h-10 rounded-full mr-3">
-                      <div>
-                        <h3 class="font-semibold text-gray-800">NuevoEntrenador</h3>
-                        <p class="text-xs text-gray-500">Publicado el 08/02/2024</p>
-                      </div>
-                    </div>
-                    
-                    <div class="prose max-w-none text-gray-700 mb-4">
-                      <h4 class="text-lg font-medium text-indigo-600">¿Cómo prepararme para mi primer torneo?</h4>
-                      <p>Hola a todos, soy nuevo en el mundo competitivo y me gustaría consejos para mi primer torneo local.</p>
-                    </div>
-                    
-                    <div class="flex items-center text-sm text-gray-500">
-                      <span class="flex items-center mr-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                        </svg>
-                        32 comentarios
-                      </span>
-                      <span class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                        </svg>
-                        15 votos
-                      </span>
-                    </div>
-                  </div>
-                </router-link>
-                
-                
+                    <!-- Mostrar los post de la DB con el component-->
+                    <PostItem 
+                    v-for="post in posts" 
+                    :key="post._id" 
+                    :title="post.title" 
+                    :author="post.author" 
+                    :subforum="post.subforum" 
+                    :description="post.description"
+                    :bracket="post.bracket"
+                    :participants="post.participants"
+                    :answers="post.answers"
+                    :createdAt="post.createdAt"
+                    :editedAt="post.editedAt"
+                  />   
               </div>
             </div>
           </div>
@@ -230,15 +137,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { IonContent, IonPage } from '@ionic/vue';
 import PostItem from '@/components/PostItem.vue'; // Importar el componente PostItem
+import * as dataController from '@/controllers/dataController';
 
 const sidebarOpen = ref(false);
 const currentForum = ref('torneos');
-const posts = ref([]);
 
+interface post {
+  _id:string,
+  title:string,
+  author:string,
+  subforum:string,
+  description:string,
+  participants:string[],
+  bracket:string[],
+  answers:number,
+  createdAt:string,
+  editedAt:string
+}
 
+const posts = ref<post[]>([]);
+
+// Función para obtener los posts desde el servidor
+const fetchPosts = async ()  => {
+  try {
+    posts.value = await dataController.getPostsTorneo() as post[]; // Llamar al servicio para obtener los posts
+  } catch (error) {
+    console.error('Error al obtener los posts:', error);
+  }
+};
+
+// Llamar a la función fetchPosts cuando el componente se monte
+onMounted(() => {
+  fetchPosts();
+});
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
