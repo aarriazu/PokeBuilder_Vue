@@ -36,6 +36,7 @@ export const login = async (userName: string, password: string, router: ReturnTy
   };
   
 export function logout(router: ReturnType<typeof useRouter>) {
+  user.value = null;
   sessionStorage.removeItem('session'); 
   router.push('/login');
 }

@@ -1,20 +1,9 @@
 <template>
   <ion-page>
     <navbarCustom/>
-    <menuComponent/>
+    <menuComponent :router="router"/>
     <ion-content :fullscreen="true">
       <div class="main">
-        <!-- Perfil -->
-        <div class="flex items-center mt-6 ml-6">
-          <img class="w-20 h-20 rounded-lg object-cover mr-4 border-2 border-gray-200" 
-               src="/src/assets/images/profile/profilePic.png">
-          <div>
-            <h5 class="text-blue-600 font-semibold text-lg">{{ userController.getUsername() }}</h5>
-            <h5 class="text-gray-600 text-sm mt-1">Miembro desde 10/02/2024</h5>
-            <a class="text-red-500 hover:text-red-700 text-sm mt-1 inline-block">Exit</a>
-          </div>
-        </div>
-
         <!-- Grid principal -->
         <ion-grid class="container px-4">
           <ion-row>

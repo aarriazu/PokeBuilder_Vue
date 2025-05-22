@@ -11,6 +11,7 @@
           <div>
             <h5 class="text-blue-600 font-semibold text-sm">{{ userController.getUsername() }}</h5>
             <p class="text-gray-500 text-xs">Miembro desde 10/02/2024</p>
+            <a @click="userController.logout(router)" class="text-red-500 hover:text-red-700 text-sm mt-1 inline-block">Exit</a>
           </div>
         </div>
       </ion-toolbar>
@@ -19,13 +20,10 @@
       <!-- Contenido del menú -->
       <ion-list>
         <ion-item button>
-          <ion-label>Opción 1</ion-label>
+          <ion-label>Perfil</ion-label>
         </ion-item>
         <ion-item button>
-          <ion-label>Opción 2</ion-label>
-        </ion-item>
-        <ion-item button>
-          <ion-label>Opción 3</ion-label>
+          <ion-label>Configuración</ion-label>
         </ion-item>
       </ion-list>
     </ion-content>
@@ -52,7 +50,15 @@
 <script setup lang="ts">
     import { onMounted, ref } from 'vue';
     import * as userController from '@/controllers/userController';
-    import { useRouter } from 'vue-router';
+    
+    import type { Router } from 'vue-router';
+
+    defineProps({
+      router: {
+        type: Object as () => Router,
+        required: true,
+      },
+    });
 
     const profilePic = ref<any>(null);
 
