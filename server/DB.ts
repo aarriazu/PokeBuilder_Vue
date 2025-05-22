@@ -1,4 +1,5 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
+import { User } from './server';
 
 const uri = "mongodb+srv://pokeadmin:Yg4FDgNGHoNuZ6Ov@pokebuilderdb.1iko4rb.mongodb.net/?retryWrites=true&w=majority&appName=PokeBuilderDB";
 
@@ -35,5 +36,62 @@ export async function insertTeam(team: any) {
     throw error;
   } finally {
     await client.close();
+  }
+}
+
+export async function getUserByUsernameOrEmail(identifier: string): Promise<User | null> {
+  try {
+    const db = await connectToDatabase();
+    const collection = db.collection<User>("users"); // Tipar la colección como User
+
+    // Buscar por username o email
+    const user = await collection.findOne({
+      $or: [{ username: identifier }, { email: identifier }]
+    });
+
+    if (user) {
+      return {
+        id: user.id,
+        username: user.username,
+        password: user.password,
+        profilePicture: user.profilePicture,
+        email: user.email,
+        isMod: user.isMod,
+        createdAt: new Date(user.createdAt),
+        updatedAt: new Date(user.updatedAt),
+      } as User;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Error al buscar el usuario:", error);
+    throw error;
+  } finally {
+    await client.close();
+  }
+}
+
+// Función para obtener los datos de un usuario por su ID o nombre de usuario
+export async function getUserData(identifier: string) {
+  try {
+    const db = await connectToDatabase();
+    const collection = db.collection("users"); // Asegúrate de que la colección sea la correcta
+
+    // Buscar por nombre de usuario o email
+    const query = typeof identifier === "string" && identifier.includes("@")
+      ? { email: identifier }
+      : { username: identifier };
+
+    const user = await collection.findOne(query);
+
+    if (!user) {
+      throw new Error("Usuario no encontrado");
+    }
+
+    console.log("Usuario encontrado:", user);
+    return user;
+  } catch (error) {
+    console.error("Error al obtener los datos del usuario:", error);
+    throw error;
   }
 }

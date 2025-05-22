@@ -48,6 +48,11 @@ export async function getAllPokemon() {
   }
 }
 
+export function formatText(text: string): string {
+  const modText = text[0].toUpperCase() + text.slice(1);
+  return modText.replace('-', ' ');
+}
+
 export function typeTranslate(type: string, lang: string): string | undefined{
   const typeRef: Type | undefined = typeArray.find(p => p.name === type);
   if (lang === 'en'){
