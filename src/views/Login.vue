@@ -13,8 +13,8 @@
         <ion-row class="w-full max-w-6xl">
           <!-- Sección de Login -->
           <ion-col size="12" size-md="6" class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-center">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Acceder</h2>
-            <p class="text-gray-600 mb-2">Nombre de usuario o correo electrónico</p>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Login</h2>
+            <p class="text-gray-600 mb-2">Username or email</p>
             <input 
               v-model="userName"
               type="text" 
@@ -22,7 +22,7 @@
               name="userName" 
               class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-black"
             >
-            <p class="text-gray-600 mb-2">Contraseña</p>
+            <p class="text-gray-600 mb-2">Password</p>
             <input 
               v-model="password"
               type="password" 
@@ -31,17 +31,17 @@
               class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-black"
             >
             <ion-button 
-              @click="login"
+              @click="userController.login(userName, password, router)"
               :disabled="loading"
               class="w-full text-white py-2 px-4 rounded-lg"
             >
-              Acceder
+              Login
             </ion-button>
             <p v-if="errorMsg" class="text-red-500 mt-2">{{ errorMsg }}</p>
             <p class="text-gray-600 mt-4 flex items-center">
               ¿No tienes cuenta?
               <span id="login-trigger" class="text-indigo-600 cursor-pointer hover:underline ml-2">
-                Regístrate aquí
+                Sign in
               </span>
             </p>
           </ion-col>
@@ -149,6 +149,7 @@ import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonModal } fro
 import navbarCustom from '@/components/navbarComponent.vue';
 import footerCustom from '@/components/footerComponent.vue';
 import { useRouter } from 'vue-router';
+import * as userController from '@/controllers/userController';
 
 const userName = ref('');
 const password = ref('');
@@ -168,22 +169,33 @@ const router = useRouter();
 const login = async () => {
   errorMsg.value = '';
   loading.value = true;
+
   try {
-    const response = await fetch('/api/login.php', {
+    const response = await fetch('http://localhost:3000/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userName: userName.value, password: password.value })
+      body: JSON.stringify({ username: userName.value, password: password.value }),
     });
-    const data = await response.json();
-    if (data.success) {
-      router.push('/home/profile');
-    } else {
-      errorMsg.value = data.message;
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      errorMsg.value = errorData.message || 'Server error';
+      return;
     }
+
+    const data = await response.json();
+
+    // Guarda el token en localStorage o sessionStorage
+    sessionStorage.setItem('session', data.token);
+
+    // Redirige al perfil del usuario
+    router.push('/home/profile');
   } catch (e) {
-    errorMsg.value = 'Error de conexión con el servidor';
+    errorMsg.value = 'Wrong username or password';
+    console.error(e);
+  } finally {
+    loading.value = false;
   }
-  loading.value = false;
 };
 
 const registerModal = ref();

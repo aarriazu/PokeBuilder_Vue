@@ -48,6 +48,10 @@ export async function getAllPokemon() {
   }
 }
 
+export function formatText(text: string): string {
+  const modText = text[0].toUpperCase() + text.slice(1);
+  return modText.replace('-', ' ');
+}
 export async function getPosts() {
   try {
     const response = await axios.get(`${API_BASE_URL}/posts`);
