@@ -86,6 +86,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios';
 import {
   IonPage,
   IonHeader,
@@ -101,6 +103,20 @@ const tournamentDescription = ref(''); // Descripción del torneo
 const numParticipants = ref<number>(2) // Número de participantes (debe ser par y mínimo 2)
 const participants = ref<string[]>(['', '']) // Array de participantes
 const bracket = ref<[string, string][]>([]) // Array de emparejamientos
+const postTorneo = ref({
+  title: '',
+  author: '', 
+  subforum: '',      
+  description: '',
+  participants: [''],
+  bracket: [['', '']],
+  answers: 0,
+  createdAt: new Date().toISOString(),
+  editedAt: new Date().toISOString(),
+}); // Post torneo
+
+// Obtener instancia del router
+const router = useRouter();
 
 // Actualizar cantidad de inputs según número de participantes
 const updateParticipants = (): void => {
@@ -134,13 +150,47 @@ const generateBracket = (): void => {
   alert(`Bracket creado para el torneo: ${tournamentName.value}`);
 }
 
-// Guardar el bracket
-const saveBracket = (): void => {
-  alert('Bracket guardado exitosamente.')
-  // Aquí hay que añadir la lógica para guardar el bracket en mongoDB para crear el post.
-  // Hacer comprobación de que no se deje nada en blanco, y no exista un torneo con el mismo nombre.
-  // Una vez guardado, se redirigirá a la pagina del foro de torneos.
-}
+  // Guardar el bracket en mongoDB como un post.
+  const saveBracket = async (): Promise<void> => {
+  if (!tournamentName.value || !tournamentDescription.value || participants.value.some(p => !p)) {
+    alert('Por favor, completa todos los campos antes de guardar.');
+    return;
+  }
+  else {
+    postTorneo.value = {
+        title: tournamentName.value,
+        author: 'USER', 
+        subforum: 'torneos',      
+        description: tournamentDescription.value,
+        participants: participants.value,
+        bracket: bracket.value,
+        answers: 0,
+        createdAt: new Date().toISOString(),
+        editedAt: new Date().toISOString(),
+      };
+      console.log('Post torneo:', postTorneo.value);
+  }
+
+  try {
+    
+    const response = await axios.post<{ insertedId: string }>('http://localhost:3000/api/postsTorneo', postTorneo.value, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Intentar parsear solo si el texto no está vacío
+    let data = null;
+
+
+    alert('Torneo guardado exitosamente.');
+    router.push('/home/forumTorneos');
+  } catch (error) {
+    console.error('Error al guardar el post:', error);
+    alert('Hubo un error al guardar el post, disculpa las molestias.');
+  }
+};
+
 </script>
 
 <style scoped>
