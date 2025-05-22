@@ -250,14 +250,42 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { IonContent, IonPage } from '@ionic/vue';
+import PostItem from '@/components/PostItem.vue';
 
 const sidebarOpen = ref(false);
 const currentForum = ref('general'); // Rutas
+import * as dataController from '@/controllers/dataController';
+
+interface post{
+  _id: string;
+  id:number,
+  title: string;
+  author: string;
+  subforum: string;
+  content: string;
+  answers: number;
+  PublicationDate: string;
+  editedDate: string;
+}
+
+const posts = ref<post[]>([]); // Array de publicaciones
+
+//Recoger los post con subforum "General"
+const fetchGeneralPost = async () => {
+  
+  
+
+}
+
+
+
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
 };
 </script>
+
+
 
 <style scoped>
 /* Asegurar que el contenido ocupe toda la altura disponible */

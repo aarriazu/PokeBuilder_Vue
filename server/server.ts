@@ -102,6 +102,25 @@ app.get('/api/posts/:name', async (req, res) => {
   }
 });
 
+app.get('/api/posts', async (req, res) => {
+  try {
+    // Conectar a la base de datos
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("posts");
+    // Obtener todos los posts con subforum "General"
+    const posts = await collection.find({ subforum: "General" }).toArray();
+    // Enviar los posts como respuesta
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error al obtener los posts:", error);
+    res.status(500).json({ error: "Error al obtener los posts" });
+  } finally {
+    // Cerrar la conexión con la base de datos
+    await client.close();
+  }
+});
+
 // Recibir llamada para insertar un post en la base de datos (RECORDAR LA PRMOMISE <ANY>)
 app.post('/api/posts', async (req, res): Promise <any> => {
   try {
