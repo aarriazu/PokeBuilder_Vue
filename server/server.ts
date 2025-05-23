@@ -34,11 +34,11 @@ export interface User {
   id: number;
   username: string;
   password: string;
-  profilePicture: string;
+  profilePic: string;
   email: string;
   isMod: boolean;
   createdAt: Date;
-  updatedAt: Date;
+  lastLogin: Date;
 }
 
 // Ruta para iniciar sesión y generar un token
@@ -65,7 +65,7 @@ app.post('/login', async (req: Request, res: Response): Promise<any> => {
     */
 
     // Generar un token JWT
-    const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, username: user.username, email: user.email, profilePic: user.profilePic, createdAt: user.createdAt, lastLogin: new Date(), isMod: user.isMod }, SECRET_KEY, { expiresIn: '1h' });
     res.json({ token });
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
@@ -89,7 +89,7 @@ function authenticateToken(req: Request & { user?: CustomJwtPayload }, res: Resp
       return;
     }
 
-    req.user = user as CustomJwtPayload; // Aseguramos que el payload cumple con la interfaz CustomJwtPayload
+    req.user = user as CustomJwtPayload;
     next();
   });
 }
@@ -103,6 +103,57 @@ app.get('/profile', authenticateToken, (req: Request & { user?: CustomJwtPayload
   }
 });
 
+//Ruta para recoger usuario
+app.post('/api/user', async (req: Request, res: Response): Promise<any> => {
+  const request = req.body;
+  const username = request.username;
+  
+  console.log("Username recibido en backend:", username);
+  try {
+    const user = await dbClass.getUserByUsernameOrEmail(username);
+
+    if (!user) {
+      return res.status(401).send('Usuario no encontrado');
+    }
+
+    res.status(200).send(user);
+  } catch (error) {
+    console.error("Error al iniciar sesión:", error);
+    res.status(500).send('Error interno del servidor');
+  }
+});
+
+app.put('/api/user/lastLogin', async (req: Request, res: Response): Promise<any> => {
+  const { username } = req.body;
+
+  if (!username) {
+    return res.status(400).send('Username is required');
+  }
+
+  try {
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const usersCollection = db.collection('users');
+
+    // Actualiza el campo lastLogin con la fecha actual
+    const result = await usersCollection.updateOne(
+      { username: username },
+      { $set: { lastLogin: new Date() } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send('User not found');
+    }
+
+    res.send('Last login updated successfully');
+  } catch (error) {
+    console.error('Error updating lastLogin:', error);
+    res.status(500).send('Internal server error');
+  } finally {
+    await client.close();
+  }
+});
+
 // Ruta para obtener todos los Pokémon
 app.get('/api/pokemon', async (req, res) => {
   try {
@@ -110,7 +161,6 @@ app.get('/api/pokemon', async (req, res) => {
     const db = client.db("PokeBuilderDB");
     const collection = db.collection("pokemon");
 
-    // Obtener todos los Pokémon con los campos necesarios
     const pokemonList = await collection
       .find({}, { projection: { id: 1, name: 1, sprite: 1, types: 1, generation: 1 } }) // Seleccionar los campos necesarios
       .toArray();

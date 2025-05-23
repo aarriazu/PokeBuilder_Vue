@@ -9,8 +9,8 @@
             :src="profilePic! || ''"
           >
           <div>
-            <h5 class="text-blue-600 font-semibold text-sm">{{ userController.getUsername() }}</h5>
-            <p class="text-gray-500 text-xs">Miembro desde 10/02/2024</p>
+            <h5 class="text-blue-600 font-semibold text-sm">{{ user!.username }}</h5>
+            <p class="text-gray-500 text-xs">Member since {{ new Date(user!.createdAt).toLocaleDateString('en-EN') }}</p>
             <a @click="userController.logout(router)" class="text-red-500 hover:text-red-700 text-sm mt-1 inline-block">Exit</a>
           </div>
         </div>
@@ -20,10 +20,10 @@
       <!-- Contenido del menú -->
       <ion-list>
         <ion-item button>
-          <ion-label>Perfil</ion-label>
+          <ion-label>Profile</ion-label>
         </ion-item>
         <ion-item button>
-          <ion-label>Configuración</ion-label>
+          <ion-label>Settings</ion-label>
         </ion-item>
       </ion-list>
     </ion-content>
@@ -50,23 +50,48 @@
 <script setup lang="ts">
     import { onMounted, ref } from 'vue';
     import * as userController from '@/controllers/userController';
+    //import navbarComponent from '@/components/navbarComponent.vue';
+    import { IonContent, IonPage, IonToolbar, IonMenu, IonMenuButton, IonHeader, IonLabel, IonItem, IonList, IonButtons, IonTitle } from '@ionic/vue';
     
+    import { User } from '@/classes/User';
     import type { Router } from 'vue-router';
 
-    defineProps({
+    const props = defineProps({
       router: {
         type: Object as () => Router,
         required: true,
       },
+      /*
+      user: {
+        type: Object as () => User,
+        required: true,
+      },
+      */
     });
 
     const profilePic = ref<any>(null);
+    const user = ref<User | null>(null);
 
-    onMounted(() => {
-        userController.getUser();
-        profilePic.value = userController.getProfilePic();
-        console.log('Imagen de perfil:', profilePic.value);
+    onMounted(async () => {
+      user.value = await userController.getUser();
     });
+    
+
+    // SI NO FUNCIONA VOLVER A ESTO!!!
+    /*
+    onMounted(() => { 
+      if (props.user) {
+        profilePic.value = props.user.profilePic || null; // Asigna la imagen de perfil si existe
+        //profilePic.value = userController.getProfilePic() || null; 
+        console.log('Usuario:', props.user);
+        console.log('Imagen de perfil:', profilePic.value);
+        console.log('Miembro desde:', props.user.createdAt);
+      } else {
+        console.error('No se encontró el usuario');
+      }
+        
+    });
+    */
 </script>
   
 <style scoped>

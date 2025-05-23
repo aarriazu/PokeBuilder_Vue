@@ -1,7 +1,7 @@
 <template>
   <ion-page>
-    <navbarCustom/>
-    <menuComponent :router="router"/>
+    <navbarComponent/>
+    <menuComponent v-if="user" :router="router" :user="user"/>
     <ion-content :fullscreen="true">
       <div class="main">
         <!-- Grid principal -->
@@ -32,14 +32,15 @@
 </template>
 
 <script setup lang="ts">
-import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol } from '@ionic/vue';
+import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonIcon } from '@ionic/vue';
 import { onMounted, ref } from 'vue';
 import Team from '@/components/Team.vue';
-import navbarCustom from '@/components/navbarComponent.vue';
+import navbarComponent from '@/components/navbarComponent.vue';
 import menuComponent from '@/components/menuComponent.vue';
 import { useRouter } from 'vue-router';
 import * as userController from '@/controllers/userController';
 import { jwtDecode } from 'jwt-decode';
+import { User } from '@/classes/User';
 
 interface Pokemon {
   name: string;
@@ -56,10 +57,10 @@ interface Team {
 
 const router = useRouter();
 
-const username = ref<string | null>(null);
+const user = ref<User | null>(null);
 
-onMounted(() => {
-  userController.getUser();
+onMounted(async () => {
+  user.value = await userController.getUser();
 });
 
 const dummyTeams = ref([

@@ -2,8 +2,11 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { jwtDecode } from 'jwt-decode';
 import { User } from '@/classes/User';
+import axios, { get } from 'axios';
 
+const username = ref<string | null>(null);
 const user = ref<User | null>(null);
+const token = ref<User | null>(null);
 
 export const login = async (userName: string, password: string, router: ReturnType<typeof useRouter>) => {
     try {
@@ -24,6 +27,20 @@ export const login = async (userName: string, password: string, router: ReturnTy
   
       // Guarda el token en sessionStorage
       sessionStorage.setItem('session', data.token);
+      username.value = userName;
+
+      // Actualiza el campo lastLogin en la base de datos
+      await fetch('http://localhost:3000/api/user/lastLogin', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${data.token}`, // Envía el token si es necesario
+        },
+        body: JSON.stringify({ username: userName }),
+      });
+
+      console.log('Campo lastLogin actualizado');
+
   
       // Redirige al perfil del usuario
       router.push('/home/profile');
@@ -41,28 +58,32 @@ export function logout(router: ReturnType<typeof useRouter>) {
   router.push('/login');
 }
 
-export function getUser() {
+export async function getUser() {
   const session = sessionStorage.getItem('session');
-
+  console.log('Token de sesión:', session);
   if (session) {
-    try {
-      // Decodifica el token JWT
-      user.value = jwtDecode(session) as User; 
-      console.log('Usuario decodificado:', user.value.profilePicture);
-    } catch (error) {
-      console.error('Error al decodificar el token:', error);
-    }
+    user.value = jwtDecode(session) as User;
+    console.log('Usuario:', user.value.username);
+    console.log('Token decodificado:', user.value);
+    return user.value;
   } else {
-    console.error('No se encontró el token en el almacenamiento');
+    console.error('No session token found');
+    return null;
   }
 }
 
 export function getUsername(): String  {
+  getUser();
   return user.value?.username || "nousername";
 }
 
-export function getProfilePic(): String  {
-    return user.value?.profilePicture || "noimg";
+export function getProfilePic(): string {
+  if (!user.value) {
+    console.error('El usuario no está definido');
+    return 'https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1'; // Devuelve una imagen predeterminada
+  }
+
+  return user.value.profilePic || 'https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1'; // Devuelve la imagen del perfil o una predeterminada
 }
 
 /*
