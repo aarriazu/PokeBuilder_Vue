@@ -66,8 +66,12 @@
               </div>
               <span class="font-medium">Ayuda</span>
             </router-link>
-            <router-link to="/home/forumSpinoff" class="flex items-center p-3 rounded-lg transition-colors"
-                         :class="{'bg-purple-100 text-purple-800': currentForum === 'spinoff', 'text-gray-700 hover:bg-gray-100': currentForum !== 'spinoff'}">
+
+            <router-link 
+              to="/home/forumSpinoff" class="flex items-center p-3 rounded-lg transition-colors"
+              :class="{'bg-purple-100 text-purple-800': currentForum === 'spinoff', 'text-gray-700 hover:bg-gray-100': currentForum !== 'spinoff'}"
+            >
+
               <div class="bg-purple-100 p-2 rounded-lg mr-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2a1 1 0 00-.553.894V17zM15.211 6.276a1 1 0 000-1.788l-4.764-2.382a1 1 0 00-.894 0L4.789 4.488a1 1 0 000 1.788l4.764 2.382a1 1 0 00.894 0l4.764-2.382zM4.447 8.342A1 1 0 003 9.236V15a1 1 0 00.553.894l4 2A1 1 0 009 17v-5.764a1 1 0 00-.553-.894l-4-2z" />
@@ -111,7 +115,7 @@
               <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-4">Bienvenido al foro de Spinoff</h2>
                 <p class="text-gray-600 mb-6">
-                  Aquí puedes discutir temas relacionados con preguntas y respuestas sobre Pokémon. Participa en las conversaciones y ayuda a otros entrenadores.
+                  Aquí puedes discutir sobre otros juegos de Pokémon, compartir memorias y mucho más.
                 </p>
 
                 <!-- Botón Crear Post -->
@@ -162,7 +166,7 @@ import { IonContent, IonPage } from '@ionic/vue';
 import PostItem from '@/components/PostItem.vue';
 
 const sidebarOpen = ref(false);
-const currentForum = ref('ayuda'); // Rutas
+const currentForum = ref('spinoff'); // Rutas
 import * as dataController from '@/controllers/dataController';
 
 interface post {
