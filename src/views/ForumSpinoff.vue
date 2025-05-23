@@ -120,7 +120,7 @@
 
                 <!-- Botón Crear Post -->
                 <router-link 
-                  to="/home/newPost" 
+                  :to="{ path: '/home/newPost', query: { subforum: 'Spinoff' } }" 
                   class="inline-flex items-center bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
