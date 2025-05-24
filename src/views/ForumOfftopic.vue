@@ -171,7 +171,7 @@ const posts = ref<post[]>([]);
 const fetchOfftopicPost = async () => {
   try {
     posts.value = await dataController.getPosts() as post[];
-    posts.value = posts.value.filter((post) => post.subforum === 'Off-topic');
+    posts.value = posts.value.filter((post) => post.subforum === 'Offtopic');
   } catch (error) {
     console.error('Error al obtener los posts:', error);
   }

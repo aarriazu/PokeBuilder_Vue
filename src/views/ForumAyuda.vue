@@ -109,7 +109,7 @@
             <div class="max-w-4xl mx-auto">
               <!-- Cabecera del foro -->
               <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Bienvenido al foro de ayuda</h2>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Bienvenido al foro de Ayuda</h2>
                 <p class="text-gray-600 mb-6">
                   Aquí puedes discutir temas relacionados con preguntas y respuestas sobre Pokémon. Participa en las conversaciones y ayuda a otros entrenadores.
                 </p>
@@ -158,7 +158,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { IonContent, IonPage } from '@ionic/vue';
+import { IonContent, IonPage, IonTitle } from '@ionic/vue';
 import PostItem from '@/components/PostItem.vue';
 
 const sidebarOpen = ref(false);
@@ -183,7 +183,7 @@ const posts = ref<post[]>([]); // Array de publicaciones
 const fetchAyudaPost = async () => {
   try {
     posts.value = await dataController.getPosts() as post[];
-    posts.value = posts.value.filter((post) => post.subforum === 'Ayuda');
+    posts.value = posts.value.filter((post) => post.subforum == 'Ayuda');
   } catch (error) {
     console.error('Error al obtener los posts:', error);
   }

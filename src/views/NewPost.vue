@@ -115,11 +115,12 @@
                 </p>
 
                 <!-- Formulario para crear un post -->
-                <form class="space-y-4">
+                <form class="space-y-4" @submit.prevent="savePost">
                   <!-- Título del post -->
                   <div>
                     <label for="postTitle" class="block text-gray-800 font-semibold mb-2">Título del post</label>
                     <input 
+                      v-model="postContent.title"
                       type="text" 
                       id="postTitle" 
                       name="postTitle" 
@@ -132,6 +133,7 @@
                   <div>
                     <label for="postContent" class="block text-gray-800 font-semibold mb-2">Contenido</label>
                     <textarea 
+                      v-model="postContent.content"
                       id="postContent" 
                       name="postContent" 
                       rows="6" 
@@ -142,7 +144,7 @@
 
                   <!-- Botón para enviar -->
                   <div>
-                    <button @click="savePost"
+                    <button
                       type="submit" 
                       class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition"
                     >
@@ -170,21 +172,12 @@ const currentForum = ref('newPost');
 
 // Obtener instancia del router
 const router = useRouter();
-
-
-const id=ref('');
-const title=ref('');
-const author=ref('');
-const subforum=ref('');
-const answers=ref(0);
-const content=ref('');
-const createdAt=ref('');
-const editedAt=ref('');
+const route = useRoute();
 
 const postContent = ref({
   title: '',
   author: '',
-  subforum: subforum.value,
+  subforum: '',
   answers: 0,
   content: '',
   createdAt: '',
@@ -200,10 +193,8 @@ const savePost = async (): Promise<void> => {
 
   // Configurar el contenido del post
   postContent.value = {
-    title: postContent.value.title,
+    ...postContent.value,
     author: 'USER', // Cambiar por el autor real si está disponible
-    subforum: postContent.value.subforum,
-    content: postContent.value.content,
     answers: 0,
     createdAt: new Date().toISOString(),
     editedAt: new Date().toISOString(),
@@ -219,6 +210,9 @@ const savePost = async (): Promise<void> => {
       },
     });
 
+     // Intentar parsear solo si el texto no está vacío
+    let data = null;
+    
     alert('Post guardado exitosamente.');
     router.push(`/home/forumGeneral`);
   } catch (error) {
@@ -228,10 +222,10 @@ const savePost = async (): Promise<void> => {
 };
 
 onMounted(() => {
-  const route = useRoute();
   // Leer el parámetro 'subforum' de la URL
-  subforum.value = route.query.subforum as string || '';
-  console.log('Subforo seleccionado:', subforum.value);
+  const subforumParam = route.query.subforum as string || '';
+  postContent.value.subforum = subforumParam;
+  console.log('Subforo seleccionado:', postContent.value.subforum);
 });
 
 const toggleSidebar = () => {

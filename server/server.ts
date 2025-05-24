@@ -194,8 +194,8 @@ app.get('/api/posts', async (req, res) => {
     await client.connect();
     const db = client.db("PokeBuilderDB");
     const collection = db.collection("posts");
-    // Obtener todos los posts con subforum "General"
-    const posts = await collection.find({ subforum: "General" }).toArray();
+    // Obtener todos los posts 
+    const posts = await collection.find({}).toArray();
     // Enviar los posts como respuesta
     res.status(200).json(posts);
   } catch (error) {
@@ -215,15 +215,20 @@ app.post('/api/posts', async (req, res): Promise <any> => {
     const db = client.db("PokeBuilderDB");
     const collection = db.collection("posts");
 
-    // Validar que no haya un post con el mismo nombre de torneo
-    const existingPost = await collection.findOne({ name: post.name.toLowerCase() });
+    // Validar que el título exista
+    if (!post.title) {
+      return res.status(400).send({ error: "El título es obligatorio." });
+    }
+
+    // Validar que no haya un post con el mismo título
+    const existingPost = await collection.findOne({ title: post.title.toLowerCase() });
     if (existingPost) {
-      return res.status(400).send({ error: "Ya existe un torneo con este nombre." });
+      return res.status(400).send({ error: "Ya existe un post con este título." });
     }
 
     // Insertar el nuevo post
-    const result = await collection.insertOne(post);
-    res.status(201).send({ insertedId: result.insertedId });
+    const insertedId = await dbClass.insertPost(post);
+    res.status(201).json({ insertedId });
   } catch (error) {
     console.error("Error al guardar el post:", error);
     res.status(500).send("Error al guardar el post");
