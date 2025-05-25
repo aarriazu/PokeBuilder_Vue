@@ -1,6 +1,5 @@
 <template>
   <ion-page>
-    <navbarCustom/>
     <ion-content :fullscreen="true">
       <!-- Título principal -->
       <div class="absolute top-0 w-full text-center mt-16">
@@ -145,8 +144,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol } from '@ionic/vue';
-import navbarCustom from '@/components/navbarComponent.vue';
+import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonModal } from '@ionic/vue';
 import footerCustom from '@/components/footerComponent.vue';
 import { useRouter } from 'vue-router';
 import * as userController from '@/controllers/userController';

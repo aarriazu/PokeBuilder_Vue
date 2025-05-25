@@ -3,10 +3,12 @@ import { useRouter } from 'vue-router';
 import { jwtDecode } from 'jwt-decode';
 import { User } from '@/classes/User';
 import axios, { get } from 'axios';
+import * as routerController from '@/controllers/routerController';
+import { userState } from '@/controllers/stateController';
 
-const username = ref<string | null>(null);
-const user = ref<User | null>(null);
-const token = ref<User | null>(null);
+//const username = ref<string | null>(null);
+//const user = ref<User | null>(null);
+//const token = ref<User | null>(null);
 
 export const login = async (userName: string, password: string, router: ReturnType<typeof useRouter>) => {
     try {
@@ -27,7 +29,10 @@ export const login = async (userName: string, password: string, router: ReturnTy
   
       // Guarda el token en sessionStorage
       sessionStorage.setItem('session', data.token);
-      username.value = userName;
+
+      // Actualiza el estado global del usuario
+      userState.value = jwtDecode(data.token) as User;
+
 
       // Actualiza el campo lastLogin en la base de datos
       await fetch('http://localhost:3000/api/user/lastLogin', {
@@ -43,7 +48,7 @@ export const login = async (userName: string, password: string, router: ReturnTy
 
   
       // Redirige al perfil del usuario
-      router.push('/home/profile');
+      routerController.navigateToAndClose(router, '/home/profile');
     } catch (e) {
       //errorMsg.value = 'Wrong username or password';
       console.error(e);
@@ -53,19 +58,20 @@ export const login = async (userName: string, password: string, router: ReturnTy
   };
   
 export function logout(router: ReturnType<typeof useRouter>) {
-  user.value = null;
+  userState.value = null;
+  console.log('Estado del usuario después de logout:', userState.value);
   sessionStorage.removeItem('session'); 
-  router.push('/login');
+  routerController.navigateToAndClose(router, '/login');
 }
 
 export async function getUser() {
   const session = sessionStorage.getItem('session');
   console.log('Token de sesión:', session);
   if (session) {
-    user.value = jwtDecode(session) as User;
-    console.log('Usuario:', user.value.username);
-    console.log('Token decodificado:', user.value);
-    return user.value;
+    userState.value = jwtDecode(session) as User;
+    console.log('Usuario:', userState.value.username);
+    console.log('Token decodificado:', userState.value);
+    return userState.value;
   } else {
     console.error('No session token found');
     return null;
@@ -74,16 +80,16 @@ export async function getUser() {
 
 export function getUsername(): String  {
   getUser();
-  return user.value?.username || "nousername";
+  return userState.value?.username || "nousername";
 }
 
 export function getProfilePic(): string {
-  if (!user.value) {
+  if (!userState.value) {
     console.error('El usuario no está definido');
     return 'https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1'; // Devuelve una imagen predeterminada
   }
 
-  return user.value.profilePic || 'https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1'; // Devuelve la imagen del perfil o una predeterminada
+  return userState.value.profilePic || 'https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1'; // Devuelve la imagen del perfil o una predeterminada
 }
 
 /*

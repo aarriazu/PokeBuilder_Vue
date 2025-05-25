@@ -1,7 +1,6 @@
 <template>
   <Suspense>
     <ion-page :key="pokemonName"> <!--Se recarga el componente cuando cambia pokemonName-->
-      <navbarComponent/>
       <ion-content :fullscreen="true">
         <pokeCard :pokemonName="pokemonName" @selectPokemon="handleSelectPokemon"></pokeCard>
       </ion-content>
@@ -14,7 +13,6 @@ import { IonContent, IonPage, IonGrid, IonRow, IonCol, IonButton } from '@ionic/
 import { ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import pokeCard from '@/components/pokeCard.vue';
-import navbarComponent from '@/components/navbarComponent.vue';
 
 /*Recogemos el nombre del pokemon y lo guardamos
 para usarlo en el pokeCard. */ 

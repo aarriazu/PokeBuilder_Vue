@@ -1,6 +1,5 @@
 <template>
   <ion-page>
-    <navbar-custom/>
     <ion-content :fullscreen="true">
       <div class="main">
         <div class="title">
@@ -100,14 +99,15 @@ import { onMounted, ref } from 'vue';
 import { IonModal, IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonList, IonItem } from '@ionic/vue';
 import { PokemonInterface } from '@/interfaces/pokemonInterface';
 import { TeamPokemon } from '@/classes/TeamPokemon';
-import { Team } from '@/classes/Team';
+import { useRouter } from 'vue-router';
 import * as dataController from '@/controllers/dataController';
 import { modalController } from '@ionic/vue';
 import SelectPokemonModal from '@/components/SelectPokemonModal.vue';
-import navbarCustom from '@/components/navbarComponent.vue';
 import axios from 'axios';
 
 // Inicializar un Pokémon vacio con valores predeterminados
+const router = useRouter();
+
 const blankPokemon = () => new TeamPokemon(
   '' as unknown as PokemonInterface,
   '',
