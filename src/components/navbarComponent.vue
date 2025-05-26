@@ -2,26 +2,30 @@
   <ion-header class="shadow-sm">
     <ion-toolbar class="px-4 bg-indigo-100">
       <ion-buttons slot="start">
-        <button @click="openMenu" class="relative w-10 h-10 rounded-full border-2 border-gray-200 overflow-hidden bg-white">
-          <img
-            :src="user?.profilePic || 'https://i.pinimg.com/474x/2c/47/d5/2c47d5dd5b532f83bb55c4cd6f5bd1ef.jpg'"
-            alt="Profile Picture"
-            class="w-full h-full object-cover"
-          />
-        </button>
+        <div v-if="user">
+          <button @click="openMenu" class="relative w-10 h-10 rounded-full border-2 border-gray-200 overflow-hidden bg-white">
+            <img
+              :src="user?.profilePic || 'https://i.pinimg.com/474x/2c/47/d5/2c47d5dd5b532f83bb55c4cd6f5bd1ef.jpg'"
+              alt="Profile Picture"
+              class="w-full h-full object-cover"
+            />
+          </button>
+        </div>
       </ion-buttons>
 
-      <ion-title class="text-gray-900 font-semibold">PokeBuilder</ion-title>
-
-      <button v-if="!user" @click="showLogin = true" class="text-blue-600">Log in</button>
-      <button v-if="!user" @click="showSignin = true" class="text-blue-600 ml-2">Sign in</button>
+      <div class="flex items-center space-x-2">
+        <div class="w-1"></div>
+        <span class="text-gray-900 font-semibold text-lg">PokeBuilder</span>
+        <button v-if="!user" @click="showLogin = true" class="text-blue-600">Log in</button>
+        <button v-if="!user" @click="showSignin = true" class="text-blue-600 ml-2">Sign in</button>
+      </div>
 
       <!-- Login Modal -->
       <ion-modal :is-open="showLogin" @didDismiss="showLogin = false">
         <ion-content class="ion-padding">
           <div class="bg-white rounded-lg p-6 max-w-md mx-auto">
             <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Login</h2>
-            <form class="space-y-4" @submit.prevent="login">
+            <form class="space-y-4" @submit.prevent="handleLogin">
               <div>
                 <label class="block text-gray-800 font-semibold mb-2">Username or email</label>
                 <input 
@@ -40,6 +44,7 @@
                   placeholder="Enter your password"
                 >
               </div>
+              <p v-if="loginErrorMsg" class="text-red-500 mt-2">{{ loginErrorMsg }}</p>
               <div class="text-center">
                 <ion-button type="submit" class="text-white font-semibold py-2 px-4 rounded-lg transition">
                   Log in
@@ -55,7 +60,7 @@
         <ion-content class="ion-padding">
           <div class="bg-white rounded-lg p-6 max-w-md mx-auto">
             <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Sign in</h2>
-            <form class="space-y-4" @submit.prevent="signin">
+            <form class="space-y-4" @submit.prevent="handleSignin">
               <div>
                 <label class="block text-gray-800 font-semibold mb-2">Username</label>
                 <input 
@@ -83,6 +88,16 @@
                   placeholder="Enter your password"
                 >
               </div>
+              <div>
+                <label class="block text-gray-800 font-semibold mb-2">Confirm Password</label>
+                <input 
+                  v-model="signinPasswordConfirm"
+                  type="password"
+                  class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Confirm your password"
+                >
+              </div>
+              <p v-if="signinErrorMsg" class="text-red-500 mt-2">{{ signinErrorMsg }}</p>
               <div class="text-center">
                 <ion-button type="submit" class="text-white font-semibold py-2 px-4 rounded-lg transition">
                   Sign in
@@ -95,6 +110,12 @@
 
       <!-- Menú normal para desktop -->
       <ion-buttons slot="end" class="hidden md:flex space-x-2">
+        <ion-button 
+          @click="routerController.navigateTo(props.router, '/home/forumGeneral')" 
+          class="text-gray-700 hover:text-indigo-600 transition-colors duration-300 font-medium"
+        >
+          Forum
+        </ion-button>
         <ion-button 
           @click="routerController.navigateTo(props.router, '/pokedex')" 
           class="text-gray-700 hover:text-indigo-600 transition-colors duration-300 font-medium"
@@ -145,6 +166,13 @@
         class="md:hidden bg-indigo-100 shadow-lg overflow-hidden"
       >
         <div class="flex flex-col py-2 space-y-1 px-4">
+          <button 
+            @click="routerController.navigateToAndClose(props.router, '/home/forumGeneral')" 
+            class="w-full text-left px-4 py-3 rounded-lg hover:bg-indigo-50 text-gray-700 hover:text-indigo-600 transition-all duration-300 flex items-center"
+          >
+            <span class="font-medium">Forum</span>
+          </button>
+
           <button 
             @click="routerController.navigateToAndClose(props.router, '/pokedex')" 
             class="w-full text-left px-4 py-3 rounded-lg hover:bg-indigo-50 text-gray-700 hover:text-indigo-600 transition-all duration-300 flex items-center"
@@ -202,6 +230,10 @@ const loginPassword = ref('');
 const signinUserName = ref('');
 const signinEmail = ref('');
 const signinPassword = ref('');
+const signinPasswordConfirm = ref('');
+
+const loginErrorMsg = ref('');
+const signinErrorMsg = ref(''); 
 
 const isMenuOpen = computed(() => mobileMenuState.value);
 
@@ -213,15 +245,27 @@ const toggleMobileMenu = () => {
   mobileMenuState.value = !mobileMenuState.value;
 };
 
-function login() {
-  userController.login(loginUserName.value, loginPassword.value, props.router);
-  showLogin.value = false;
-}
 
-function signin() {
-  //userController.signin(signinUserName.value, signinEmail.value, signinPassword.value, props.router);
-  showSignin.value = false;
-}
+const handleLogin = async () => {
+  loginErrorMsg.value = '';
+  try {
+    await userController.login(loginUserName.value, loginPassword.value, props.router);
+    showLogin.value = false;
+  } catch (error) {
+    loginErrorMsg.value = (error instanceof Error ? error.message : 'Error al iniciar sesión');
+  }
+};
+
+const handleSignin = async () => {
+  signinErrorMsg.value = '';
+  try {
+    await userController.signin(signinUserName.value, signinEmail.value, signinPassword.value, signinPasswordConfirm.value);
+    showSignin.value = false;
+    await userController.login(signinUserName.value, signinPassword.value, props.router);
+  } catch (error) {
+     signinErrorMsg.value = (error instanceof Error ? error.message : 'Error al registrar el usuario');
+  }
+};
 
 const props = defineProps({
   router: {

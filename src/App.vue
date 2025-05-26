@@ -4,7 +4,6 @@
     <ion-app class="app-content">
       <ion-router-outlet id="main-content" />
     </ion-app>
-    <footerComponent class="footer" />
   </div>
 </template>
 
@@ -19,6 +18,11 @@ import footerComponent from '@/components/footerComponent.vue';
   display: flex;
   flex-direction: column;
   min-height: 100vh; /* Asegura que el contenedor ocupe toda la altura de la ventana */
+}
+
+.app-content {
+  flex: 1 0 auto; /* Hace que el contenido crezca y empuje el footer hacia abajo */
+  margin-top: 60px; /* Si tu header es fijo */
 }
 
 .header {

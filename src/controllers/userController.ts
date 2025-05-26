@@ -20,8 +20,7 @@ export const login = async (userName: string, password: string, router: ReturnTy
   
       if (!response.ok) {
         const errorData = await response.json();
-        //errorMsg.value = errorData.message || 'Server error';
-        return;
+        throw new Error(errorData.error || 'Server error');
       }
   
       const data = await response.json();
@@ -49,13 +48,38 @@ export const login = async (userName: string, password: string, router: ReturnTy
   
       // Redirige al perfil del usuario
       routerController.navigateToAndClose(router, '/home/profile');
-    } catch (e) {
-      //errorMsg.value = 'Wrong username or password';
-      console.error(e);
-    } finally {
-      //loading.value = false;
+    } catch (error) {
+      console.error('Error en login:', error);
+      throw error;
     }
   };
+
+  export const signin = async ( username: string, email: string, password: string, confirmPassword: string) => {
+    try {
+      const response = await fetch('http://localhost:3000/api/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+          confirmPassword,
+        }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Server error');
+    }
+
+    const data = await response.json();
+    console.log('Usuario registrado:', data);
+    return data;
+  } catch (error) {
+    console.error('Error en signIn:', error);
+    throw error;
+  }
+};
   
 export function logout(router: ReturnType<typeof useRouter>) {
   userState.value = null;

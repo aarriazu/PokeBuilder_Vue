@@ -50,19 +50,52 @@ app.post('/login', async (req: Request, res: Response): Promise<any> => {
     const user = await dbClass.getUserByUsernameOrEmail(username);
 
     if (!user) {
-      return res.status(401).send('Usuario no encontrado');
+      return res.status(400).send({ error: 'User not found.' });
+      //return res.status(401).send({ error: 'User not found.' });
     }
 
     // Verificar la contraseña
     if (password !== user.password) {
-      return res.status(401).send('Contraseña incorrecta');
+      return res.status(400).send({ error: 'Incorrect password.' });
+      //return res.status(401).send({ error: 'Incorrect password.' });
     }
-    /*
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      return res.status(401).send('Contraseña incorrecta');
+
+    // Generar un token JWT
+    const token = jwt.sign(
+      {
+        //id: user.id,
+        username: user.username,
+        email: user.email,
+        profilePic: user.profilePic,
+        createdAt: user.createdAt,
+        lastLogin: new Date(),
+        isMod: user.isMod,
+      },
+      SECRET_KEY,
+      { expiresIn: '1h' }
+    );
+    res.json({ token });
+  } catch (error) {
+    console.error("Error al iniciar sesión:", error);
+    res.status(500).send({ error: 'Internal server error' });
+  }
+});
+/*
+app.post('/login', async (req: Request, res: Response): Promise<any> => {
+  const { username, password } = req.body;
+
+  try {
+    // Buscar al usuario por username o email
+    const user = await dbClass.getUserByUsernameOrEmail(username);
+
+    if (!user) {
+      return res.status(400).send({ error: 'User not found.' });
     }
-    */
+
+    // Verificar la contraseña
+    if (password !== user.password) {
+      return res.status(400).send({ error: 'Incorrect password.' });
+    }
 
     // Generar un token JWT
     const token = jwt.sign({ id: user.id, username: user.username, email: user.email, profilePic: user.profilePic, createdAt: user.createdAt, lastLogin: new Date(), isMod: user.isMod }, SECRET_KEY, { expiresIn: '1h' });
@@ -70,6 +103,51 @@ app.post('/login', async (req: Request, res: Response): Promise<any> => {
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
     res.status(500).send('Error interno del servidor');
+  }
+});
+*/
+
+app.post('/api/signin', async (req: Request, res: Response): Promise<any> => {
+  const { username, email, password, confirmPassword } = req.body;
+  try {
+    if (!username || !email || !password || !confirmPassword) {
+      return res.status(400).send({ error: 'All fields are required.' });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).send({ error: "Passwords don't match." });
+    }
+
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection('users');
+
+    // Comprobar si el username ya existe
+    const existingUser = await collection.findOne({ username: username });
+    if (existingUser) {
+      return res.status(400).send({ error: 'This username is already registered.' });
+    }
+
+    // Comprobar si el email ya existe
+    const existingEmail = await collection.findOne({ email: email });
+    if (existingEmail) {
+      return res.status(400).send({ error: 'This email is already registered.' });
+    }
+
+    const user = {
+      username,
+      email,
+      password,
+      profilePic: '',
+      isMod: false,
+      createdAt: new Date(),
+      lastLogin: new Date(),
+    };
+
+    await collection.insertOne(user);
+    res.status(201).send({ message: 'Usuario registrado correctamente' });
+  } catch (error) {
+    res.status(500).send({ error: 'Error al registrar el usuario' });
   }
 });
 

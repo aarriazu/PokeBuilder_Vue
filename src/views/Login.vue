@@ -20,6 +20,7 @@
               id="userName" 
               name="userName" 
               class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-black"
+              placeholder="Enter your username or email"
             >
             <p class="text-gray-600 mb-2">Password</p>
             <input 
@@ -28,20 +29,19 @@
               id="password" 
               name="password" 
               class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-black"
+              placeholder="Enter your password"
             >
             <ion-button 
-              @click="userController.login(userName, password, router)"
+              @click="handleLogin"
               :disabled="loading"
               class="w-full text-white py-2 px-4 rounded-lg"
             >
               Login
             </ion-button>
-            <p v-if="errorMsg" class="text-red-500 mt-2">{{ errorMsg }}</p>
+            <p v-if="loginErrorMsg" class="text-red-500 mt-2">{{ loginErrorMsg }}</p>
             <p class="text-gray-600 mt-4 flex items-center">
-              ¿No tienes cuenta?
-              <span id="login-trigger" class="text-indigo-600 cursor-pointer hover:underline ml-2">
-                Sign in
-              </span>
+              Don't have an account?
+              <button @click="showSignin = true" class="text-blue-600 ml-2">Sign in</button>
             </p>
           </ion-col>
 
@@ -66,69 +66,52 @@
         </ion-row>
       </ion-grid>
 
-      <ion-modal ref="registerModal" trigger="login-trigger" trigger-action="click" alignment="center">
+      <!-- Signin Modal -->
+      <ion-modal :is-open="showSignin" @didDismiss="showSignin = false">
         <ion-content class="ion-padding">
           <div class="bg-white rounded-lg p-6 max-w-md mx-auto">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Crear cuenta</h2>
-            <form class="space-y-4" @submit.prevent="createAccount">
-              <!-- Nombre de usuario -->
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Sign in</h2>
+            <form class="space-y-4" @submit.prevent="handleSignin">
               <div>
-                <label for="registerUserName" class="block text-gray-800 font-semibold mb-2">Nombre de usuario</label>
+                <label class="block text-gray-800 font-semibold mb-2">Username</label>
                 <input 
-                  v-model="registerUserName"
-                  type="text" 
-                  id="registerUserName" 
-                  name="registerUserName" 
+                  v-model="signinUserName"
+                  type="text"
                   class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="Escribe tu nombre de usuario"
+                  placeholder="Enter your username"
                 >
               </div>
-              <!-- Correo electrónico -->
               <div>
-                <label for="registerEmail" class="block text-gray-800 font-semibold mb-2">Correo electrónico</label>
+                <label class="block text-gray-800 font-semibold mb-2">Email</label>
                 <input 
-                  v-model="registerEmail"
-                  type="email" 
-                  id="registerEmail" 
-                  name="registerEmail" 
+                  v-model="signinEmail"
+                  type="email"
                   class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="Escribe tu correo electrónico"
+                  placeholder="Enter your email"
                 >
               </div>
-              <!-- Contraseña -->
               <div>
-                <label for="registerPassword" class="block text-gray-800 font-semibold mb-2">Contraseña</label>
+                <label class="block text-gray-800 font-semibold mb-2">Password</label>
                 <input 
-                  v-model="registerPassword"
-                  type="password" 
-                  id="registerPassword" 
-                  name="registerPassword" 
+                  v-model="signinPassword"
+                  type="password"
                   class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="Escribe tu contraseña"
+                  placeholder="Enter your password"
                 >
               </div>
-              <!-- Confirmar contraseña -->
               <div>
-                <label for="registerPasswordConfirm" class="block text-gray-800 font-semibold mb-2">Confirmar contraseña</label>
+                <label class="block text-gray-800 font-semibold mb-2">Confirm Password</label>
                 <input 
-                  v-model="registerPasswordConfirm"
-                  type="password" 
-                  id="registerPasswordConfirm" 
-                  name="registerPasswordConfirm" 
+                  v-model="signinPasswordConfirm"
+                  type="password"
                   class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="Confirma tu contraseña"
+                  placeholder="Confirm your password"
                 >
               </div>
-              <p v-if="registerErrorMsg" class="text-red-500 mt-2">{{ registerErrorMsg }}</p>
-              <p v-if="registerSuccessMsg" class="text-green-600 mt-2">{{ registerSuccessMsg }}</p>
-              <!-- Botón para crear cuenta -->
+              <p v-if="signinErrorMsg" class="text-red-500 mt-2">{{ signinErrorMsg }}</p>
               <div class="text-center">
-                <ion-button 
-                  type="submit"
-                  :disabled="registerLoading"
-                  class="text-white font-semibold py-2 px-4 rounded-lg transition"
-                >
-                  Crear cuenta
+                <ion-button type="submit" class="text-white font-semibold py-2 px-4 rounded-lg transition">
+                  Sign in
                 </ion-button>
               </div>
             </form>
@@ -149,55 +132,43 @@ import footerCustom from '@/components/footerComponent.vue';
 import { useRouter } from 'vue-router';
 import * as userController from '@/controllers/userController';
 
+const showSignin = ref(false);
+
 const userName = ref('');
 const password = ref('');
-const errorMsg = ref('');
 const loading = ref(false);
 
-const registerUserName = ref('');
-const registerEmail = ref('');
-const registerPassword = ref('');
-const registerPasswordConfirm = ref('');
-const registerErrorMsg = ref('');
-const registerSuccessMsg = ref('');
-const registerLoading = ref(false);
+const signinUserName = ref('');
+const signinEmail = ref('');
+const signinPassword = ref('');
+const signinPasswordConfirm = ref('');
+
+const loginErrorMsg = ref('');
+const signinErrorMsg = ref(''); 
 
 const router = useRouter();
 
-const login = async () => {
-  errorMsg.value = '';
-  loading.value = true;
-
+const handleLogin = async () => {
+  loginErrorMsg.value = '';
   try {
-    const response = await fetch('http://localhost:3000/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: userName.value, password: password.value }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      errorMsg.value = errorData.message || 'Server error';
-      return;
-    }
-
-    const data = await response.json();
-
-    // Guarda el token en localStorage o sessionStorage
-    sessionStorage.setItem('session', data.token);
-
-    // Redirige al perfil del usuario
-    router.push('/home/profile');
-  } catch (e) {
-    errorMsg.value = 'Wrong username or password';
-    console.error(e);
-  } finally {
-    loading.value = false;
+    await userController.login(userName.value, password.value, router);
+  } catch (error) {
+    loginErrorMsg.value = (error instanceof Error ? error.message : 'Error al iniciar sesión');
   }
 };
 
-const registerModal = ref();
+const handleSignin = async () => {
+  signinErrorMsg.value = '';
+  try {
+    await userController.signin(signinUserName.value, signinEmail.value, signinPassword.value, signinPasswordConfirm.value);
+    showSignin.value = false;
+    await userController.login(signinUserName.value, signinPassword.value, router);
+  } catch (error) {
+     signinErrorMsg.value = (error instanceof Error ? error.message : 'Error al registrar el usuario');
+  }
+};
 
+/*
 const createAccount = async () => {
   registerErrorMsg.value = '';
   registerSuccessMsg.value = '';
@@ -232,6 +203,7 @@ const createAccount = async () => {
   }
   registerLoading.value = false;
 };
+*/
 </script>
 
 <style scoped>

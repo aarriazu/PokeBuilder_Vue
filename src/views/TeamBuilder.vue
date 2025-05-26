@@ -90,6 +90,7 @@
           </ion-row>
         </ion-grid>
       </div>
+      <footerComponent/>
     </ion-content>
   </ion-page>
 </template>
@@ -104,6 +105,7 @@ import * as dataController from '@/controllers/dataController';
 import { modalController } from '@ionic/vue';
 import SelectPokemonModal from '@/components/SelectPokemonModal.vue';
 import axios from 'axios';
+import footerComponent from '@/components/footerComponent.vue';
 
 // Inicializar un Pokémon vacio con valores predeterminados
 const router = useRouter();

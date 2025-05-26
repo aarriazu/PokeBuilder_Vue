@@ -25,6 +25,7 @@
           </ion-row>
         </ion-grid>
       </div>
+      <footerComponent/>
     </ion-content>
   </ion-page>
 </template>
@@ -35,6 +36,7 @@ import { onMounted, ref } from 'vue';
 import Team from '@/components/Team.vue';
 import { useRouter } from 'vue-router';
 import * as userController from '@/controllers/userController';
+import footerComponent from '@/components/footerComponent.vue';
 //import { jwtDecode } from 'jwt-decode';
 import { User } from '@/classes/User';
 
