@@ -32,7 +32,7 @@
           <ion-item button @click="routerController.navigateTo(router, '/home/profile')">          
             <ion-label>Profile</ion-label>
           </ion-item>
-          <ion-item button>
+          <ion-item button @click="routerController.navigateTo(router, '/home/settings')">
             <ion-label>Settings</ion-label>
           </ion-item>
         </ion-list>

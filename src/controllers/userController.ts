@@ -102,6 +102,32 @@ export async function getUser() {
   }
 }
 
+export const updateUser = async (
+  username: string,
+  updateFields: any,
+  currentPassword: string
+) => {
+  const response = await fetch('http://localhost:3000/api/user/update', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      username,
+      ...updateFields,
+      currentPassword,
+    }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error || 'Error updating user');
+  }
+  // Guarda el nuevo token si existe
+  if (data.token) {
+    sessionStorage.setItem('session', data.token);
+  }
+  return data;
+};
+
 export function getUsername(): String  {
   getUser();
   return userState.value?.username || "nousername";

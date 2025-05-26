@@ -3,6 +3,7 @@ import cors from 'cors';
 import express, { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import * as dbClass from './DB.js';
+import bcrypt from 'bcrypt';
 
 const app = express();
 const port = 3000;
@@ -54,8 +55,9 @@ app.post('/login', async (req: Request, res: Response): Promise<any> => {
       //return res.status(401).send({ error: 'User not found.' });
     }
 
-    // Verificar la contraseña
-    if (password !== user.password) {
+    // Compara la contraseña con el hash
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
       return res.status(400).send({ error: 'Incorrect password.' });
       //return res.status(401).send({ error: 'Incorrect password.' });
     }
@@ -80,32 +82,6 @@ app.post('/login', async (req: Request, res: Response): Promise<any> => {
     res.status(500).send({ error: 'Internal server error' });
   }
 });
-/*
-app.post('/login', async (req: Request, res: Response): Promise<any> => {
-  const { username, password } = req.body;
-
-  try {
-    // Buscar al usuario por username o email
-    const user = await dbClass.getUserByUsernameOrEmail(username);
-
-    if (!user) {
-      return res.status(400).send({ error: 'User not found.' });
-    }
-
-    // Verificar la contraseña
-    if (password !== user.password) {
-      return res.status(400).send({ error: 'Incorrect password.' });
-    }
-
-    // Generar un token JWT
-    const token = jwt.sign({ id: user.id, username: user.username, email: user.email, profilePic: user.profilePic, createdAt: user.createdAt, lastLogin: new Date(), isMod: user.isMod }, SECRET_KEY, { expiresIn: '1h' });
-    res.json({ token });
-  } catch (error) {
-    console.error("Error al iniciar sesión:", error);
-    res.status(500).send('Error interno del servidor');
-  }
-});
-*/
 
 app.post('/api/signin', async (req: Request, res: Response): Promise<any> => {
   const { username, email, password, confirmPassword } = req.body;
@@ -134,10 +110,13 @@ app.post('/api/signin', async (req: Request, res: Response): Promise<any> => {
       return res.status(400).send({ error: 'This email is already registered.' });
     }
 
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     const user = {
       username,
       email,
-      password,
+      password: hashedPassword,
       profilePic: '',
       isMod: false,
       createdAt: new Date(),
@@ -198,6 +177,67 @@ app.post('/api/user', async (req: Request, res: Response): Promise<any> => {
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
     res.status(500).send('Error interno del servidor');
+  }
+});
+
+app.put('/api/user/update', async (req: Request, res: Response): Promise<any> => {
+  const { username, newUsername, newEmail, newPassword, newProfilePic, currentPassword } = req.body;
+
+  try {
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const usersCollection = db.collection('users');
+
+    const user = await usersCollection.findOne({ username });
+    if (!user) {
+      return res.status(404).send({ error: 'User not found.' });
+    }
+
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!passwordMatch) {
+      return res.status(400).send({ error: 'Incorrect current password.' });
+    }
+
+    const updateFields: any = {};
+    if (newUsername && newUsername !== username) updateFields.username = newUsername;
+    if (newEmail && newEmail !== user.email) updateFields.email = newEmail;
+    if (newProfilePic) updateFields.profilePic = newProfilePic;
+    if (newPassword) {
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      updateFields.password = hashedPassword;
+    }
+
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).send({ error: 'No changes provided.' });
+    }
+
+    await usersCollection.updateOne(
+  { username },
+  { $set: updateFields }
+);
+
+  // Obtén los datos actualizados del usuario
+  const updatedUser = await usersCollection.findOne({ username: newUsername || username });
+
+  // Genera el nuevo token
+  const token = jwt.sign(
+    {
+      username: updatedUser!.username,
+      email: updatedUser!.email,
+      profilePic: updatedUser!.profilePic,
+      createdAt: updatedUser!.createdAt,
+      lastLogin: updatedUser!.lastLogin,
+      isMod: updatedUser!.isMod,
+    },
+    SECRET_KEY,
+    { expiresIn: '1h' }
+  );
+
+  res.status(200).send({ message: 'User updated successfully.', token });
+  } catch (error) {
+    res.status(500).send({ error: 'Internal server error.' });
+  } finally {
+    await client.close();
   }
 });
 

@@ -207,11 +207,9 @@ import { PropType } from 'vue';
 import {
   IonHeader,
   IonToolbar,
-  IonTitle,
   IonButtons,
   IonButton,
   IonIcon,
-  IonMenuButton,
   IonModal,
   IonContent,
 } from '@ionic/vue';
@@ -244,7 +242,6 @@ const openMenu = async () => {
 const toggleMobileMenu = () => {
   mobileMenuState.value = !mobileMenuState.value;
 };
-
 
 const handleLogin = async () => {
   loginErrorMsg.value = '';
