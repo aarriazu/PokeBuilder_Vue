@@ -1,4 +1,4 @@
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { MongoClient, ObjectId, ServerApiVersion } from 'mongodb';
 import cors from 'cors';
 import express, { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
@@ -32,7 +32,7 @@ interface CustomJwtPayload extends JwtPayload {
 
 // Interfaz para el usuario
 export interface User {
-  id: number;
+  _id?: string;
   username: string;
   password: string;
   profilePic: string;
@@ -65,7 +65,7 @@ app.post('/login', async (req: Request, res: Response): Promise<any> => {
     // Generar un token JWT
     const token = jwt.sign(
       {
-        //id: user.id,
+        _id: user._id,
         username: user.username,
         email: user.email,
         profilePic: user.profilePic,

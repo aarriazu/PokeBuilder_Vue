@@ -31,6 +31,7 @@ export const login = async (userName: string, password: string, router: ReturnTy
 
       // Actualiza el estado global del usuario
       userState.value = jwtDecode(data.token) as User;
+      console.log('userState: ', userState.value);
 
 
       // Actualiza el campo lastLogin en la base de datos

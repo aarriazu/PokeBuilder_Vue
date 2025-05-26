@@ -1,5 +1,5 @@
 export class User {
-    //id: number;
+    _id: string;
     username: string;
     password: string;
     profilePic: string;
@@ -7,8 +7,8 @@ export class User {
     createdAt: Date;
     lastLogin: Date;
 
-    constructor(username: string, password: string, email: string) {
-        //this.id = id;
+    constructor(_id: string, username: string, password: string, email: string) {
+        this._id = _id;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -17,11 +17,10 @@ export class User {
         this.lastLogin = new Date();
     }
 
-    /*
-    get getId(): number {
-        return this.id;
+
+    get getId(): string {
+        return this._id;
     }
-    */
     
     get getUsername(): string {
         return this.username;

@@ -11,7 +11,7 @@
             <div>
               <h5 class="text-blue-600 font-semibold text-sm">{{ props.user!.username }}</h5>
               <p class="text-gray-500 text-xs">Member since {{ new Date(props.user!.createdAt).toLocaleDateString('en-EN') }}</p>
-              <a @click="userController.logout(router)" class="text-red-500 hover:text-red-700 text-sm mt-1 inline-block">Exit</a>
+              <a @click="userController.logout(router)" class="text-red-500 hover:text-red-700 text-sm mt-1 inline-block">Logout</a>
             </div>
           </div>
           <div v-else>

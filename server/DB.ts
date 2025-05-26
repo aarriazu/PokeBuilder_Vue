@@ -51,7 +51,7 @@ export async function getUserByUsernameOrEmail(identifier: string): Promise<User
 
     if (user) {
       return {
-        id: user.id,
+        _id: user._id?.toString(),
         username: user.username,
         password: user.password,
         profilePic: user.profilePic,
