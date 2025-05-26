@@ -63,7 +63,7 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/ForumOfftopic.vue')
       },
       {
-        path: 'post',
+        path: 'post/:id',
         component: () => import('@/views/Post.vue')
       },
       {

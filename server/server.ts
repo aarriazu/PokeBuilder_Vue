@@ -1,4 +1,4 @@
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb';
 import cors from 'cors';
 import express, { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
@@ -165,16 +165,19 @@ app.post('/api/teams', async (req: Request, res: Response) => {
 });
 
 // Ruta para buscar un post por nombre
-app.get('/api/posts/:name', async (req, res) => {  
+app.get('/api/posts/:id', async (req, res): Promise <any> => {  
   try {
-    const name = req.params.name; 
+    const id = req.params.id;
     await client.connect();
     const db = client.db("PokeBuilderDB");
     const collection = db.collection("posts");
-
-    // Buscar el post por nombre
-    const post = await collection.findOne({ name: name.toLowerCase() });
-
+    // Buscar el post por _id
+    let post;
+    try {
+      post = await collection.findOne({ _id: new ObjectId(id) });
+    } catch (e) {
+      return res.status(400).send({ error: "ID de post no válido" });
+    }
     if (!post) {
       res.status(404).send({ error: "Post no encontrado" });
     } else {
