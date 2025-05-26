@@ -16,7 +16,7 @@
   
   <script setup lang="ts">
   import { ref } from 'vue';
-  import { IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+  import { IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon } from '@ionic/vue';
   import { star } from 'ionicons/icons';
   
   const props = defineProps({

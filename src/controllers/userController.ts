@@ -2,8 +2,13 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { jwtDecode } from 'jwt-decode';
 import { User } from '@/classes/User';
+import axios, { get } from 'axios';
+import * as routerController from '@/controllers/routerController';
+import { userState } from '@/controllers/stateController';
 
-const user = ref<User | null>(null);
+//const username = ref<string | null>(null);
+//const user = ref<User | null>(null);
+//const token = ref<User | null>(null);
 
 export const login = async (userName: string, password: string, router: ReturnType<typeof useRouter>) => {
     try {
@@ -15,8 +20,7 @@ export const login = async (userName: string, password: string, router: ReturnTy
   
       if (!response.ok) {
         const errorData = await response.json();
-        //errorMsg.value = errorData.message || 'Server error';
-        return;
+        throw new Error(errorData.error || 'Server error');
       }
   
       const data = await response.json();
@@ -24,45 +28,119 @@ export const login = async (userName: string, password: string, router: ReturnTy
   
       // Guarda el token en sessionStorage
       sessionStorage.setItem('session', data.token);
+
+      // Actualiza el estado global del usuario
+      userState.value = jwtDecode(data.token) as User;
+      console.log('userState: ', userState.value);
+
+
+      // Actualiza el campo lastLogin en la base de datos
+      await fetch('http://localhost:3000/api/user/lastLogin', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${data.token}`, // Envía el token si es necesario
+        },
+        body: JSON.stringify({ username: userName }),
+      });
+
+      console.log('Campo lastLogin actualizado');
+
   
       // Redirige al perfil del usuario
-      router.push('/home/profile');
-    } catch (e) {
-      //errorMsg.value = 'Wrong username or password';
-      console.error(e);
-    } finally {
-      //loading.value = false;
+      routerController.navigateToAndClose(router, '/home/profile');
+    } catch (error) {
+      console.error('Error en login:', error);
+      throw error;
     }
   };
+
+  export const signin = async ( username: string, email: string, password: string, confirmPassword: string) => {
+    try {
+      const response = await fetch('http://localhost:3000/api/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+          confirmPassword,
+        }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Server error');
+    }
+
+    const data = await response.json();
+    console.log('Usuario registrado:', data);
+    return data;
+  } catch (error) {
+    console.error('Error en signIn:', error);
+    throw error;
+  }
+};
   
 export function logout(router: ReturnType<typeof useRouter>) {
-  user.value = null;
+  userState.value = null;
+  console.log('Estado del usuario después de logout:', userState.value);
   sessionStorage.removeItem('session'); 
-  router.push('/login');
+  routerController.navigateToAndClose(router, '/login');
 }
 
-export function getUser() {
+export async function getUser() {
   const session = sessionStorage.getItem('session');
-
+  console.log('Token de sesión:', session);
   if (session) {
-    try {
-      // Decodifica el token JWT
-      user.value = jwtDecode(session) as User; 
-      console.log('Usuario decodificado:', user.value.profilePicture);
-    } catch (error) {
-      console.error('Error al decodificar el token:', error);
-    }
+    userState.value = jwtDecode(session) as User;
+    console.log('Usuario:', userState.value.username);
+    console.log('Token decodificado:', userState.value);
+    return userState.value;
   } else {
-    console.error('No se encontró el token en el almacenamiento');
+    console.error('No session token found');
+    return null;
   }
 }
 
+export const updateUser = async (
+  username: string,
+  updateFields: any,
+  currentPassword: string
+) => {
+  const response = await fetch('http://localhost:3000/api/user/update', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      username,
+      ...updateFields,
+      currentPassword,
+    }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error || 'Error updating user');
+  }
+  // Guarda el nuevo token si existe
+  if (data.token) {
+    sessionStorage.setItem('session', data.token);
+  }
+  return data;
+};
+
 export function getUsername(): String  {
-  return user.value?.username || "nousername";
+  getUser();
+  return userState.value?.username || "nousername";
 }
 
-export function getProfilePic(): String  {
-    return user.value?.profilePicture || "noimg";
+export function getProfilePic(): string {
+  if (!userState.value) {
+    console.error('El usuario no está definido');
+    return 'https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1'; // Devuelve una imagen predeterminada
+  }
+
+  return userState.value.profilePic || 'https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1'; // Devuelve la imagen del perfil o una predeterminada
 }
 
 /*

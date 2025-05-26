@@ -24,6 +24,7 @@
     "@ionic/vue": "^8.5.2",
     "@ionic/vue-router": "^8.0.0",
     "axios": "^1.9.0",
+    "bcrypt": "^6.0.0",
     "chart.js": "^4.4.8",
     "cors": "^2.8.5",
     "express": "^5.1.0",
@@ -39,6 +40,7 @@
   "devDependencies": {
     "@capacitor/cli": "7.0.1",
     "@types/axios": "^0.9.36",
+    "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
