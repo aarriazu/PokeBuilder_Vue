@@ -1,6 +1,5 @@
 <template>
     <ion-page>
-      <navbarComponent />
       <ion-content>
         <div class="p-4">
           <!-- Barra de búsqueda -->
@@ -83,7 +82,6 @@
   import { useRoute, useRouter } from 'vue-router';
   import { IonContent, IonPage, IonGrid, IonRow, IonCol, IonButton, IonInput, IonSelect, IonSelectOption } from '@ionic/vue';
   import * as dataController from '@/controllers/dataController';
-  import navbarComponent from '@/components/navbarComponent.vue';
   
   // Configuración de la paginación
   const itemsPerPage = 40; // Número de elementos por página

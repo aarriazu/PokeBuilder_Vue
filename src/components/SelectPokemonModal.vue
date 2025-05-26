@@ -2,7 +2,7 @@
     <ion-page>
       <ion-content>
         <div class="modal-content">
-          <h2>Selecciona Pokémon</h2>
+          <h2>Select Pokémon</h2>
   
           <!-- Barra de búsqueda -->
           <ion-input
@@ -31,7 +31,7 @@
             <!-- Filtro por generación -->
             <ion-select v-model="selectedGeneration" placeholder="Generación">
               <ion-select-option v-for="generation in pokemonGenerations" :key="generation" :value="generation">
-                Generación {{ generation }}
+                Generation {{ generation }}
               </ion-select-option>
             </ion-select>
           </div>
@@ -53,7 +53,7 @@
             </ion-item>
           </ion-list>
   
-          <ion-button @click="close">Cerrar</ion-button>
+          <ion-button @click="close">Close</ion-button>
         </div>
       </ion-content>
     </ion-page>

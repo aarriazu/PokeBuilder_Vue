@@ -1,24 +1,25 @@
 export class User {
-    id: number;
+    _id: string;
     username: string;
     password: string;
-    profilePicture: string;
+    profilePic: string;
     email: string;
     createdAt: Date;
-    updatedAt: Date;
+    lastLogin: Date;
 
-    constructor(id: number, username: string, password: string, email: string) {
-        this.id = id;
+    constructor(_id: string, username: string, password: string, email: string) {
+        this._id = _id;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.profilePicture = "";
+        this.profilePic = "";
         this.createdAt = new Date();
-        this.updatedAt = new Date();
+        this.lastLogin = new Date();
     }
 
-    get getId(): number {
-        return this.id;
+
+    get getId(): string {
+        return this._id;
     }
     
     get getUsername(): string {
@@ -45,17 +46,17 @@ export class User {
     }
     
     get getUpdatedAt(): Date {
-        return this.updatedAt;
+        return this.lastLogin;
     }
     set setUpdatedAt(updatedAt: Date) { 
-        this.updatedAt = updatedAt;
+        this.lastLogin = updatedAt;
     }
 
-    get getProfilePicture(): string {
-        return this.profilePicture;
+    get getProfilePic(): string {
+        return this.profilePic;
     }
     
-    set setProfilePicture(profilePicture: string) {
-        this.profilePicture = profilePicture;
+    set setProfilePic(profilePic: string) {
+        this.profilePic = profilePic;
     }
 }

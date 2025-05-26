@@ -73,6 +73,10 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/Stats.vue')
       },
       {
+        path: 'settings',
+        component: () => import('@/views/Settings.vue')
+      },
+      {
         path: 'forumGeneral',
         component: () => import('@/views/ForumGeneral.vue')
       },

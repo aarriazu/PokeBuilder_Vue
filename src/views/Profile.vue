@@ -1,7 +1,5 @@
 <template>
   <ion-page>
-    <navbarCustom/>
-    <menuComponent :router="router"/>
     <ion-content :fullscreen="true">
       <div class="main">
         <!-- Grid principal -->
@@ -27,19 +25,20 @@
           </ion-row>
         </ion-grid>
       </div>
+      <footerComponent/>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol } from '@ionic/vue';
+import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonIcon } from '@ionic/vue';
 import { onMounted, ref } from 'vue';
 import Team from '@/components/Team.vue';
-import navbarCustom from '@/components/navbarComponent.vue';
-import menuComponent from '@/components/menuComponent.vue';
 import { useRouter } from 'vue-router';
 import * as userController from '@/controllers/userController';
-import { jwtDecode } from 'jwt-decode';
+import footerComponent from '@/components/footerComponent.vue';
+//import { jwtDecode } from 'jwt-decode';
+import { User } from '@/classes/User';
 
 interface Pokemon {
   name: string;
@@ -56,10 +55,15 @@ interface Team {
 
 const router = useRouter();
 
-const username = ref<string | null>(null);
+const user = ref<User | null>(null);
 
-onMounted(() => {
-  userController.getUser();
+onMounted(async () => {
+  try {
+    user.value = await userController.getUser();
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    user.value = null; // Asegurarse de que user sea null si ocurre un error
+  }
 });
 
 const dummyTeams = ref([
