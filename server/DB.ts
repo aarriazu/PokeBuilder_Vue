@@ -39,7 +39,6 @@ export async function insertTeam(team: any) {
   }
 }
 
-<<<<<<< HEAD
 export async function getUserByUsernameOrEmail(identifier: string): Promise<User | null> {
   try {
     const db = await connectToDatabase();
@@ -82,9 +81,7 @@ export async function insertPost(post: any) {
     return result.insertedId;
   } catch (error) {
     console.error("Error al guardar el post en la base de datos:", error);
-    throw error;
-  } finally {
-    await client.close();
+    throw error
   }
 }
 
