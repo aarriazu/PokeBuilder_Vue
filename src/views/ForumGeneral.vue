@@ -12,17 +12,7 @@
             </svg>
           </button>
 
-          <!-- Perfil en sidebar -->
-          <div class="flex items-center p-4 border-b border-gray-200">
-            <img 
-              class="w-12 h-12 rounded-lg object-cover mr-3 border-2 border-gray-200" 
-              src="/src/assets/images/profile/profilePic.png"
-            >
-            <div>
-              <h5 class="text-blue-600 font-semibold text-sm">Pokefan33</h5>
-              <p class="text-gray-500 text-xs">Miembro desde 10/02/2024</p>
-            </div>
-          </div>
+          
 
           <!-- Categorías del foro -->
           <div class="p-4 space-y-2">
