@@ -5,6 +5,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import * as dbClass from './DB.js';
 import bcrypt from 'bcrypt';
 
+
 const app = express();
 const port = 3000;
 
@@ -23,6 +24,7 @@ const client = new MongoClient(uri, {
 
 app.use(cors());
 app.use(express.json());
+
 
 // Interfaz para el payload del token
 interface CustomJwtPayload extends JwtPayload {
@@ -329,6 +331,110 @@ app.post('/api/teams', async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error al guardar el equipo:", error);
     res.status(500).send("Error al guardar el equipo");
+  }
+});
+
+// Ruta para buscar un post por nombre
+app.get('/api/posts/:name', async (req, res) => {  
+  try {
+    const name = req.params.name; 
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("posts");
+
+    // Buscar el post por nombre
+    const post = await collection.findOne({ name: name.toLowerCase() });
+
+    if (!post) {
+      res.status(404).send({ error: "Post no encontrado" });
+    } else {
+      res.status(200).send(post);
+    }
+  } catch (error) {
+    console.error("Error al obtener el post:", error);
+    res.status(500).send({ error: "Error al obtener el post" });
+  } finally {
+    await client.close();
+  }
+});
+
+app.get('/api/posts', async (req, res) => {
+  try {
+    // Conectar a la base de datos
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("posts");
+    // Obtener todos los posts con subforum "General"
+    const posts = await collection.find({ subforum: "General" }).toArray();
+    // Enviar los posts como respuesta
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error al obtener los posts:", error);
+    res.status(500).json({ error: "Error al obtener los posts" });
+  } finally {
+    // Cerrar la conexión con la base de datos
+    await client.close();
+  }
+});
+
+// Recibir llamada para insertar un post en la base de datos (RECORDAR LA PRMOMISE <ANY>)
+app.post('/api/posts', async (req, res): Promise <any> => {
+  try {
+    const post = req.body;
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("posts");
+
+    // Validar que no haya un post con el mismo nombre de torneo
+    const existingPost = await collection.findOne({ name: post.name.toLowerCase() });
+    if (existingPost) {
+      return res.status(400).send({ error: "Ya existe un torneo con este nombre." });
+    }
+
+    // Insertar el nuevo post
+    const result = await collection.insertOne(post);
+    res.status(201).send({ insertedId: result.insertedId });
+  } catch (error) {
+    console.error("Error al guardar el post:", error);
+    res.status(500).send("Error al guardar el post");
+  } finally {
+    await client.close();
+  }
+});
+
+app.get('/api/postsTorneo', async (req, res): Promise<any> => {
+  try {
+    // Conectar a la base de datos
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("postsTorneo");
+
+    // Obtener todos los posts de subforo de torneos
+    const postsTorneo = await collection.find({}).toArray();
+
+    // Enviar los posts como respuesta
+    res.status(200).json(postsTorneo);
+  } catch (error) {
+    console.error("Error al obtener los posts:", error);
+    res.status(500).json({ error: "Error al obtener los posts" });
+  } finally {
+    // Cerrar la conexión con la base de datos
+    await client.close();
+  }
+});
+
+
+app.post('/api/postsTorneo', async (req,res): Promise<any> => {
+  try {
+    console.log("Datos recibidos:", req.body);
+    const post = req.body;
+
+    // Insertar el nuevo post de torneo
+    const insertedId = await dbClass.insertTorneoPost(post);
+    res.status(201).json({ insertedId }); // Respuesta JSON válida
+  } catch (error) {
+    console.error("Error al guardar el post:", error);
+    res.status(500).json({ error: "Error al guardar el post" }); // Respuesta JSON válida en caso de error
   }
 });
 

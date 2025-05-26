@@ -52,6 +52,25 @@ export function formatText(text: string): string {
   const modText = text[0].toUpperCase() + text.slice(1);
   return modText.replace('-', ' ');
 }
+export async function getPosts() {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/posts`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener los posts:", error);
+    throw error;
+  }
+}
+
+export async function getPostsTorneo() {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/postsTorneo`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener los posts de torneo:", error);
+    throw error;
+  }
+}
 
 export function typeTranslate(type: string, lang: string): string | undefined{
   const typeRef: Type | undefined = typeArray.find(p => p.name === type);

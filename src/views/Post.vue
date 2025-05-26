@@ -200,7 +200,7 @@
 
               <!-- Lista de respuestas -->
               <div class="space-y-6">
-                <h3 class="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2">Respuestas (3)</h3>
+                <h3 class="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2">Respuestas (1)</h3>
                 
                 <!-- Respuesta 1 -->
                 <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
@@ -231,64 +231,6 @@
                   </div>
                 </div>
 
-                <!-- Respuesta 2 -->
-                <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-                  <div class="flex items-start">
-                    <img src="/src/assets/images/profile/otherProfile.png" 
-                         alt="User Icon" 
-                         class="w-10 h-10 rounded-full mr-4 flex-shrink-0">
-                    <div class="flex-1">
-                      <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-semibold text-gray-800">Usuario2</h4>
-                        <span class="text-xs text-gray-500">Hace 5 horas</span>
-                      </div>
-                      <div class="prose max-w-none text-gray-700 mb-4">
-                        <p>Otro comentario de ejemplo. Este usuario también participa en la discusión.</p>
-                        <p>Puede incluir múltiples párrafos si es necesario para explicar su punto de vista.</p>
-                      </div>
-                      <div class="flex items-center space-x-4 text-sm">
-                        <button class="flex items-center text-gray-500 hover:text-blue-600">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                          </svg>
-                          <span>3 votos</span>
-                        </button>
-                        <button class="text-red-500 hover:text-red-700">
-                          Reportar
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Respuesta 3 -->
-                <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-                  <div class="flex items-start">
-                    <img src="/src/assets/images/profile/otherProfile.png" 
-                         alt="User Icon" 
-                         class="w-10 h-10 rounded-full mr-4 flex-shrink-0">
-                    <div class="flex-1">
-                      <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-semibold text-gray-800">Usuario3</h4>
-                        <span class="text-xs text-gray-500">Ayer, 14:30</span>
-                      </div>
-                      <div class="prose max-w-none text-gray-700 mb-4">
-                        <p>Este es un tercer comentario para mostrar cómo se ven múltiples respuestas.</p>
-                      </div>
-                      <div class="flex items-center space-x-4 text-sm">
-                        <button class="flex items-center text-gray-500 hover:text-blue-600">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                          </svg>
-                          <span>8 votos</span>
-                        </button>
-                        <button class="text-red-500 hover:text-red-700">
-                          Reportar
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
