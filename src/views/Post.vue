@@ -147,6 +147,26 @@
               </div>
             </div>
           </div>
+
+          <!-- Caja para responder-->
+            <div class="max-w-4xl mx-auto mb-8">
+              <label for="message" class="block mb-2 text-sm font-medium text-gray-900">Tu respuesta</label>
+              <textarea
+                id="message"
+                rows="4"
+                v-model="answerContent"
+                class="block w-full p-3 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                placeholder="Escribe tu respuesta aquí..."
+              ></textarea>
+              <div class="flex justify-end mt-3">
+                <button
+                  @click="sendAnswer"
+                  class="bg-indigo-600 text-white px-5 py-2 rounded-lg font-semibold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                >
+                  Send answer
+                </button>
+              </div>
+            </div>
           <!-- Comentarios -->
            
         </div>
@@ -166,6 +186,13 @@ const currentForum = ref('offtopic');
 
 const route = useRoute();
 const post = ref<any>(null);
+const answerContent = ref('');
+
+const sendAnswer = () => {
+  // Aquí puedes manejar el envío de la respuesta
+  console.log('Respuesta enviada:', answerContent.value);
+  answerContent.value = '';
+};
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
