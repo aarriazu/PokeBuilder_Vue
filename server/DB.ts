@@ -1,4 +1,4 @@
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb';
 import { User } from './server';
 
 const uri = "mongodb+srv://pokeadmin:Yg4FDgNGHoNuZ6Ov@pokebuilderdb.1iko4rb.mongodb.net/?retryWrites=true&w=majority&appName=PokeBuilderDB";
@@ -84,6 +84,29 @@ export async function insertPost(post: any) {
     throw error
   }
 }
+
+//Funcion para insertar un comentario en la colecciín "Answers"
+export async function insertComment(comment: any) {
+  try {
+    const db = await connectToDatabase();
+    const collection = db.collection("Answers"); // Usamos la colección "Answers"
+
+    // Convertir postId a ObjectId si es necesario
+    if (comment.postId && typeof comment.postId === 'string') {
+      comment.postId = ObjectId.createFromHexString(comment.postId);
+    }
+
+    const result = await collection.insertOne(comment);
+    console.log("Comentario guardado en la base de datos:", result.insertedId);
+    return result.insertedId;
+  } catch (error) {
+    console.error("Error al guardar el comentario en la base de datos:", error);
+    throw error;
+  } finally {
+    await client.close();
+  }
+}
+
 
 // Función para obtener los datos de un usuario por su ID o nombre de usuario
 export async function getUserData(identifier: string) {

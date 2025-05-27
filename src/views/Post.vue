@@ -16,7 +16,7 @@
           <div class="p-4 space-y-2">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categorías</h3>
             <router-link 
-              to="/home/forumGeneral" 
+              to="/forumGeneral" 
               class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-blue-100 text-blue-800': currentForum === 'general', 'text-gray-700 hover:bg-gray-100': currentForum !== 'general'}"
             >
@@ -28,7 +28,7 @@
               <span class="font-medium">General</span>
             </router-link>
             <router-link 
-              to="/home/forumTorneos" 
+              to="/forumTorneos" 
               class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-red-100 text-red-800': currentForum === 'torneos', 'text-gray-700 hover:bg-gray-100': currentForum !== 'torneos'}"
             >
@@ -40,7 +40,7 @@
               <span class="font-medium">Torneos</span>
             </router-link>
             <router-link 
-              to="/home/forumAyuda" 
+              to="/forumAyuda" 
               class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-green-100 text-green-800': currentForum === 'ayuda', 'text-gray-700 hover:bg-gray-100': currentForum !== 'ayuda'}"
             >
@@ -52,7 +52,7 @@
               <span class="font-medium">Ayuda</span>
             </router-link>
             <router-link 
-              to="/home/forumSpinoff" class="flex items-center p-3 rounded-lg transition-colors"
+              to="/forumSpinoff" class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-purple-100 text-purple-800': currentForum === 'spinoff', 'text-gray-700 hover:bg-gray-100': currentForum !== 'spinoff'}"
             >
               <div class="bg-purple-100 p-2 rounded-lg mr-3">
@@ -62,7 +62,7 @@
               </div>
               <span class="font-medium">Spin-off</span>
             </router-link>
-            <router-link to="/home/forumOfftopic" class="flex items-center p-3 rounded-lg transition-colors"
+            <router-link to="/forumOfftopic" class="flex items-center p-3 rounded-lg transition-colors"
                          :class="{'bg-yellow-100 text-yellow-800': currentForum === 'offtopic', 'text-gray-700 hover:bg-gray-100': currentForum !== 'offtopic'}">
               <div class="bg-yellow-100 p-2 rounded-lg mr-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-600" viewBox="0 0 20 20" fill="currentColor">
@@ -168,7 +168,21 @@
               </div>
             </div>
           <!-- Comentarios -->
-           
+          <div class="bg-white p-4 sm:p-6 rounded-lg">
+            <h3 class="text-lg sm:text-xl text-center font-semibold text-gray-800 mb-4">Respuestas</h3>
+            <div v-if="answers.length > 0">
+              <AnswerComponent
+                v-for="(answer, index) in answers"
+                :key="index"
+                :author="answer.author"
+                :content="answer.content"
+                :createdAt="answer.createdAt"
+              />
+            </div>
+            <div v-else class="text-gray-500  text-center text-sm sm:text-base">
+              No hay respuestas aún. ¡Sé el primero en responder!
+            </div>
+          </div>
         </div>
       </div>
     </ion-content>
@@ -179,20 +193,83 @@
 import { ref, onMounted } from 'vue';
 import { IonContent, IonPage } from '@ionic/vue';
 import { useRoute } from 'vue-router';
+import AnswerComponent from '@/components/AnswerComponent.vue';
+import axios from 'axios';
 import * as dataController from '@/controllers/dataController';
 
+// Interface para el comentario
+interface Comment {
+  postId: string;
+  author: string;
+  content: string;
+  createdAt: string;
+  editedAt: string;
+}
+
 const sidebarOpen = ref(false);
-const currentForum = ref('offtopic');
+const currentForum = ref('');
 
 const route = useRoute();
 const post = ref<any>(null);
+const answers = ref<Comment[]>([]); // Array para almacenar las respuestas
 const answerContent = ref('');
 
-const sendAnswer = () => {
-  // Aquí puedes manejar el envío de la respuesta
-  console.log('Respuesta enviada:', answerContent.value);
-  answerContent.value = '';
+// Función para enviar la respuesta
+const sendAnswer = async () => {
+  if (!answerContent.value.trim()) {
+    alert('El contenido de la respuesta no puede estar vacío.');
+    return;
+  }
+
+  // Crear el objeto del comentario usando la interface
+  const comment: Comment = {
+    postId: post.value._id, // ID del post actual
+    author: 'Usuario2', // Cambiar por el autor real si está disponible
+    content: answerContent.value,
+    createdAt: new Date().toISOString(),
+    editedAt: new Date().toISOString(),
+  };
+
+  try {
+    // Enviar el comentario al servidor
+    const response = await axios.post('http://localhost:3000/api/Answers', comment, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log('Respuesta enviada exitosamente:', response.data);
+    alert('Respuesta enviada exitosamente.');
+    answerContent.value = ''; // Limpiar el campo de respuesta
+    location.reload(); // Recargar la página para mostrar la nueva respuesta
+  } catch (error) {
+    console.error('Error al enviar la respuesta:', error);
+    alert('Hubo un error al enviar la respuesta.');
+  }
 };
+
+// Función para obtener las respuestas del post
+const fetchAnswers = async () => {
+  try {
+    // Verificar que el post esté cargado antes de intentar obtener las respuestas
+    if (!post.value || !post.value._id) {
+      console.error('El post no está cargado o no tiene un ID válido.');
+      return;
+    }
+
+    // Realizar la solicitud GET al servidor
+    const response = await axios.get<Comment[]>('http://localhost:3000/api/Answers', {
+      params: { postId: post.value._id }, // Pasar el ID del post como parámetro
+    });
+
+    // Guardar las respuestas en el array `answers`
+    answers.value = response.data;
+    console.log('Respuestas obtenidas:', answers.value);
+  } catch (error) {
+    console.error('Error al obtener las respuestas:', error);
+  }
+};
+
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
@@ -201,6 +278,11 @@ const toggleSidebar = () => {
 onMounted(async () => {
   const id = route.params.id as string;
   post.value = await dataController.getPostById(id);
+  if( post.value) {
+    await fetchAnswers(); // Cargar las respuestas al montar el componente
+  } else {
+    console.error('Post no encontrado');
+  }
 });
 </script>
 

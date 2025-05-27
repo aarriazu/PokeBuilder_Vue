@@ -64,28 +64,28 @@
 
                 <!-- Publicaciones -->
                 <div class="space-y-4">
-                  <a href="/home/post" class="block">
+                  <a href="/post" class="block">
                     <img 
                       src="/src/assets/images/forum/forumPostGeneral.png" 
                       alt="Publicación 1" 
                       class="w-full rounded-lg shadow-md hover:shadow-lg transition-shadow"
                     >
                   </a>
-                  <a href="/home/post" class="block">
+                  <a href="/post" class="block">
                     <img 
                       src="/src/assets/images/forum/forumPostGeneral.png" 
                       alt="Publicación 2" 
                       class="w-full rounded-lg shadow-md hover:shadow-lg transition-shadow"
                     >
                   </a>
-                  <a href="/home/post" class="block">
+                  <a href="/post" class="block">
                     <img 
                       src="/src/assets/images/forum/forumPostGeneral.png" 
                       alt="Publicación 3" 
                       class="w-full rounded-lg shadow-md hover:shadow-lg transition-shadow"
                     >
                   </a>
-                  <a href="/home/post" class="block">
+                  <a href="/post" class="block">
                     <img 
                       src="/src/assets/images/forum/forumPostGeneral.png" 
                       alt="Publicación 4" 

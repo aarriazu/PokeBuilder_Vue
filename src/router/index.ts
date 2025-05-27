@@ -78,7 +78,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/ForumOfftopic.vue')
   },
   {
-    path: '/post',
+    path: '/post/:id',
     name: 'Post',
     component: () => import('@/views/Post.vue')
   }, 
@@ -91,6 +91,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/torneoBracket',
     name: 'TorneoBracket',
     component: () => import('@/views/TorneoBracket.vue')
+  },
+  {
+    path: '/forumTorneos/post/:id',
+    name: 'PostTorneo',
+    component: () => import('@/views/PostTorneo.vue')
   },
   {
     path: '/:pathMatch(.*)*',

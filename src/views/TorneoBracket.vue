@@ -184,7 +184,7 @@ const generateBracket = (): void => {
 
 
     alert('Torneo guardado exitosamente.');
-    router.push('/home/forumTorneos');
+    router.push('/forumTorneos');
   } catch (error) {
     console.error('Error al guardar el post:', error);
     alert('Hubo un error al guardar el post, disculpa las molestias.');

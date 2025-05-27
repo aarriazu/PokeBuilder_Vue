@@ -29,7 +29,7 @@
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categorías</h3>
             
             <router-link 
-              to="/home/forumGeneral" 
+              to="/forumGeneral" 
               class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-blue-100 text-blue-800': currentForum === 'general', 'text-gray-700 hover:bg-gray-100': currentForum !== 'general'}"
             >
@@ -42,7 +42,7 @@
             </router-link>
 
             <router-link 
-              to="/home/forumTorneos" 
+              to="/forumTorneos" 
               class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-red-100 text-red-800': currentForum === 'torneos', 'text-gray-700 hover:bg-gray-100': currentForum !== 'torneos'}"
             >
@@ -55,7 +55,7 @@
             </router-link>
 
             <router-link 
-              to="/home/forumAyuda" 
+              to="/forumAyuda" 
               class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-green-100 text-green-800': currentForum === 'ayuda', 'text-gray-700 hover:bg-gray-100': currentForum !== 'ayuda'}"
             >
@@ -67,7 +67,7 @@
               <span class="font-medium">Ayuda</span>
             </router-link>
 
-            <router-link to="/home/forumSpinoff" class="flex items-center p-3 rounded-lg transition-colors"
+            <router-link to="/forumSpinoff" class="flex items-center p-3 rounded-lg transition-colors"
                          :class="{'bg-purple-100 text-purple-800': currentForum === 'spinoff', 'text-gray-700 hover:bg-gray-100': currentForum !== 'spinoff'}">
               <div class="bg-purple-100 p-2 rounded-lg mr-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600" viewBox="0 0 20 20" fill="currentColor">
@@ -77,7 +77,7 @@
               <span class="font-medium">Spin-off</span>
             </router-link>
 
-            <router-link to="/home/forumOfftopic" class="flex items-center p-3 rounded-lg transition-colors"
+            <router-link to="/forumOfftopic" class="flex items-center p-3 rounded-lg transition-colors"
                          :class="{'bg-yellow-100 text-yellow-800': currentForum === 'offtopic', 'text-gray-700 hover:bg-gray-100': currentForum !== 'offtopic'}">
               <div class="bg-yellow-100 p-2 rounded-lg mr-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-600" viewBox="0 0 20 20" fill="currentColor">
@@ -214,7 +214,7 @@ const savePost = async (): Promise<void> => {
     let data = null;
     
     alert('Post guardado exitosamente.');
-    router.push(`/home/forumGeneral`);
+    router.push(`/forumGeneral`);
   } catch (error) {
     console.error('Error al guardar el post:', error);
     alert('Hubo un error al guardar el post, disculpa las molestias.');

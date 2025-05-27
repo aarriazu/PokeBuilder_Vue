@@ -446,6 +446,80 @@ app.post('/api/postsTorneo', async (req,res): Promise<any> => {
   }
 });
 
+app.get('/api/postsTorneo/:id', async (req, res): Promise<any> => {
+  try {
+    const id = req.params.id;
+
+    // Validar que el ID sea un ObjectId válido
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "ID no válido" });
+    }
+
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("postsTorneo");
+
+    const post = await collection.findOne({ _id: new ObjectId(id) });
+    if (!post) {
+      return res.status(404).json({ error: "Post de torneo no encontrado" });
+    }
+
+    res.status(200).json(post);
+  } catch (error) {
+    console.error("Error al obtener el post de torneo:", error);
+    res.status(500).json({ error: "Error al obtener el post de torneo" });
+  } finally {
+    await client.close();
+  }
+});
+
+app.post('/api/Answers', async (req, res): Promise<any> => {
+  try {
+    console.log("Datos recibidos para la respuesta:", req.body);
+    const { postId, author, content, createdAt, editedAt } = req.body;
+    if (!postId || !author || !content || !createdAt || !editedAt) {
+      res.status(400).json({ error: "Faltan datos requeridos para guardar la respuesta." });
+      return;
+    }
+    const comment = req.body;
+    const insertedId = await dbClass.insertComment(comment);
+    // Responder con el ID del comentario insertado
+    res.status(201).json({ insertedId });
+  } catch (error) {
+    console.error("Error al guardar la respuesta:", error);
+    res.status(500).json({ error: "Error al guardar la respuesta." });
+  }
+});
+
+// Obtener todas las respuestas o filtrar por postId
+app.get('/api/Answers', async (req, res): Promise<any> => {
+  try {
+    console.log("Solicitud para obtener respuestas:", req.query);
+
+    // Conectar a la base de datos
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("Answers");
+
+    // Verificar si se proporciona un postId como query parameter
+    const { postId } = req.query;
+
+    let filter = {};
+    if (postId) {
+      filter = { postId: new ObjectId(postId as string) }; // Filtrar por postId
+    }
+
+    // Obtener las respuestas de la base de datos
+    const answers = await collection.find(filter).toArray();
+
+    res.status(200).json(answers);
+  } catch (error) {
+    console.error("Error al obtener las respuestas:", error);
+    res.status(500).json({ error: "Error al obtener las respuestas." });
+  } finally {
+    await client.close();
+  }
+});
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
