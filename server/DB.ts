@@ -39,7 +39,6 @@ export async function insertTeam(team: any) {
   }
 }
 
-<<<<<<< HEAD
 export async function getUserByUsernameOrEmail(identifier: string): Promise<User | null> {
   try {
     const db = await connectToDatabase();

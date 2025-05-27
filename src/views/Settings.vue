@@ -110,7 +110,7 @@ const profileUpdate = async () => {
       changeProfilePic.value = '';
       currentPassword.value = '';
       alert("Parameters updated.");
-      routerController.navigateTo(router, "/home/profile")
+      routerController.navigateTo(router, "/profile")
     }
   } catch (error: any) {
     updateMsg.value = error.message || 'Error al actualizar los datos';

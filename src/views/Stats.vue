@@ -21,7 +21,7 @@
           <div class="p-4 space-y-2">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Opciones</h3>
             <router-link
-              to="/home/profile"
+              to="/profile"
               class="flex items-center p-3 rounded-lg transition-colors text-gray-700 hover:bg-gray-100"
             >
               <span class="font-medium">Volver al perfil</span>
