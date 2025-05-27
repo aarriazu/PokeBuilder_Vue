@@ -9,8 +9,8 @@
             <ion-col size="12" size-md="6" class="pr-0 md:pr-4">
               <div class="max-w-[50%] mb-4">
                 <div class="grid grid-cols-2 gap-2">
-                  <ion-button router-link="/home/teamBuilder" class="w-full">New Team</ion-button>
-                  <ion-button router-link="/home/stats" class="w-full">Stats</ion-button>
+                  <ion-button router-link="/teamBuilder" class="w-full">New Team</ion-button>
+                  <ion-button router-link="/stats" class="w-full">Stats</ion-button>
                 </div>
               </div>
               <Team
@@ -67,9 +67,9 @@ onMounted(async () => {
 });
 
 const dummyTeams = ref([
-  { name: 'Equipo Eevee', image: '/src/assets/images/pokemon/teamEevee.png', link: '/home/teamBuilder' },
-  { name: 'Equipo 2', image: '/src/assets/images/pokemon/team2.png', link: '/home/teamBuilder' },
-  { name: 'Equipo Kanto', image: '/src/assets/images/pokemon/teamKanto.png', link: '/home/teamBuilder' }
+  { name: 'Equipo Eevee', image: '/src/assets/images/pokemon/teamEevee.png', link: '/teamBuilder' },
+  { name: 'Equipo 2', image: '/src/assets/images/pokemon/team2.png', link: '/teamBuilder' },
+  { name: 'Equipo Kanto', image: '/src/assets/images/pokemon/teamKanto.png', link: '/teamBuilder' }
 ]);
 
 const deleteTeam = (index: number) => {

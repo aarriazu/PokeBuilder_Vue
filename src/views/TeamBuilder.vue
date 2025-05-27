@@ -6,7 +6,7 @@
           <div style="float: right;">
             <ion-button @click="saveTeam">Save</ion-button>
             <ion-button @click="resetPokemons">Reset</ion-button>
-            <ion-button router-link="/home">Back</ion-button>
+            <ion-button router-link="/profile">Back</ion-button>
           </div>
         </div>
 
