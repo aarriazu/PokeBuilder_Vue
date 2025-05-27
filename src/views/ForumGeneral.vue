@@ -118,15 +118,16 @@
           <!-- Área de contenido -->
           <div class="p-4 md:p-6">
             <div class="max-w-4xl mx-auto">
-              <h2 class="text-2xl font-semibold text-gray-800 mb-4">Bienvenido al foro general</h2>
-              <p class="text-gray-600 mb-6">
-                Aquí puedes discutir temas generales relacionados con Pokémon. Participa en las conversaciones y comparte tus ideas con otros entrenadores.
-              </p>
+              <!-- Cabecera del foro -->
+              <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Bienvenido al foro general</h2>
+                <p class="text-gray-600 mb-6">
+                  Aquí puedes discutir temas generales relacionados con Pokémon. Participa en las conversaciones y comparte tus ideas con otros entrenadores.
+                </p>
 
-              <!-- Botón Crear Post -->
-              <div class="mb-6">
+                <!-- Botón Crear Post -->
                 <router-link 
-                  to="/home/newPost" 
+                  :to="{ path: '/home/newPost', query: { subforum: 'General' } }"  
                   class="inline-flex items-center bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
@@ -136,108 +137,27 @@
                 </router-link>
               </div>
 
-              <!-- Publicaciones -->
-              <div class="space-y-4">
-                <!-- Post 1 -->
-                <div class="flex items-start p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition">
-                  <div class="w-16 h-16 flex-shrink-0 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  </div>
-                  
-                  <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold text-lg text-gray-800 truncate hover:text-blue-600">
-                      <router-link to="/home/post/">Mejor equipo para la liga de Galar</router-link>
-                    </h3>
-                    <p class="text-sm text-gray-600 mt-1">Publicado por: EntrenadorElite</p>
-                    
-                    <div class="flex flex-wrap items-center mt-2 text-xs gap-2 md:gap-4">
-                      <span class="text-gray-500 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                        </svg>
-                        24 comentarios
-                      </span>
-                      <span class="text-gray-500 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                        </svg>
-                        10 votos
-                      </span>
-                      <a href="#" class="text-red-500 hover:text-red-700 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                        Reportar
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Post 2 -->
-                <div class="flex items-start p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition">
-                  <div class="w-16 h-16 flex-shrink-0 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                    </svg>
-                  </div>
-                  
-                  <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold text-lg text-gray-800 truncate hover:text-blue-600">
-                      <router-link to="/home/post/2">Nuevas mecánicas en Pokémon Escarlata</router-link>
-                    </h3>
-                    <p class="text-sm text-gray-600 mt-1">Publicado por: ExploradorPaldea</p>
-                    
-                    <div class="flex flex-wrap items-center mt-2 text-xs gap-2 md:gap-4">
-                      <span class="text-gray-500 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                        </svg>
-                        42 comentarios
-                      </span>
-                      <span class="text-gray-500 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                        </svg>
-                        28 votos
-                      </span>
-                      <a href="#" class="text-red-500 hover:text-red-700">Reportar</a>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Post 3 -->
-                <div class="flex items-start p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition">
-                  <div class="w-16 h-16 flex-shrink-0 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  
-                  <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold text-lg text-gray-800 truncate hover:text-blue-600">
-                      <router-link to="/home/post/3">Eventos de temporada actualizados</router-link>
-                    </h3>
-                    <p class="text-sm text-gray-600 mt-1">Publicado por: CazadorEventos</p>
-                    
-                    <div class="flex flex-wrap items-center mt-2 text-xs gap-2 md:gap-4">
-                      <span class="text-gray-500 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                        </svg>
-                        15 comentarios
-                      </span>
-                      <span class="text-gray-500 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                        </svg>
-                        9 votos
-                      </span>
-                      <a href="#" class="text-red-500 hover:text-red-700">Reportar</a>
-                    </div>
-                  </div>
-                </div>
+              <!-- Lista de posts -->
+              <div class="space-y-6">
+                <h3 class="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2">Publicaciones recientes</h3>
+                
+                <router-link 
+                  v-for="post in posts" 
+                  :key="post._id" 
+                  :to="`/home/post/${post._id}`" 
+                  class="block no-underline"
+                >
+                  <PostItem 
+                    :key="post._id" 
+                    :title="post.title" 
+                    :author="post.author" 
+                    :subforum="post.subforum" 
+                    :description="post.content"
+                    :answers="post.answers"
+                    :createdAt="post.createdAt"
+                    :editedAt="post.editedAt"
+                  />  
+                </router-link>
               </div>
             </div>
           </div>
@@ -248,7 +168,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { IonContent, IonPage } from '@ionic/vue';
 import PostItem from '@/components/PostItem.vue';
 
@@ -264,21 +184,28 @@ interface post{
   subforum: string;
   content: string;
   answers: number;
-  PublicationDate: string;
-  editedDate: string;
+  createdAt: string;
+  editedAt: string;
 }
 
 const posts = ref<post[]>([]); // Array de publicaciones
 
 //Recoger los post con subforum "General"
 const fetchGeneralPost = async () => {
+  try{
+    posts.value = await dataController.getPosts() as post[];
+    posts.value = posts.value.filter((post) => post.subforum === 'General');   
+  }
+  catch (error) {
+    console.error('Error al obtener los posts:', error);
+  }
   
-  
-
 }
 
-
-
+// Llamar a la función fetchPosts cuando el componente se monte
+onMounted(() => {
+  fetchGeneralPost();
+});
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
