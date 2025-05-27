@@ -111,7 +111,7 @@
       <!-- Menú normal para desktop -->
       <ion-buttons slot="end" class="hidden md:flex space-x-2">
         <ion-button 
-          @click="routerController.navigateTo(props.router, '/home/forumGeneral')" 
+          @click="routerController.navigateTo(props.router, '/forumGeneral')" 
           class="text-gray-700 hover:text-indigo-600 transition-colors duration-300 font-medium"
         >
           Forum
@@ -167,7 +167,7 @@
       >
         <div class="flex flex-col py-2 space-y-1 px-4">
           <button 
-            @click="routerController.navigateToAndClose(props.router, '/home/forumGeneral')" 
+            @click="routerController.navigateToAndClose(props.router, '/forumGeneral')" 
             class="w-full text-left px-4 py-3 rounded-lg hover:bg-indigo-50 text-gray-700 hover:text-indigo-600 transition-all duration-300 flex items-center"
           >
             <span class="font-medium">Forum</span>

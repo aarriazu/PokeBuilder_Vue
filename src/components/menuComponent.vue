@@ -29,10 +29,10 @@
       <!-- Contenido del menú -->
       <div v-if="props.user"> 
         <ion-list>
-          <ion-item button @click="routerController.navigateTo(router, '/home/profile')">          
+          <ion-item button @click="routerController.navigateTo(router, '/profile')">          
             <ion-label>Profile</ion-label>
           </ion-item>
-          <ion-item button @click="routerController.navigateTo(router, '/home/settings')">
+          <ion-item button @click="routerController.navigateTo(router, '/settings')">
             <ion-label>Settings</ion-label>
           </ion-item>
         </ion-list>

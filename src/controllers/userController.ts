@@ -48,7 +48,7 @@ export const login = async (userName: string, password: string, router: ReturnTy
 
   
       // Redirige al perfil del usuario
-      routerController.navigateToAndClose(router, '/home/profile');
+      routerController.navigateToAndClose(router, '/profile');
     } catch (error) {
       console.error('Error en login:', error);
       throw error;
