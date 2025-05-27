@@ -221,7 +221,6 @@ app.put('/api/user/update', async (req: Request, res: Response): Promise<any> =>
   // Obtén los datos actualizados del usuario
   const updatedUser = await usersCollection.findOne({ username: newUsername || username });
 
-  // Genera el nuevo token
   const token = jwt.sign(
     {
       username: updatedUser!.username,
@@ -323,14 +322,113 @@ app.get('/api/pokemon/:identifier', async (req, res) => {
 });
 
 //Recibir llamada para insertar equipo en la base de datos
-app.post('/api/teams', async (req: Request, res: Response) => {
+app.post('/api/teams', async (req: Request, res: Response): Promise<any> => {
   try {
-    const team = req.body; 
+    const team = req.body;
+
+    if (!team.ownerId) {
+      return res.status(400).send("El campo 'ownerId' es obligatorio.");
+    }
+    try {
+      team.ownerId = ObjectId.createFromHexString(team.ownerId);
+    } catch (error) {
+      return res.status(400).send("El campo 'ownerId' no es un ObjectId válido.");
+    }
+
     const insertedId = await dbClass.insertTeam(team);
     res.status(201).send({ insertedId });
   } catch (error) {
     console.error("Error al guardar el equipo:", error);
     res.status(500).send("Error al guardar el equipo");
+  }
+});
+
+// Ruta para obtener equipos por ownerId
+app.get('/api/teams/:ownerId', async (req: Request, res: Response): Promise<any> => {
+  const { ownerId } = req.params;
+
+  try {
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const teamsCollection = db.collection("teams");
+
+    // Convertir ownerId a ObjectId
+    const objectId = new ObjectId(ownerId);
+
+    // Buscar equipos con el ownerId proporcionado
+    const teams = await teamsCollection.find({ ownerId: objectId }).toArray();
+
+    // Asegurarse de que todos los equipos tengan un _id
+    if (teams.some(team => !team._id)) {
+      console.error('Algunos equipos no tienen _id:', teams);
+    }
+
+    res.status(200).send(teams);
+  } catch (error) {
+    console.error("Error al obtener los equipos:", error);
+    res.status(500).send("Error al obtener los equipos");
+  } finally {
+    await client.close();
+  }
+});
+
+//Ruta para actualizar el estado de favorito de un equipo
+app.put('/api/teams/:ownerId/favorite', async (req: Request, res: Response): Promise<any> => {
+  const { ownerId } = req.params;
+  const { teamId, favorite } = req.body;
+
+  try {
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const teamsCollection = db.collection("teams");
+
+    // Convertir teamId a ObjectId
+    const objectId = new ObjectId(teamId);
+
+    // Actualizar el estado de favorito del equipo
+    const result = await teamsCollection.updateOne(
+      { _id: objectId, ownerId: new ObjectId(ownerId) },
+      { $set: { favorite: favorite } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send("Equipo no encontrado");
+    }
+
+    res.status(200).send("Estado de favorito actualizado correctamente");
+  } catch (error) {
+    console.error("Error al actualizar el estado de favorito:", error);
+    res.status(500).send("Error al actualizar el estado de favorito");
+  } finally {
+    await client.close();
+  }
+});
+
+// Ruta para eliminar un equipo por su ID
+app.delete('/api/teams/:id', async (req: Request, res: Response): Promise<any> => {
+  const { id } = req.params;
+
+  try {
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const teamsCollection = db.collection("teams");
+
+    // Convertir id a ObjectId
+    const objectId = new ObjectId(id);
+
+    // Eliminar el equipo
+    const result = await teamsCollection.deleteOne({ _id: objectId });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).send("Team not found");
+    }
+
+    res.status(200).send("Team deleted successfully");
+  } catch (error) {
+    console.error("Error deleting team:", error);
+    res.status(500).send("Error deleting team");
+  } finally {
+    await client.close();
   }
 });
 

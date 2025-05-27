@@ -6,7 +6,7 @@
           <div style="float: right;">
             <ion-button @click="saveTeam">Save</ion-button>
             <ion-button @click="resetPokemons">Reset</ion-button>
-            <ion-button router-link="/profile">Back</ion-button>
+            <ion-button @click="goBack">Back</ion-button>
           </div>
         </div>
 
@@ -100,14 +100,15 @@ import { onMounted, ref } from 'vue';
 import { IonModal, IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonList, IonItem } from '@ionic/vue';
 import { PokemonInterface } from '@/interfaces/pokemonInterface';
 import { TeamPokemon } from '@/classes/TeamPokemon';
+import { Team } from '@/classes/Team';
 import { useRouter } from 'vue-router';
 import * as dataController from '@/controllers/dataController';
+import { userState } from '@/controllers/stateController';
 import { modalController } from '@ionic/vue';
 import SelectPokemonModal from '@/components/SelectPokemonModal.vue';
 import axios from 'axios';
 import footerComponent from '@/components/footerComponent.vue';
 
-// Inicializar un Pokémon vacio con valores predeterminados
 const router = useRouter();
 
 const blankPokemon = () => new TeamPokemon(
@@ -144,7 +145,7 @@ const selectedPokemonIndex = ref<number | null>(null);
 // Función para calcular el total de EVs de un Pokémon y poner topes a los sliders
 function calculateRemainingEVs(currentEV: number, pokemon: TeamPokemon) {
   const remainingEVs = 510 - (pokemon.evTotal - currentEV);
-  return Math.min(remainingEVs, 252); // El máximo permitido por stat es 252
+  return Math.min(remainingEVs, 252);
 }
 
 function updateEVTotal(pokemon: TeamPokemon) {
@@ -199,12 +200,13 @@ async function saveTeam() {
     return;
   }
 
-  const newTeam = {
-    name: teamName.value,
-    format: "1",
-    rating: 1,
-    pokemon: JSON.parse(JSON.stringify(team.value)),
-  };
+  //const userId = ObjectId.createFromHexString(userState.value!._id);
+
+  const newTeam = new Team(
+    JSON.parse(JSON.stringify(team.value)),
+    teamName.value, 
+    userState.value!._id,
+  );
 
   console.log("Datos enviados al backend:", newTeam);
 
@@ -217,6 +219,11 @@ async function saveTeam() {
     });
 
     alert(`Equipo guardado correctamente con ID: ${response.data.insertedId}`);
+
+    team.value = [blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()];
+    teamName.value = '';
+
+    router.push('/profile');
   } catch (error) {
     console.error("Error al guardar el equipo:", error);
     alert("Hubo un error al guardar el equipo. Por favor, inténtalo de nuevo.");
@@ -227,6 +234,12 @@ async function saveTeam() {
 function resetPokemons() {
   team.value = [blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()];
   teamName.value = '';
+}
+
+function goBack() {
+  team.value = [blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()];
+  teamName.value = '';
+  router.push('/profile');
 }
 </script>
 

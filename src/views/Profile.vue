@@ -13,14 +13,21 @@
                   <ion-button router-link="/stats" class="w-full">Stats</ion-button>
                 </div>
               </div>
-              <Team
-                v-for="(team, index) in dummyTeams"
-                :key="index"
-                :teamName="team.name"
-                :teamImage="team.image"
-                :teamLink="team.link"
-                @delete-team="deleteTeam(index)"
-              />
+              <!-- Renderizar equipos dinámicamente -->
+              <div v-if="teamStore.teams.length > 0">
+                <TeamComponent
+                  v-for="(team, index) in teamStore.teams"
+                  :key="team._id?.toString() || index"
+                  :teamId="team._id?.toString()"
+                  :teamName="team.name"
+                  :teamPokemon="team.pokemon"
+                  :teamOwnerId="team.ownerId"
+                  :teamFavorite="team.favorite"
+                  :teamCreatedAt="team.createdAt"
+                  :teamUpdatedAt="team.updatedAt"
+                  @delete-team="removeTeam"
+                />
+              </div>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -33,47 +40,44 @@
 <script setup lang="ts">
 import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonIcon } from '@ionic/vue';
 import { onMounted, ref } from 'vue';
-import Team from '@/components/Team.vue';
+import TeamComponent from '@/components/TeamComponent.vue';
 import { useRouter } from 'vue-router';
 import * as userController from '@/controllers/userController';
 import footerComponent from '@/components/footerComponent.vue';
 //import { jwtDecode } from 'jwt-decode';
 import { User } from '@/classes/User';
-
-interface Pokemon {
-  name: string;
-  item: string;
-  ability: string;
-  nature: string;
-  moves: string[];
-}
-
-interface Team {
-  name: string;
-  pokemons: Pokemon[];
-}
+import axios from 'axios';
+import { Team } from '@/classes/Team';
+import { useTeamStore } from '@/stores/teamStore';
 
 const router = useRouter();
 
 const user = ref<User | null>(null);
+//const teams = ref<Team[]>([]);
+const teamStore = useTeamStore();
 
 onMounted(async () => {
   try {
+    // Obtener el usuario en sesión
     user.value = await userController.getUser();
+
+    if (user.value && user.value._id) {
+      // Llamar al backend para obtener los equipos del usuario
+      const response = await axios.get(`http://localhost:3000/api/teams/${user.value._id}`);
+      console.log('Respuesta del backend:', response.data); // Verifica los datos aquí
+      teamStore.setTeams(response.data as Team[]);
+      //teams.value = response.data as Team[]; // Asignar los equipos obtenidos
+      //console.log('Equipos obtenidos:', teams.value);
+    }
   } catch (error) {
-    console.error('Error fetching user:', error);
+    console.error('Error fetching user or teams:', error);
     user.value = null; // Asegurarse de que user sea null si ocurre un error
   }
 });
 
-const dummyTeams = ref([
-  { name: 'Equipo Eevee', image: '/src/assets/images/pokemon/teamEevee.png', link: '/teamBuilder' },
-  { name: 'Equipo 2', image: '/src/assets/images/pokemon/team2.png', link: '/teamBuilder' },
-  { name: 'Equipo Kanto', image: '/src/assets/images/pokemon/teamKanto.png', link: '/teamBuilder' }
-]);
-
-const deleteTeam = (index: number) => {
-  dummyTeams.value.splice(index, 1);
+const removeTeam = (teamId: string) => {
+  teamStore.removeTeam(teamId);
+  //teams.value = teams.value.filter((team) => team._id !== teamId);
 };
 </script>
 

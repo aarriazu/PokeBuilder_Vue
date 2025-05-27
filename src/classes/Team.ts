@@ -1,21 +1,41 @@
 import { TeamInterface } from '@/interfaces/teamInterface';
 import { TeamPokemon } from '@/classes/TeamPokemon';
+import { ObjectId } from 'mongodb';
 
 export class Team  implements TeamInterface {
+    _id?: string | ObjectId;
     pokemon: TeamPokemon[] //[TeamPokemon, ...TeamPokemon[]] & { length: 0 | 1 | 2 | 3 | 4 | 5 | 6 };
     name: string;
-    format: string;
-    rating: number;
+    ownerId: string;
+    favorite: boolean;
     createdAt: Date;
     updatedAt: Date;
 
-    constructor (pokemon: TeamPokemon[], name: string, format: string, rating: number) {
+    constructor (pokemon: TeamPokemon[], name: string, ownerId: string) {
         this.pokemon = pokemon;
         this.name = name;
-        this.format = format;
-        this.rating = rating;
+        this.ownerId = ownerId;
+        this.favorite = false;
         this.createdAt = new Date();
         this.updatedAt = new Date();
+    }
+
+    // Segundo constructor para inicializar todos los campos
+    static fromFullData(
+        _id: string | ObjectId | undefined,
+        pokemon: TeamPokemon[],
+        name: string,
+        ownerId: string,
+        favorite: boolean,
+        createdAt: Date,
+        updatedAt: Date
+    ): Team {
+        const team = new Team(pokemon, name, ownerId);
+        team._id = _id;
+        team.favorite = favorite;
+        team.createdAt = createdAt;
+        team.updatedAt = updatedAt;
+        return team;
     }
 
     get getPokemon(): TeamPokemon[] {
@@ -24,11 +44,11 @@ export class Team  implements TeamInterface {
     get getName(): string {
         return this.name;
     }
-    get getFormat(): string {
-        return this.format;
+    get getOwner(): string {
+        return this.ownerId;
     }
-    get getRating(): number {
-        return this.rating;
+    get getFavorite(): boolean {
+        return this.favorite;
     }
     get getCreatedAt(): Date {
         return this.createdAt;
@@ -43,13 +63,8 @@ export class Team  implements TeamInterface {
     set setPokemon(pokemon: TeamPokemon[]) {
         this.pokemon = pokemon;
     }
-    
-    set setFormat(format: string) {         
-        this.format = format;
-    }
-    
-    set setRating(rating: number) {
-        this.rating = rating;
+    set setFavorite(favorite: boolean) {
+        this.favorite = favorite;
     }
     set getUpdatedAt(updatedAt: Date) {
         this.updatedAt = updatedAt;
