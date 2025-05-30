@@ -233,6 +233,9 @@ const signinPasswordConfirm = ref('');
 const loginErrorMsg = ref('');
 const signinErrorMsg = ref(''); 
 
+const loginTempUsername = ref('');
+const loginTempPassword = ref('');
+
 const isMenuOpen = computed(() => mobileMenuState.value);
 
 const openMenu = async () => {
@@ -245,9 +248,13 @@ const toggleMobileMenu = () => {
 
 const handleLogin = async () => {
   loginErrorMsg.value = '';
+  loginTempUsername.value = loginUserName.value;
+  loginTempPassword.value = loginPassword.value;
   try {
-    await userController.login(loginUserName.value, loginPassword.value, props.router);
+    await userController.login(loginTempUsername.value, loginTempPassword.value, props.router);
     showLogin.value = false;
+    loginUserName.value = '';
+    loginPassword.value = '';
   } catch (error) {
     loginErrorMsg.value = (error instanceof Error ? error.message : 'Error al iniciar sesión');
   }
@@ -257,7 +264,13 @@ const handleSignin = async () => {
   signinErrorMsg.value = '';
   try {
     await userController.signin(signinUserName.value, signinEmail.value, signinPassword.value, signinPasswordConfirm.value);
+    loginTempUsername.value = signinUserName.value;
+    loginTempPassword.value = signinPassword.value;
     showSignin.value = false;
+    signinUserName.value = '';
+    signinEmail.value = '';
+    signinPassword.value = '';
+    signinPasswordConfirm.value = '';
     await userController.login(signinUserName.value, signinPassword.value, props.router);
   } catch (error) {
      signinErrorMsg.value = (error instanceof Error ? error.message : 'Error al registrar el usuario');

@@ -9,7 +9,7 @@
             <ion-col size="12" size-md="6" class="pr-0 md:pr-4">
               <div class="max-w-[50%] mb-4">
                 <div class="grid grid-cols-2 gap-2">
-                  <ion-button router-link="/teamBuilder" class="w-full">New Team</ion-button>
+                  <ion-button router-link="/teambuilder" class="w-full">New Team</ion-button>
                   <ion-button router-link="/stats" class="w-full">Stats</ion-button>
                 </div>
               </div>

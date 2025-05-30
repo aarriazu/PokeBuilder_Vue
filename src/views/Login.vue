@@ -15,7 +15,7 @@
             <h2 class="text-2xl font-semibold text-gray-800 mb-4">Login</h2>
             <p class="text-gray-600 mb-2">Username or email</p>
             <input 
-              v-model="userName"
+              v-model="loginUserName"
               type="text" 
               id="userName" 
               name="userName" 
@@ -24,7 +24,7 @@
             >
             <p class="text-gray-600 mb-2">Password</p>
             <input 
-              v-model="password"
+              v-model="loginPassword"
               type="password" 
               id="password" 
               name="password" 
@@ -134,8 +134,8 @@ import * as userController from '@/controllers/userController';
 
 const showSignin = ref(false);
 
-const userName = ref('');
-const password = ref('');
+const loginUserName = ref('');
+const loginPassword = ref('');
 const loading = ref(false);
 
 const signinUserName = ref('');
@@ -146,12 +146,19 @@ const signinPasswordConfirm = ref('');
 const loginErrorMsg = ref('');
 const signinErrorMsg = ref(''); 
 
+const loginTempUsername = ref('');
+const loginTempPassword = ref('');
+
 const router = useRouter();
 
 const handleLogin = async () => {
   loginErrorMsg.value = '';
   try {
-    await userController.login(userName.value, password.value, router);
+    loginTempUsername.value = loginUserName.value;
+    loginTempPassword.value = loginPassword.value;
+    await userController.login(loginTempUsername.value, loginTempPassword.value, router);
+    loginUserName.value = '';
+    loginPassword.value = '';
   } catch (error) {
     loginErrorMsg.value = (error instanceof Error ? error.message : 'Error al iniciar sesión');
   }
@@ -159,10 +166,17 @@ const handleLogin = async () => {
 
 const handleSignin = async () => {
   signinErrorMsg.value = '';
+  
   try {
     await userController.signin(signinUserName.value, signinEmail.value, signinPassword.value, signinPasswordConfirm.value);
+    loginTempUsername.value = signinUserName.value;
+    loginTempPassword.value = signinPassword.value;
     showSignin.value = false;
-    await userController.login(signinUserName.value, signinPassword.value, router);
+    signinUserName.value = '';
+    signinEmail.value = '';
+    signinPassword.value = '';
+    signinPasswordConfirm.value = '';
+    await userController.login(loginTempUsername.value, loginTempPassword.value, router);
   } catch (error) {
      signinErrorMsg.value = (error instanceof Error ? error.message : 'Error al registrar el usuario');
   }
