@@ -1,8 +1,8 @@
-import { TeamInterface } from '@/interfaces/teamInterface';
+
 import { TeamPokemon } from '@/classes/TeamPokemon';
 import { ObjectId } from 'mongodb';
 
-export class Team  implements TeamInterface {
+export class Team {
     _id?: string | ObjectId;
     pokemon: TeamPokemon[] //[TeamPokemon, ...TeamPokemon[]] & { length: 0 | 1 | 2 | 3 | 4 | 5 | 6 };
     name: string;

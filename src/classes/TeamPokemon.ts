@@ -1,9 +1,8 @@
 import { PokemonInterface } from '@/interfaces/pokemonInterface';
 import { Item } from '@/interfaces/itemInterface';
-import { TeamPokemonInterface } from '@/interfaces/teamPokemonInterface';
 import * as dataController from '@/controllers/dataController';
 
-export class TeamPokemon  implements TeamPokemonInterface {
+export class TeamPokemon {
   species: PokemonInterface;
   name: string;
   ability: string;
