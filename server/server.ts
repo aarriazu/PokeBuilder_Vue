@@ -237,8 +237,6 @@ app.put('/api/user/update', async (req: Request, res: Response): Promise<any> =>
   res.status(200).send({ message: 'User updated successfully.', token });
   } catch (error) {
     res.status(500).send({ error: 'Internal server error.' });
-  } finally {
-    await client.close();
   }
 });
 
@@ -268,8 +266,6 @@ app.put('/api/user/lastLogin', async (req: Request, res: Response): Promise<any>
   } catch (error) {
     console.error('Error updating lastLogin:', error);
     res.status(500).send('Internal server error');
-  } finally {
-    await client.close();
   }
 });
 
@@ -288,8 +284,6 @@ app.get('/api/pokemon', async (req, res) => {
   } catch (error) {
     console.error("Error al obtener los Pokémon:", error);
     res.status(500).send({ error: "Error al obtener los Pokémon" });
-  } finally {
-    await client.close();
   }
 });
 
@@ -316,8 +310,6 @@ app.get('/api/pokemon/:identifier', async (req, res) => {
   } catch (error) {
     console.error("Error al obtener el Pokémon:", error);
     res.status(500).send({ error: "Error al obtener el Pokémon" });
-  } finally {
-    await client.close();
   }
 });
 
@@ -340,6 +332,40 @@ app.post('/api/teams', async (req: Request, res: Response): Promise<any> => {
   } catch (error) {
     console.error("Error al guardar el equipo:", error);
     res.status(500).send("Error al guardar el equipo");
+  }
+});
+
+//Recibir llamada para actualizar un equipo en la base de datos
+app.put('/api/teams/:id', async (req: Request, res: Response): Promise<any> => {
+  const { id } = req.params;
+  const updatedTeam = req.body;
+
+  try {
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const teamsCollection = db.collection("teams");
+
+    const objectId = new ObjectId(id);
+
+    if (updatedTeam.ownerId && typeof updatedTeam.ownerId === 'string') {
+      updatedTeam.ownerId = ObjectId.createFromHexString(updatedTeam.ownerId);
+    }
+
+    delete updatedTeam._id;
+
+    const result = await teamsCollection.updateOne(
+      { _id: objectId },
+      { $set: updatedTeam }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send("Team not found");
+    }
+
+    res.status(200).send("Team updated successfully");
+  } catch (error) {
+    console.error("Error updating team:", error);
+    res.status(500).send("Error updating team");
   }
 });
 
@@ -367,8 +393,6 @@ app.get('/api/teams/:ownerId', async (req: Request, res: Response): Promise<any>
   } catch (error) {
     console.error("Error al obtener los equipos:", error);
     res.status(500).send("Error al obtener los equipos");
-  } finally {
-    await client.close();
   }
 });
 
@@ -399,8 +423,6 @@ app.put('/api/teams/:ownerId/favorite', async (req: Request, res: Response): Pro
   } catch (error) {
     console.error("Error al actualizar el estado de favorito:", error);
     res.status(500).send("Error al actualizar el estado de favorito");
-  } finally {
-    await client.close();
   }
 });
 
@@ -427,8 +449,6 @@ app.delete('/api/teams/:id', async (req: Request, res: Response): Promise<any> =
   } catch (error) {
     console.error("Error deleting team:", error);
     res.status(500).send("Error deleting team");
-  } finally {
-    await client.close();
   }
 });
 
@@ -454,8 +474,6 @@ app.get('/api/posts/:id', async (req, res): Promise <any> => {
   } catch (error) {
     console.error("Error al obtener el post:", error);
     res.status(500).send({ error: "Error al obtener el post" });
-  } finally {
-    await client.close();
   }
 });
 
@@ -472,9 +490,6 @@ app.get('/api/posts', async (req, res) => {
   } catch (error) {
     console.error("Error al obtener los posts:", error);
     res.status(500).json({ error: "Error al obtener los posts" });
-  } finally {
-    // Cerrar la conexión con la base de datos
-    await client.close();
   }
 });
 
@@ -503,8 +518,6 @@ app.post('/api/posts', async (req, res): Promise <any> => {
   } catch (error) {
     console.error("Error al guardar el post:", error);
     res.status(500).send("Error al guardar el post");
-  } finally {
-    await client.close();
   }
 });
 
@@ -523,9 +536,6 @@ app.get('/api/postsTorneo', async (req, res): Promise<any> => {
   } catch (error) {
     console.error("Error al obtener los posts:", error);
     res.status(500).json({ error: "Error al obtener los posts" });
-  } finally {
-    // Cerrar la conexión con la base de datos
-    await client.close();
   }
 });
 
@@ -547,4 +557,9 @@ app.post('/api/postsTorneo', async (req,res): Promise<any> => {
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
+});
+
+process.on('SIGINT', async () => {
+  await client.close(); // Cierra solo al apagar el servidor
+  process.exit();
 });

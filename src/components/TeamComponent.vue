@@ -3,23 +3,28 @@
       <p>{{ props.teamName }}</p>
       <ul class="flex space-x-4">
         <li v-for="(pokemon, index) in teamPokemon" :key="index" class="relative group">
-          <img :src="pokemon!.species.sprite || ''" :alt="pokemon!.name" class="w-24 h-24" />
-
-          <!-- Contenedor de datos que se muestra al hacer hover -->
-          <div
+          <img
             v-if="pokemon.species"
-            class="absolute bottom-0 left-0 w-full bg-white text-black text-sm p-2 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          >
-            <p><strong>Name:</strong> {{ pokemon.name }}</p>
-            <p><strong>Species:</strong> {{ pokemon.species.name }}</p>
-            <p><strong>Types:</strong> {{ pokemon.species.types.join(', ') }}</p>
-            <p><strong>Moves:</strong> {{ pokemon.moves.join(', ') }}</p>
-            <p><strong>Ability:</strong> {{ pokemon.ability }}</p>
-            <p><strong>Nature:</strong> {{ pokemon.nature }}</p>
-          </div>
+            :src="pokemon!.species.sprite || ''"
+            :alt="pokemon!.name"
+            class="w-24 h-24"
+            @mouseenter="(e) => {
+              tooltip.show = true;
+              tooltip.text =
+                `<strong>Name:</strong> ${pokemon.name}<br>
+                  <strong>Species:</strong> ${dataController.formatText(pokemon.species.name)}<br>
+                  <strong>Types:</strong> ${pokemon.species.types.filter(m => !!m).map(m => dataController.formatText(m)).join(', ')}<br>
+                  <strong>Moves:</strong> ${pokemon.moves.filter(m => !!m).map(m => dataController.formatText(m)).join(', ')}<br>
+                  <strong>Ability:</strong> ${dataController.formatText(pokemon.ability)}<br>
+                  <strong>Nature:</strong> ${dataController.formatText(pokemon.nature)}`;
+              tooltip.x = e.clientX;
+              tooltip.y = e.pageY - 60;
+            }"
+            @mouseleave="tooltip.show = false"
+          />
         </li>
       </ul>
-      <ion-button :router-link="teamOwnerId" shape="round">Modificar</ion-button>
+      <ion-button @click="editTeam" shape="round">Modificar</ion-button>
       <ion-button @click="toggleFavorite">
         <ion-icon :class="{ 'active-icon': isIconActive }" slot="icon-only" :icon="star"></ion-icon>
       </ion-button>
@@ -27,6 +32,13 @@
         <ion-button @click="deleteTeam" shape="round" color="danger">Eliminar</ion-button>
       </div>
     </div>
+    
+    <div
+      v-if="tooltip.show"
+      :style="{ position: 'fixed', left: tooltip.x + 10 + 'px', top: tooltip.y + 10 + 'px', zIndex: 1000 }"
+      class="bg-white border border-gray-400 rounded shadow-lg p-2 text-xs max-w-xs"
+      v-html="tooltip.text"
+    ></div>
   </template>
   
   <script setup lang="ts">
@@ -34,7 +46,11 @@
   import { IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon } from '@ionic/vue';
   import { star } from 'ionicons/icons';
   import { TeamPokemon } from '@/classes/TeamPokemon';
+  import * as dataController from '@/controllers/dataController';
   import axios from 'axios';
+  import { teamEditData } from '@/stores/teamEditStore';
+  import router from '@/router';
+
   
   const props = defineProps({
     teamId: String,
@@ -45,6 +61,23 @@
     teamCreatedAt: Date,
     teamUpdatedAt: Date,
   });
+
+  const tooltip = ref({
+    show: false,
+    text: '',
+    x: 0,
+    y: 0,
+  });
+
+  function editTeam() {
+    teamEditData.value = {
+      team: props.teamPokemon,
+      teamName: props.teamName,
+      teamId: props.teamId
+    };
+    console.log(teamEditData.value);
+    router.replace({ name: 'TeamBuilder' });
+  }
 
   const isIconActive = ref(props.teamFavorite);
   const emit = defineEmits(['delete-team']); 

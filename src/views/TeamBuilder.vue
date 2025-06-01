@@ -5,7 +5,7 @@
         <div class="title">
           <div style="float: right;">
             <ion-button @click="saveTeam">Save</ion-button>
-            <ion-button @click="resetPokemons">Reset</ion-button>
+            <ion-button v-if="!teamEdit" @click="resetPokemons">Reset</ion-button>
             <ion-button @click="goBack">Back</ion-button>
           </div>
         </div>
@@ -101,13 +101,14 @@ import { IonModal, IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonL
 import { PokemonInterface } from '@/interfaces/pokemonInterface';
 import { TeamPokemon } from '@/classes/TeamPokemon';
 import { Team } from '@/classes/Team';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import * as dataController from '@/controllers/dataController';
 import { userState } from '@/controllers/stateController';
 import { modalController } from '@ionic/vue';
 import SelectPokemonModal from '@/components/SelectPokemonModal.vue';
 import axios from 'axios';
 import footerComponent from '@/components/footerComponent.vue';
+import { teamEditData } from '@/stores/teamEditStore';
 
 const router = useRouter();
 
@@ -137,6 +138,8 @@ const blankPokemon = () => new TeamPokemon(
   ['', '', '', '']
 );
 
+const teamEdit = ref(false);
+const teamId = ref('');
 const team = ref([blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()]);
 const teamName = ref('');
 
@@ -195,52 +198,104 @@ async function openModal(index: number) {
 
 // Función para guardar el equipo en MongoDB
 async function saveTeam() {
-  if (!teamName.value) {
-    alert('Por favor, ingresa un nombre para el equipo.');
-    return;
+  console.log(teamEdit.value)
+  if (teamEdit.value == false){
+    console.log("teamEdit es false")
+    if (!teamName.value) {
+      alert('Por favor, ingresa un nombre para el equipo.');
+      return;
+    }
+
+    //const userId = ObjectId.createFromHexString(userState.value!._id);
+
+    const newTeam = new Team(
+      JSON.parse(JSON.stringify(team.value)),
+      teamName.value, 
+      userState.value!._id,
+    );
+
+    console.log("Datos enviados al backend:", newTeam);
+
+    //enviar datos al backend con axios
+    try {
+      const response = await axios.post<{ insertedId: string }>('http://localhost:3000/api/teams', newTeam, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      alert(`Equipo guardado correctamente con ID: ${response.data.insertedId}`);
+
+      team.value = [blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()];
+      teamName.value = '';
+
+      router.push('/profile');
+    } catch (error) {
+      console.error("Error al guardar el equipo:", error);
+      alert("Hubo un error al guardar el equipo. Por favor, inténtalo de nuevo.");
+    }
   }
+  else if (teamEdit.value == true) {
+    console.log("jeje god")
+    if (!teamName.value) {
+      alert('Por favor, ingresa un nombre para el equipo.');
+      return;
+    }
+    if (!teamId.value) {
+      alert('No se encontró el ID del equipo a actualizar.');
+      return;
+    }
 
-  //const userId = ObjectId.createFromHexString(userState.value!._id);
+    const updatedTeam = new Team(
+      JSON.parse(JSON.stringify(team.value)),
+      teamName.value,
+      userState.value!._id,
+    );
 
-  const newTeam = new Team(
-    JSON.parse(JSON.stringify(team.value)),
-    teamName.value, 
-    userState.value!._id,
-  );
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/teams/${teamId.value}`,
+        updatedTeam,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      alert('Team updated');
 
-  console.log("Datos enviados al backend:", newTeam);
-
-  //enviar datos al backend con axios
-  try {
-    const response = await axios.post<{ insertedId: string }>('http://localhost:3000/api/teams', newTeam, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    alert(`Equipo guardado correctamente con ID: ${response.data.insertedId}`);
-
-    team.value = [blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()];
-    teamName.value = '';
-
-    router.push('/profile');
-  } catch (error) {
-    console.error("Error al guardar el equipo:", error);
-    alert("Hubo un error al guardar el equipo. Por favor, inténtalo de nuevo.");
+      router.push('/profile');
+    } catch (error) {
+      console.error("Error al actualizar el equipo:", error);
+      alert("Hubo un error al actualizar el equipo. Por favor, inténtalo de nuevo.");
+    }
   }
 }
 
 // Función para reiniciar el equipo
 function resetPokemons() {
   team.value = [blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()];
+  teamEdit.value = false;
   teamName.value = '';
 }
 
 function goBack() {
   team.value = [blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()];
   teamName.value = '';
-  router.push('/profile');
+  teamEdit.value = false;
+  router.replace('/profile');
 }
+
+onMounted(() => {
+  if (teamEditData.value) {
+    teamEdit.value = true;
+    team.value = JSON.parse(JSON.stringify(teamEditData.value.team));
+    teamName.value = teamEditData.value.teamName as string;
+    teamId.value = teamEditData.value.teamId as string;
+    teamEditData.value = null;
+  }
+  else {
+    teamEdit.value = false;
+    team.value = [blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()];
+  }
+});
+
 </script>
 
 <style scoped>
@@ -258,8 +313,8 @@ function goBack() {
 
 .stat-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Dos columnas */
-  gap: 10px; /* Espaciado entre los subapartados */
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 10px;
 }
 
 .stat-subsection {

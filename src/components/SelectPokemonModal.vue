@@ -15,21 +15,21 @@
           <!-- Filtros por tipo y generación -->
           <div class="filters">
             <!-- Filtro por tipo 1 -->
-            <ion-select v-model="selectedType1" placeholder="Tipo 1">
+            <ion-select v-model="selectedType1" placeholder="Type 1">
               <ion-select-option v-for="type in pokemonTypes" :key="type" :value="type">
                 {{ type }}
               </ion-select-option>
             </ion-select>
   
             <!-- Filtro por tipo 2 -->
-            <ion-select v-model="selectedType2" placeholder="Tipo 2">
+            <ion-select v-model="selectedType2" placeholder="Type 2">
               <ion-select-option v-for="type in pokemonTypes" :key="type" :value="type">
                 {{ type }}
               </ion-select-option>
             </ion-select>
   
             <!-- Filtro por generación -->
-            <ion-select v-model="selectedGeneration" placeholder="Generación">
+            <ion-select v-model="selectedGeneration" placeholder="Generation">
               <ion-select-option v-for="generation in pokemonGenerations" :key="generation" :value="generation">
                 Generation {{ generation }}
               </ion-select-option>

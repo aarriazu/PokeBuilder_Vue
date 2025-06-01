@@ -2,18 +2,14 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div class="main">
-        <!-- Grid principal -->
         <ion-grid class="container px-4">
           <ion-row>
-            <!-- Columna Equipos -->
             <ion-col size="12" size-md="6" class="pr-0 md:pr-4">
               <div class="max-w-[50%] mb-4">
                 <div class="grid grid-cols-2 gap-2">
                   <ion-button router-link="/teambuilder" class="w-full">New Team</ion-button>
-                  <ion-button router-link="/stats" class="w-full">Stats</ion-button>
                 </div>
               </div>
-              <!-- Renderizar equipos dinámicamente -->
               <div v-if="teamStore.teams.length > 0">
                 <TeamComponent
                   v-for="(team, index) in teamStore.teams"
@@ -23,8 +19,8 @@
                   :teamPokemon="team.pokemon"
                   :teamOwnerId="team.ownerId"
                   :teamFavorite="team.favorite"
-                  :teamCreatedAt="team.createdAt"
-                  :teamUpdatedAt="team.updatedAt"
+                  :teamCreatedAt="typeof team.createdAt === 'string' ? new Date(team.createdAt) : team.createdAt"
+                  :teamUpdatedAt="typeof team.updatedAt === 'string' ? new Date(team.updatedAt) : team.updatedAt"
                   @delete-team="removeTeam"
                 />
               </div>

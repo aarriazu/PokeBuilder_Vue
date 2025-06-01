@@ -1,10 +1,13 @@
 <template>
+  <p>Porque no se desmonta esta vaina causas</p>
   <div v-if="pokemon" class="p-4 rounded-2xl shadow-md bg-white max-w-xl mx-auto mt-4">
     <div class="p-4 rounded-2xl shadow-md bg-white max-w-xl mx-auto mt-4">
       <ion-button
         class="absolute left-4"
         fill="clear"
-        @click="handlePokemonRedirect(prevPokemon!.name)">
+        :disabled="!prevPokemon"
+        v-if="prevPokemon"
+        @click="handlePokemonRedirect(prevPokemon.name)">
         Previous
       </ion-button>
       <ion-button
@@ -117,24 +120,30 @@
         <!-- Preevolución -->
       <div v-if="preEvolution" class="mt-4">
         <h3 class="text-lg font-bold">Preevolution</h3>
-        <div class="flex items-center space-x-4">
-          <img :src="preEvolution.sprite" :alt="preEvolution.name" class="w-16 h-16" />
+        <button
+          class="flex items-center space-x-4 focus:outline-none"
+          style="background: none; border: none; cursor: pointer;"
+          @click="handlePokemonRedirect(preEvolution.name)"
+        >
+          <img :src="preEvolution.sprite || ''" :alt="preEvolution.name || ''" class="w-16 h-16" />
           <p class="capitalize">{{ preEvolution.name }}</p>
-        </div>
+        </button>
       </div>
 
       <!-- Evoluciones -->
-      <div v-if="evolutions.length > 0" class="mt-4">
+      <div v-if="evolutions && evolutions.length > 0" class="mt-4">
         <h3 class="text-lg font-bold">Evolutions</h3>
         <div class="flex space-x-4">
-          <div
+          <button
             v-for="evolution in evolutions"
             :key="evolution.id"
-            class="flex flex-col items-center"
+            class="flex flex-col items-center focus:outline-none"
+            @click="handlePokemonRedirect(evolution.name)"
+            style="background: none; border: none; cursor: pointer;"
           >
-            <img :src="evolution.sprite" :alt="evolution.name" class="w-16 h-16" />
+            <img :src="evolution.sprite || ''" :alt="evolution.name || ''" class="w-16 h-16" />
             <p class="capitalize">{{ evolution.name }}</p>
-          </div>
+          </button>
         </div>
       </div>
       </div>
@@ -157,7 +166,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import * as dataController from '@/controllers/dataController';
 import { defineProps, defineEmits } from 'vue';
 import { IonButton } from '@ionic/vue';
@@ -176,33 +185,38 @@ const tooltip = ref({
 });
 
 // Variables reactivas para almacenar los datos del Pokémon y sus evoluciones
-const pokemon = ref<any>(null);
-const preEvolution = ref<any>(null);
-const evolutions = ref<any[]>([]);
+const pokemon = ref<PokemonInterface | null>(null);
+const preEvolution = ref<PokemonInterface | null>(null);
+const evolutions = ref<PokemonInterface[]>([]);
 
-const prevPokemon = ref<any>(null);
-const nextPokemon = ref<any>(null);
+const prevPokemon = ref<PokemonInterface | null>(null);
+const nextPokemon = ref<PokemonInterface | null>(null);
 
 // Función para cargar los datos del Pokémon, preevolución y evoluciones
 async function loadPokemonData() {
   try {
     // Obtener los datos del Pokémon actual
-    pokemon.value = await dataController.getPokemon(props.pokemonName);
+    pokemon.value = await dataController.getPokemon(props.pokemonName) as PokemonInterface;
 
     // Obtener la preevolución si existe
     if (pokemon.value.preEvolution) {
-      preEvolution.value = await dataController.getPokemon(pokemon.value.preEvolution.name);
+      preEvolution.value = await dataController.getPokemon(pokemon.value.preEvolution.name) as PokemonInterface;
     }
 
     // Obtener las evoluciones si existen
     if (pokemon.value.evolutions) {
       evolutions.value = await Promise.all(
         pokemon.value.evolutions.map((evo: any) => dataController.getPokemon(evo.name))
-      );
+      ) as PokemonInterface[];
     }
 
-    prevPokemon.value = dataController.getPokemon(pokemon.value.id - 1);
-    nextPokemon.value = dataController.getPokemon(pokemon.value.id + 1);
+    if (pokemon.value.id > 1){
+      prevPokemon.value = await dataController.getPokemon(pokemon.value.id - 1) as PokemonInterface;
+    }
+    else {
+      prevPokemon.value = null;
+    }  
+    nextPokemon.value = await dataController.getPokemon(pokemon.value.id + 1) as PokemonInterface;
     
   } catch (error) {
     console.error('Error al cargar los datos del Pokémon:', error);
@@ -234,6 +248,8 @@ function getStatColor(stat: number) {
   } else {
     return '#dc2626'; // Rojo (Tailwind red-600)
   }
+
+  //Cambio de color gradual de rojo - verde
   /*
   const min = 1;
   const max = 100;
@@ -244,61 +260,6 @@ function getStatColor(stat: number) {
   return `rgb(${r},${g},${b})`;
   */
 }
-
-//const pokemon = dataController.pokemonArray.find(p => p.name === props.pokemonName);
-/*
-const pokemon = await dataController.getPokemon(props.pokemonName) as PokemonInterface;
-const preEvolutionName = pokemon!.preEvolution
-    ? [pokemon!.preEvolution.name] // Convertir a un array con un único elemento
-    : [] // Valor predeterminado si no hay preevolución
-;
-const preEvolutionData = preEvolutionName.map(name => dataController.getPokemon(name) || { name: '-', sprite: '' });
-const evolutionName = pokemon!.evolutions?.map(evo => evo.name || []);
-const evolutionData = evolutionName
-  .filter((name): name is string => typeof name === 'string')
-  .map(name => dataController.getPokemon(name) || { name: '-', sprite: '' });
-
-
-*/
-
-/*
-// Variables reactivas para almacenar los datos del Pokémon
-const pokemon = ref<PokemonInterface | null>(null);
-const preEvolutionData = ref<{ name: string; sprite: string }[]>([]);
-const evolutionData = ref<{ name: string | never[]; sprite: string; }[]>([]);
-const prevPokemon = ref<PokemonInterface | null>(null);
-const nextPokemon = ref<PokemonInterface | null>(null);
-
-// Cargar los datos del Pokémon al montar el componente
-onMounted(async () => {
-  try {
-    const fetchedPokemon = await dataController.getPokemon(props.pokemonName) as PokemonInterface;
-    pokemon.value = fetchedPokemon;
-    console.log('Pokémon cargado:', pokemon.value);
-    // Pre-evolución
-    const preEvolutionName = fetchedPokemon.preEvolution
-      ? [fetchedPokemon.preEvolution.name]
-      : [];
-    preEvolutionData.value = preEvolutionName.map(name => ({
-      name,
-      sprite: dataController.pokemonArray.find(p => p.name === name)?.sprite || '',
-    }));
-
-    // Evoluciones
-    const evolutionName = fetchedPokemon.evolutions?.map(evo => evo.name || []);
-    evolutionData.value = evolutionName?.map(name => ({
-      name,
-      sprite: dataController.pokemonArray.find(p => p.name === name)?.sprite || '',
-    })) || [];
-
-    // Pokémon anterior y siguiente
-    prevPokemon.value = dataController.pokemonArray.find(p => p.id === fetchedPokemon.id! - 1) || null;
-    nextPokemon.value = dataController.pokemonArray.find(p => p.id === fetchedPokemon.id! + 1) || null;
-  } catch (error) {
-    console.error('Error al cargar el Pokémon:', error);
-  }
-});
-*/
 
 // Definir los eventos emitidos
 const emit = defineEmits<{
@@ -314,6 +275,26 @@ function handlePokemonRedirect(pokemonNameEmit: string) {
 }
 
 onMounted(loadPokemonData);
+
+onUnmounted(() => {
+  // Limpia los datos reactivos
+  pokemon.value = null;
+  preEvolution.value = null;
+  evolutions.value = [];
+  prevPokemon.value = null;
+  nextPokemon.value = null;
+
+  // Oculta el tooltip si estaba visible
+  tooltip.value.show = false;
+  tooltip.value.text = '';
+  tooltip.value.x = 0;
+  tooltip.value.y = 0;
+
+  // Si tienes listeners globales, timeouts, intervals, límpialos aquí
+  // Por ejemplo:
+  // clearTimeout(miTimeout);
+  // window.removeEventListener('resize', miListener);
+});
 </script>
 
 <style scoped>

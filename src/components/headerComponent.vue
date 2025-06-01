@@ -9,7 +9,7 @@
     import navbarComponent from '@/components/navbarComponent.vue';
     import menuComponent from '@/components/menuComponent.vue';
     import { userState } from '@/controllers/stateController';
-    import { useRouter, onBeforeRouteLeave } from "vue-router";
+    import { useRouter } from "vue-router";
 
     const user = computed(() => userState.value); // Computed para reaccionar a los cambios en el estado global
     const router = useRouter();
@@ -23,3 +23,5 @@
     }
     });
 </script>
+<style>
+</style>

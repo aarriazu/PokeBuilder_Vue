@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <headerComponent class="header" />
+    <headerComponent class="header"/>
     <ion-app class="app-content">
       <ion-router-outlet id="main-content" />
     </ion-app>
@@ -15,22 +15,22 @@ import footerComponent from '@/components/footerComponent.vue';
 
 <style scoped>
 :root {
-  --header-height: 60px; /* Define la altura del header */
+  --header-height: 60px; 
 }
 
 .app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Asegura que el contenedor ocupe toda la altura de la ventana */
+  min-height: 100vh;
 }
 
 .app-content {
-  flex: 1 0 auto; /* Hace que el contenido crezca y empuje el footer hacia abajo */
-  margin-top: 60px; /* Si tu header es fijo */
+  flex: 1 0 auto; 
+  margin-top: 60px; 
 }
 
 .header {
-  height: var(--header-height); /* Asegúrate de que el header use la misma altura */
+  height: var(--header-height); 
   position: fixed;
   top: 0;
   left: 0;
@@ -41,7 +41,7 @@ import footerComponent from '@/components/footerComponent.vue';
 }
 
 .footer {
-  position: relative; /* Cambia a relative para que se posicione dentro del flujo del documento */
+  position: relative;
   width: 100%;
   background-color: white;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);

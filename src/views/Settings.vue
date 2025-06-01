@@ -32,7 +32,7 @@
               class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-black"
               placeholder="Enter your new password"
             >
-        <p class="text-gray-600 mb-2">Change profile picture</p>
+        <p class="text-gray-600 mb-2">Change profile picture (Needs to be a web link)</p>
             <input 
               v-model="changeProfilePic"
               type="text" 

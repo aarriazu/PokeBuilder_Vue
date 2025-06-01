@@ -1,4 +1,3 @@
-
 import { TeamPokemon } from '@/classes/TeamPokemon';
 import { ObjectId } from 'mongodb';
 
@@ -8,8 +7,8 @@ export class Team {
     name: string;
     ownerId: string;
     favorite: boolean;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: Date | string;
+    updatedAt: Date | string;
 
     constructor (pokemon: TeamPokemon[], name: string, ownerId: string) {
         this.pokemon = pokemon;
@@ -20,7 +19,6 @@ export class Team {
         this.updatedAt = new Date();
     }
 
-    // Segundo constructor para inicializar todos los campos
     static fromFullData(
         _id: string | ObjectId | undefined,
         pokemon: TeamPokemon[],
@@ -50,10 +48,10 @@ export class Team {
     get getFavorite(): boolean {
         return this.favorite;
     }
-    get getCreatedAt(): Date {
+    get getCreatedAt(): Date | string {
         return this.createdAt;
     }
-    get getUpdatedAt(): Date {
+    get getUpdatedAt(): Date | string {
         return this.updatedAt;
     }
     

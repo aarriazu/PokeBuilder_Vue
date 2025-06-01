@@ -62,19 +62,6 @@ const routes: Array<RouteRecordRaw> = [
     }),
   },
   {
-    path: '/stats',
-    name: 'Stats',
-    sensitive: true,
-    component: () => import('@/views/Stats.vue'),
-    beforeEnter: ((to, from, next) => {
-      if (to.path === '/stats' && !userState.value) {
-        next('/login');
-      } else {
-        next();
-      }
-    }),
-  },
-  {
     path: '/settings',
     name: 'Settings',
     sensitive: true,

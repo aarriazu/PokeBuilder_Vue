@@ -1,13 +1,11 @@
 import { PokemonInterface } from '@/interfaces/pokemonInterface';
-import { Item } from '@/interfaces/itemInterface';
-import * as dataController from '@/controllers/dataController';
 
 export class TeamPokemon {
   species: PokemonInterface;
   name: string;
   ability: string;
   nature: string;
-  item: string | Item;
+  item: string;
   iv: { name: string; amount: number }[];
   ev: { name: string; amount: number }[];
   evTotal: number;
@@ -20,7 +18,7 @@ export class TeamPokemon {
     name: string,
     ability: string,
     nature: string,
-    item: string | Item,
+    item: string,
     iv: { name: string; amount: number }[],
     ev: { name: string; amount: number }[],
     evTotal: number,
@@ -33,7 +31,7 @@ export class TeamPokemon {
     name?: string,
     ability?: string,
     nature?: string,
-    item?: string | Item,
+    item?: string,
     iv?: { name: string; amount: number }[],
     ev?: { name: string; amount: number }[],
     evTotal?: number,
@@ -55,11 +53,11 @@ export class TeamPokemon {
       stats: [],
       moves: [], 
       
-    }; // Default object for species
-    this.name = name || (species ? species.name : ''); // Valor por defecto si no se proporciona
+    };
+    this.name = name || (species ? species.name : ''); 
     this.ability = ability || '';
     this.nature = nature || '';
-    this.item = item || { id: 0, name: '' }; // Objeto vacío por defecto
+    this.item = item || '';
     this.iv = iv || [
       { name: 'hp', amount: 0 },
       { name: 'attack', amount: 0 },
@@ -76,8 +74,8 @@ export class TeamPokemon {
       { name: 'special-defense', amount: 0 },
       { name: 'speed', amount: 0 },
     ];
-    this.evTotal = evTotal || 0; // Valor por defecto si no se proporciona
-    this.moves = moves || ['', '', '', '']; // Array vacío por defecto
+    this.evTotal = evTotal || 0;
+    this.moves = moves || ['', '', '', '']; 
   }
 
   // Getter y Setter para species
@@ -117,11 +115,11 @@ export class TeamPokemon {
   }
 
   // Getter y Setter para item
-  get getItem(): Item {
+  get getItem(): string {
     return this.item;
   }
 
-  set setItem(item: Item) {
+  set setItem(item: string) {
     this.item = item;
   }
 
