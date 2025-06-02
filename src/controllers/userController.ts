@@ -163,9 +163,9 @@ export async function getProfilePicByUsername(username: string): Promise<string>
   try {
     const response = await fetch(`http://localhost:3000/api/user/profilePic/${username}`);
     const data = await response.json();
-    return data.profilePic || '/src/assets/images/profile/otherProfile.png';
+    return data.profilePic || '/src/assets/images/guest.jpg';
   } catch {
-    return '/src/assets/images/profile/otherProfile.png';
+    return '/src/assets/images/guest.jpg';
   }
 }
 

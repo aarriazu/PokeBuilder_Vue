@@ -120,7 +120,7 @@ const props = defineProps({
   replies: { type: Array as () => any[], required: false, default: () => [] }
 });
 
-const authorProfilePic = ref('/src/assets/images/profile/otherProfile.png'); // Default profile picture
+const authorProfilePic = ref('/src/assets/images/guest.jpg'); // Default profile picture
 const emit = defineEmits(['answer-updated', 'answer-deleted']);
 
 const editMode = ref(false);

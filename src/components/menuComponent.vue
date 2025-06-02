@@ -6,7 +6,7 @@
           <div v-if="props.user"> 
             <img 
               class="w-12 h-12 rounded-lg object-cover mr-3 border-2 border-gray-200" 
-              :src="props.user!.profilePic! || ''"
+              :src="props.user!.profilePic! || '/src/assets/images/guest.jpg'"
             >
             <div>
               <h5 class="text-blue-600 font-semibold text-sm">{{ props.user!.username }}</h5>

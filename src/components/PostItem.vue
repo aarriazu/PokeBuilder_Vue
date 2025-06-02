@@ -28,7 +28,7 @@ const props = defineProps({
   createdAt: String, // Fecha de creación del post
 });
 
-const authorProfilePic = ref('/src/assets/images/profile/otherProfile.png');
+const authorProfilePic = ref('/src/assets/images/guest.jpg');
 // Carga la imagen cuando el componente se monta o cambia el autor
 const loadProfilePic = async () => {
   if (props.author) {

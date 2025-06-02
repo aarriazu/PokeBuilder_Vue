@@ -263,7 +263,7 @@
   import { getUsername } from '@/controllers/userController'; 
   import { getProfilePicByUsername } from '@/controllers/userController';
 
-  const authorProfilePic = ref('/src/assets/images/profile/otherProfile.png');
+  const authorProfilePic = ref('/src/assets/images/guest.jpg');
 
   // Estado para el sidebar
   const sidebarOpen = ref(false);

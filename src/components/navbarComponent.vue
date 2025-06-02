@@ -5,7 +5,7 @@
         <div v-if="user">
           <button @click="openMenu" class="relative w-10 h-10 rounded-full border-2 border-gray-200 overflow-hidden bg-white">
             <img
-              :src="user?.profilePic || 'https://i.pinimg.com/474x/2c/47/d5/2c47d5dd5b532f83bb55c4cd6f5bd1ef.jpg'"
+              :src="user?.profilePic || '/src/assets/images/guest.jpg'"
               alt="Profile Picture"
               class="w-full h-full object-cover"
             />
