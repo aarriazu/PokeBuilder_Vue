@@ -114,12 +114,26 @@ const routes: Array<RouteRecordRaw> = [
     path: '/newPost',
     name: 'newPost',
     sensitive: true,
+    beforeEnter: ((to, from, next) => {
+      if (to.path === '/newPost' && !userState.value) {
+        next('/login');
+      } else {
+        next();
+      }
+    }),
     component: () => import('@/views/NewPost.vue')
   },
   {
     path: '/torneoBracket',
     name: 'TorneoBracket',
     sensitive: true,
+    beforeEnter: ((to, from, next) => {
+      if (to.path === '/torneoBracket' && !userState.value) {
+        next('/login');
+      } else {
+        next();
+      }
+    }),
     component: () => import('@/views/TorneoBracket.vue')
   },
   {

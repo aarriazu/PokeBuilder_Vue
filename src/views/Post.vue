@@ -14,7 +14,7 @@
 
           <!-- Categorías -->
           <div class="p-4 space-y-2">
-            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categorías</h3>
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categories</h3>
             <router-link 
               to="/forumGeneral" 
               class="flex items-center p-3 rounded-lg transition-colors"
@@ -37,7 +37,7 @@
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11V7a1 1 0 10-2 0v1H7a1 1 0 100 2h2v1a1 1 0 102 0V9h2a1 1 0 100-2h-2z" clip-rule="evenodd" />
                 </svg>
               </div>
-              <span class="font-medium">Torneos</span>
+              <span class="font-medium">Tournaments</span>
             </router-link>
             <router-link 
               to="/forumAyuda" 
@@ -49,7 +49,7 @@
                   <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
                 </svg>
               </div>
-              <span class="font-medium">Ayuda</span>
+              <span class="font-medium">Help</span>
             </router-link>
             <router-link 
               to="/forumSpinoff" class="flex items-center p-3 rounded-lg transition-colors"

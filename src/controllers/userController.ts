@@ -106,7 +106,6 @@ export async function getUser() {
     try {
       const response = await fetch(`http://localhost:3000/api/teams/${userState.value._id}`);
       const teams = await response.json();
-      console.log('Equipos obtenidos:', teams);
       teamStore.setTeams(teams); // Actualiza el store con los equipos obtenidos
     } catch (error) {
       console.error('Error al obtener los equipos del usuario:', error);

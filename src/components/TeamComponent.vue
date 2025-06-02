@@ -25,12 +25,12 @@
           />
         </li>
       </ul>
-      <ion-button @click="editTeam" shape="round">Modificar</ion-button>
+      <ion-button @click="editTeam" shape="round">Edit</ion-button>
       <ion-button @click="toggleFavorite">
         <ion-icon :class="{ 'active-icon': isIconActive }" slot="icon-only" :icon="star"></ion-icon>
       </ion-button>
       <div class="teamDeleteButton">
-        <ion-button @click="deleteTeam" shape="round" color="danger">Eliminar</ion-button>
+        <ion-button @click="deleteTeam" shape="round" color="danger">Delete</ion-button>
       </div>
     </div>
     
