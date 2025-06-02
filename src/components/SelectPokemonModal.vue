@@ -7,9 +7,9 @@
           <!-- Barra de búsqueda -->
           <ion-input
             v-model="searchQuery"
-            placeholder="Buscar Pokémon..."
+            placeholder="Search Pokemon..."
             clear-input
-            class="search-bar"
+            class="search-bar textBox bg-white"
           ></ion-input>
   
           <!-- Filtros por tipo y generación -->

@@ -25,4 +25,10 @@
   .text-center {
     text-align: center;
   }
+
+  ion-content {
+  --background: #ffffff;
+  background: #ffffff !important;
+  --box-shadow: none !important;
+}
   </style>

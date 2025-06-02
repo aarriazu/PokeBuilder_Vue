@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.modal-wrapper, .inner-scroll {
+  background: transparent !important;
+}

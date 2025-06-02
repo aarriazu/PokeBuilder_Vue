@@ -10,7 +10,7 @@
                   <ion-button router-link="/teambuilder" class="w-full">New Team</ion-button>
                 </div>
               </div>
-              <div v-if="teamStore.teams.length > 0">
+              <div v-if="teamStore.teams.length > 0" >
                 <TeamComponent
                   v-for="(team, index) in teamStore.teams"
                   :key="team._id?.toString() || index"
@@ -28,7 +28,6 @@
           </ion-row>
         </ion-grid>
       </div>
-      <footerComponent/>
     </ion-content>
   </ion-page>
 </template>
@@ -39,7 +38,6 @@ import { onMounted, ref } from 'vue';
 import TeamComponent from '@/components/TeamComponent.vue';
 import { useRouter } from 'vue-router';
 import * as userController from '@/controllers/userController';
-import footerComponent from '@/components/footerComponent.vue';
 //import { jwtDecode } from 'jwt-decode';
 import { User } from '@/classes/User';
 import axios from 'axios';

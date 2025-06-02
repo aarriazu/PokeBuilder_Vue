@@ -8,7 +8,7 @@
               v-model="searchQuery"
               placeholder="Search Pokemon..."
               clear-input
-              class="w-full border rounded px-4 py-2"
+              class="textBox bg-white w-full border rounded px-4 py-2"
             />
           </div>
   

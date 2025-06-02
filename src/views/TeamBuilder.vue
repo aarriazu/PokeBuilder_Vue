@@ -10,26 +10,32 @@
           </div>
         </div>
 
-        <div class="team-name">
+        <div class="team-name p-4 rounded-md flex items-center ">
           <p>Team Name:</p>
-          <input type="text" class="textBox bg-white" v-model="teamName" placeholder="Escribe el nombre del equipo" />
+          <input type="text" class="textBox bg-white border border-gray-300 rounded px-3 py-2 w-10" v-model="teamName" placeholder="Write the team name" />
         </div>
 
         <ion-grid class="custom-grid">
           <ion-row>
             <ion-col size="2" v-for="(pokemon, index) in team" :key="index">
-              <div>
+              <div class="flex flex-col items-center focus:outline-none">
                 <ion-button color="light" size="large" class="addPokemonButton" @click="openModal(index)">
                   Select Pokemon
                 </ion-button>
-                <div v-if="pokemon.name">
-                  <img :src="pokemon!.species.sprite || ''" :alt="pokemon!.name" class="w-24 h-24" />
+                <div v-if="pokemon.name" class="bg-white p-4 rounded-md shadow outline outline-1 outline-gray-300">
+                  <div class="flex justify-center">
+                    <img :src="pokemon!.species.sprite || ''" :alt="pokemon!.name" class="w-24 h-24" />
+                  </div>
 
                   <p>Name</p>
                   <input type="text" class="textBox bg-white" v-model="pokemon.name">
 
                   <p>Item</p>
-                  <input type="text" class="textBox bg-white" v-model="pokemon.item">
+                  <select class="textBox bg-white" v-model="pokemon.item">
+                    <option v-for="item in dataController.ItemArray" :key="item.name" :value="item.description">
+                      {{ dataController.formatText(item.name) }}
+                    </option>
+                  </select>
 
                   <p>Ability</p>
                   <select class="textBox bg-white" v-model="pokemon.ability">
@@ -90,7 +96,6 @@
           </ion-row>
         </ion-grid>
       </div>
-      <footerComponent/>
     </ion-content>
   </ion-page>
 </template>
@@ -107,7 +112,6 @@ import { userState } from '@/controllers/stateController';
 import { modalController } from '@ionic/vue';
 import SelectPokemonModal from '@/components/SelectPokemonModal.vue';
 import axios from 'axios';
-import footerComponent from '@/components/footerComponent.vue';
 import { teamEditData } from '@/stores/teamEditStore';
 
 const router = useRouter();

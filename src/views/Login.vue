@@ -7,64 +7,57 @@
           Pokebuilder
         </h1>
       </div>
-      
-      <ion-grid class="flex items-center justify-center min-h-screen bg-white m-2">
-        <ion-row class="w-full max-w-6xl">
-          <!-- Sección de Login -->
-          <ion-col size="12" size-md="6" class="bg-white shadow-md rounded-lg p-6 flex flex-col justify-center">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Login</h2>
-            <p class="text-gray-600 mb-2">Username or email</p>
-            <input 
-              v-model="loginUserName"
-              type="text" 
-              id="userName" 
-              name="userName" 
-              class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-black"
-              placeholder="Enter your username or email"
-            >
-            <p class="text-gray-600 mb-2">Password</p>
-            <input 
-              v-model="loginPassword"
-              type="password" 
-              id="password" 
-              name="password" 
-              class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-black"
-              placeholder="Enter your password"
-            >
-            <ion-button 
-              @click="handleLogin"
-              :disabled="loading"
-              class="w-full text-white py-2 px-4 rounded-lg"
-            >
-              Login
-            </ion-button>
-            <p v-if="loginErrorMsg" class="text-red-500 mt-2">{{ loginErrorMsg }}</p>
-            <p class="text-gray-600 mt-4 flex items-center">
-              Don't have an account?
-              <button @click="showSignin = true" class="text-blue-600 ml-2">Sign in</button>
-            </p>
-          </ion-col>
+      <br><br><br><br><br><br><br><br><br><br>
 
-          <!-- Sección de Actividad Reciente -->
-          <ion-col size="12" size-md="6" class="flex flex-col justify-center">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Actividad reciente</h2>
-            <a href="/postGuest" class="block mb-4">
-              <img 
-                src="/src/assets/images/forum/loginForumPost1.png" 
-                alt="Post 1" 
-                class="w-full rounded-lg shadow-md"
-              >
-            </a>
-            <a href="/postGuest" class="block">
-              <img 
-                src="/src/assets/images/forum/loginForumPost2.png" 
-                alt="Post 2" 
-                class="w-full rounded-lg shadow-md"
-              >
-            </a>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+      <div class="flex justify-center items-center mt-8">
+        <div class="flex bg-white bg-opacity-90 rounded-xl shadow-lg p-8">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYFPfcNmWqP1jCFAy_wtGIpeWBBz-3860teA&s"
+              alt="Login image"
+              class="w-100 h-100 object-contain hidden md:block" />
+          <ion-list lines="none" class="w-full max-w-md">
+            <ion-item>
+              <ion-label position="stacked" class="text-gray-800 font-semibold">Username or email</ion-label>
+              <ion-input
+                v-model="loginUserName"
+                type="text"
+                id="loginUserName"
+                name="loginUserName"
+                placeholder="Enter your username or email"
+                class="text-black"
+                autocomplete="username"
+              ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked" class="text-gray-800 font-semibold">Password</ion-label>
+              <ion-input
+                v-model="loginPassword"
+                type="password"
+                id="loginPassword"
+                name="loginPassword"
+                placeholder="Enter your password"
+                class="text-black"
+                autocomplete="current-password"
+              ></ion-input>
+            </ion-item>
+            <div class="text-center">
+              <ion-button
+                  expand="block"
+                  @click="handleLogin"
+                  class="text-white font-semibold py-2 px-4 rounded-lg transition"
+                >
+                  Login
+                </ion-button>
+              <p v-if="loginErrorMsg" class="text-red-500 mt-2">{{ loginErrorMsg }}</p>
+              <p class="text-gray-600 mt-4 flex items-center">
+                <ion-button fill="clear" size="small" @click="showSignin = true" class="text-blue-600 ml-2"> Don't have an account? Sign up</ion-button>
+              </p>
+              <p class="text-gray-600 mt-4 flex items-center">
+                <ion-button fill="clear" size="small" @click="router.push('/forumGeneral')" class="text-blue-600 ml-2">Enter forum as guest</ion-button>
+              </p>
+            </div>
+          </ion-list>
+        </div>
+      </div>
 
       <!-- Signin Modal -->
       <ion-modal :is-open="showSignin" @didDismiss="showSignin = false">
@@ -111,24 +104,20 @@
               <p v-if="signinErrorMsg" class="text-red-500 mt-2">{{ signinErrorMsg }}</p>
               <div class="text-center">
                 <ion-button type="submit" class="text-white font-semibold py-2 px-4 rounded-lg transition">
-                  Sign in
+                  Sign up
                 </ion-button>
               </div>
             </form>
           </div>
         </ion-content>
       </ion-modal>
-      
-      <!-- Footer -->
-      <footerCustom/>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonModal } from '@ionic/vue';
-import footerCustom from '@/components/footerComponent.vue';
+import { IonButton, IonContent, IonPage, IonList, IonModal, IonItem, IonLabel, IonInput } from '@ionic/vue';
 import { useRouter } from 'vue-router';
 import * as userController from '@/controllers/userController';
 
@@ -181,44 +170,8 @@ const handleSignin = async () => {
      signinErrorMsg.value = (error instanceof Error ? error.message : 'Error al registrar el usuario');
   }
 };
-
-/*
-const createAccount = async () => {
-  registerErrorMsg.value = '';
-  registerSuccessMsg.value = '';
-  registerLoading.value = true;
-  try {
-    const response = await fetch('/api/register.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userName: registerUserName.value,
-        email: registerEmail.value,
-        password: registerPassword.value,
-        passwordConfirm: registerPasswordConfirm.value
-      })
-    });
-    const data = await response.json();
-    if (data.success) {
-      registerSuccessMsg.value = data.message;
-      setTimeout(() => {
-        registerModal.value.dismiss();
-        registerUserName.value = '';
-        registerEmail.value = '';
-        registerPassword.value = '';
-        registerPasswordConfirm.value = '';
-        registerSuccessMsg.value = '';
-      }, 1500);
-    } else {
-      registerErrorMsg.value = data.message;
-    }
-  } catch (e) {
-    registerErrorMsg.value = 'Error de conexión con el servidor';
-  }
-  registerLoading.value = false;
-};
-*/
 </script>
 
 <style scoped>
+
 </style>

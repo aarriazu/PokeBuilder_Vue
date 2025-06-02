@@ -1,11 +1,11 @@
 <template>
-    <div class="teamDiv">
+    <div class="teamDiv bg-white p-4 rounded-md shadow outline outline-1 outline-gray-300">
       <p>{{ props.teamName }}</p>
       <ul class="flex space-x-4">
         <li v-for="(pokemon, index) in teamPokemon" :key="index" class="relative group">
           <img
             v-if="pokemon.species"
-            :src="pokemon!.species.sprite || ''"
+            :src="pokemon!.species.sprite || 'https://www.models-resource.com/resources/big_icons/73/72850.png?updated=1720523981'"
             :alt="pokemon!.name"
             class="w-24 h-24"
             @mouseenter="(e) => {
@@ -16,7 +16,8 @@
                   <strong>Types:</strong> ${pokemon.species.types.filter(m => !!m).map(m => dataController.formatText(m)).join(', ')}<br>
                   <strong>Moves:</strong> ${pokemon.moves.filter(m => !!m).map(m => dataController.formatText(m)).join(', ')}<br>
                   <strong>Ability:</strong> ${dataController.formatText(pokemon.ability)}<br>
-                  <strong>Nature:</strong> ${dataController.formatText(pokemon.nature)}`;
+                  <strong>Nature:</strong> ${dataController.formatText(pokemon.nature)}`
+                  ;
               tooltip.x = e.clientX;
               tooltip.y = e.pageY - 60;
             }"

@@ -8,14 +8,38 @@
 </template>
 
 <script setup lang="ts">
-import { IonApp, IonRouterOutlet } from '@ionic/vue';
-import headerComponent from '@/components/headerComponent.vue';
-import footerComponent from '@/components/footerComponent.vue';
+  import { IonApp, IonRouterOutlet } from '@ionic/vue';
+  import headerComponent from '@/components/headerComponent.vue';
 </script>
 
-<style scoped>
+<style>
+
 :root {
   --header-height: 60px; 
+}
+
+ion-modal {
+  background: transparent !important;
+  --background: transparent !important;
+  --box-shadow: none !important;
+  filter: none !important;
+}
+
+ion-modal .signup-modal {
+  max-width: 450px !important;
+  width: 90vw !important;
+}
+
+ion-modal .login-modal {
+  height: 80vh !important;
+  min-height: 600px !important;
+  max-height: 90vh !important;
+}
+
+ion-content {
+  --background: #e7fcff;
+  background: #e7fcff !important;
+  --box-shadow: none !important;
 }
 
 .app-container {
@@ -26,7 +50,7 @@ import footerComponent from '@/components/footerComponent.vue';
 
 .app-content {
   flex: 1 0 auto; 
-  margin-top: 60px; 
+  margin-top: 56px; 
 }
 
 .header {
@@ -36,8 +60,6 @@ import footerComponent from '@/components/footerComponent.vue';
   left: 0;
   width: 100%;
   z-index: 1000;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .footer {
@@ -47,7 +69,4 @@ import footerComponent from '@/components/footerComponent.vue';
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.app-content {
-  margin-top: 60px; 
-}
 </style>

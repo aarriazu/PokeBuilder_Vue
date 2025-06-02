@@ -11,7 +11,7 @@ import abilityData from '@/assets/json/abilityData.json';
 import { Ability } from '@/interfaces/abilityInterface';
 import natureData from '@/assets/json/natureData.json';
 import { Nature } from '@/interfaces/natureInterface';
-//import itemData from '@/assets/json/itemData.json';
+import itemData from '@/assets/json/itemData.json';
 import { Item } from '@/interfaces/itemInterface';
 
 import axios from 'axios';
@@ -23,7 +23,7 @@ export const abilityArray: Ability[] = abilityData;
 export const typeArray: Type[] = typeData;
 export const eggGroupArray: EggGroup[] = eggGroupData;
 export const natureArray: Nature[] = natureData;
-//export const ItemArray: Item[] = itemData;
+export const ItemArray: Item[] = itemData;
 
 const API_BASE_URL = 'http://localhost:3000/api';
 

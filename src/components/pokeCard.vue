@@ -1,21 +1,20 @@
 <template>
-  <p>Porque no se desmonta esta vaina causas</p>
-  <div v-if="pokemon" class="p-4 rounded-2xl shadow-md bg-white max-w-xl mx-auto mt-4">
-    <div class="p-4 rounded-2xl shadow-md bg-white max-w-xl mx-auto mt-4">
-      <ion-button
-        class="absolute left-4"
-        fill="clear"
-        :disabled="!prevPokemon"
-        v-if="prevPokemon"
-        @click="handlePokemonRedirect(prevPokemon.name)">
-        Previous
-      </ion-button>
-      <ion-button
-        class="absolute right-4"
-        fill="clear"
-        @click="handlePokemonRedirect(nextPokemon!.name)">
-        Next
-      </ion-button>
+  <div v-if="pokemon" class="p-4 rounded-2xl shadow-md bg-white w-full max-w-6xl mx-auto mt-4">
+    <ion-button
+      class="absolute left-4"
+      :disabled="!prevPokemon"
+      v-if="prevPokemon"
+      @click="handlePokemonRedirect(prevPokemon.name)">
+      Previous
+    </ion-button>
+    <ion-button
+      class="absolute right-4"
+      @click="handlePokemonRedirect(nextPokemon!.name)">
+      Next
+    </ion-button>
+      
+
+    <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
       <div class="flex items-center space-x-4">
         <img :src="pokemon!.sprite || ''" :alt="pokemon!.name" class="w-24 h-24" />
         <div>
@@ -35,10 +34,7 @@
           </p>
         </div>
       </div>
-
-      <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
-        <div><strong>Weight:</strong> {{ pokemon!.weight }} kg</div>
-        <div><strong>Height:</strong> {{ pokemon!.height }} m</div>
+      <div>
         <div><strong>Egg Groups:</strong> 
           <div class="grid grid-cols-2 md:grid-cols-2 gap-2 text-sm text-gray-700">
             <span 
@@ -68,66 +64,76 @@
             </span>
         </div>
       </div>
+    </div>
 
-      <div class="mt-4">
-        <h3 class="font-semibold mb-2">Stats</h3>
-        <div v-for="stat in pokemon!.stats" :key="stat.name" class="mb-2">
-          <label class="capitalize">{{ stat.name.replace('-', ' ') }}: {{ stat.base }}</label>
-          <div class="w-full bg-gray-400 rounded h-4 overflow-hidden">
-            <div
-              class="bg-green-500 h-full"
-              :style="{ width: (stat.base / 200 * 100) + '%',
-              backgroundColor: getStatColor(stat.base)
-              }"
-            ></div>
-          </div>
+    <div class="mt-4 grid grid-cols-2  text-sm">
+      <div><strong>Weight:</strong> {{ pokemon!.weight }} kg</div>
+      <div><strong>Height:</strong> {{ pokemon!.height }} m</div>
+    </div>
+    <div></div>
+    </div>
+
+    <div class="mt-4">
+      <h3 class="font-semibold mb-2">Stats</h3>
+      <div v-for="stat in pokemon!.stats" :key="stat.name" class="mb-2">
+        <label class="capitalize">{{ stat.name.replace('-', ' ') }}: {{ stat.base }}</label>
+        <div class="w-full bg-gray-400 rounded h-4 overflow-hidden">
+          <div
+            class="bg-green-500 h-full"
+            :style="{ width: (stat.base / 200 * 100) + '%',
+            backgroundColor: getStatColor(stat.base)
+            }"
+          ></div>
         </div>
       </div>
+    </div>
 
-      <div class="mt-4">
-        <h3 class="font-semibold mb-2">Moves</h3>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm text-gray-700">
-          <span
-            v-for="move in pokemon!.moves"
-            :key="move"
-            :style="{
-              backgroundColor: getTypeColor(getMoveData(move)?.type || '')
-            }"
-            class="rounded px-2 py-1 capitalize relative cursor-pointer"
-            @mouseenter="(e) => {
-              const data = getMoveData(move);
-              tooltip.show = true;
-              tooltip.text = data
-                ? `<strong>Type:</strong> ${dataController.formatText(data.type)}<br>
-                  <strong>Class:</strong> ${dataController.formatText(data.damage_class)}<br>
-                  <strong>Effect:</strong> ${data.short_effect}<br>
-                  <strong>Power:</strong> ${data.power ?? '-'}<br>
-                  <strong>Accuracy:</strong> ${data.accuracy ?? '-'}<br>
-                  <strong>PP:</strong> ${data.pp}<br>
-                  <strong>Priority:</strong> ${data.priority}`
-                : 'No move data';
-              tooltip.x = e.clientX;
-              tooltip.y = e.pageY - 60;
-            }"
-            @mouseleave="tooltip.show = false"
-          >
-            {{ dataController.formatText(move) }}
-          </span>
-        </div>
+    <div class="mt-4">
+      <h3 class="font-semibold mb-2">Moves</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm text-gray-700">
+        <span
+          v-for="move in pokemon!.moves"
+          :key="move"
+          :style="{
+            backgroundColor: getTypeColor(getMoveData(move)?.type || '')
+          }"
+          class="rounded px-2 py-1 capitalize relative cursor-pointer"
+          @mouseenter="(e) => {
+            const data = getMoveData(move);
+            tooltip.show = true;
+            tooltip.text = data
+              ? `<strong>Type:</strong> ${dataController.formatText(data.type)}<br>
+                <strong>Class:</strong> ${dataController.formatText(data.damage_class)}<br>
+                <strong>Effect:</strong> ${data.short_effect}<br>
+                <strong>Power:</strong> ${data.power ?? '-'}<br>
+                <strong>Accuracy:</strong> ${data.accuracy ?? '-'}<br>
+                <strong>PP:</strong> ${data.pp}<br>
+                <strong>Priority:</strong> ${data.priority}`
+              : 'No move data';
+            tooltip.x = e.clientX;
+            tooltip.y = e.pageY - 60;
+          }"
+          @mouseleave="tooltip.show = false"
+        >
+          {{ dataController.formatText(move) }}
+        </span>
       </div>
+    </div>
 
-      <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
-        <!-- Preevolución -->
+    <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
+      <!-- Preevolución -->
       <div v-if="preEvolution" class="mt-4">
         <h3 class="text-lg font-bold">Preevolution</h3>
-        <button
-          class="flex items-center space-x-4 focus:outline-none"
-          style="background: none; border: none; cursor: pointer;"
-          @click="handlePokemonRedirect(preEvolution.name)"
-        >
-          <img :src="preEvolution.sprite || ''" :alt="preEvolution.name || ''" class="w-16 h-16" />
-          <p class="capitalize">{{ preEvolution.name }}</p>
-        </button>
+        <div class="flex space-x-4">
+          <button
+            class="flex flex-col items-center focus:outline-none"
+            style="background: none; border: none; cursor: pointer;"
+            @click="handlePokemonRedirect(preEvolution.name)"
+          >
+            <img :src="preEvolution.sprite || ''" :alt="preEvolution.name || ''" class="w-16 h-16" />
+            <p class="capitalize">{{ preEvolution.name }}</p>
+          </button>
+        </div>
       </div>
 
       <!-- Evoluciones -->
@@ -146,13 +152,12 @@
           </button>
         </div>
       </div>
-      </div>
+
     </div>
+  </div>
   
 
   <!-- Mensaje de carga -->
-    </div>
-  </div>
   <div v-else class="text-center mt-4">
     <p>Loading Pokemon data...</p>
   </div>
