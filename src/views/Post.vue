@@ -12,20 +12,11 @@
             </svg>
           </button>
 
-          <!-- Perfil del usuario -->
-          <div class="flex items-center p-4 border-b border-gray-200">
-            <img class="w-12 h-12 rounded-lg object-cover mr-3 border-2 border-gray-200" src="/src/assets/images/profile/profilePic.png">
-            <div>
-              <h5 class="text-blue-600 font-semibold text-sm">Pokefan33</h5>
-              <p class="text-gray-500 text-xs">Miembro desde 10/02/2024</p>
-            </div>
-          </div>
-
           <!-- Categorías -->
           <div class="p-4 space-y-2">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categorías</h3>
             <router-link 
-              to="/home/forumGeneral" 
+              to="/forumGeneral" 
               class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-blue-100 text-blue-800': currentForum === 'general', 'text-gray-700 hover:bg-gray-100': currentForum !== 'general'}"
             >
@@ -37,7 +28,7 @@
               <span class="font-medium">General</span>
             </router-link>
             <router-link 
-              to="/home/forumTorneos" 
+              to="/forumTorneos" 
               class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-red-100 text-red-800': currentForum === 'torneos', 'text-gray-700 hover:bg-gray-100': currentForum !== 'torneos'}"
             >
@@ -49,7 +40,7 @@
               <span class="font-medium">Torneos</span>
             </router-link>
             <router-link 
-              to="/home/forumAyuda" 
+              to="/forumAyuda" 
               class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-green-100 text-green-800': currentForum === 'ayuda', 'text-gray-700 hover:bg-gray-100': currentForum !== 'ayuda'}"
             >
@@ -61,7 +52,7 @@
               <span class="font-medium">Ayuda</span>
             </router-link>
             <router-link 
-              to="/home/forumSpinoff" class="flex items-center p-3 rounded-lg transition-colors"
+              to="/forumSpinoff" class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-purple-100 text-purple-800': currentForum === 'spinoff', 'text-gray-700 hover:bg-gray-100': currentForum !== 'spinoff'}"
             >
               <div class="bg-purple-100 p-2 rounded-lg mr-3">
@@ -71,7 +62,7 @@
               </div>
               <span class="font-medium">Spin-off</span>
             </router-link>
-            <router-link to="/home/forumOfftopic" class="flex items-center p-3 rounded-lg transition-colors"
+            <router-link to="/forumOfftopic" class="flex items-center p-3 rounded-lg transition-colors"
                          :class="{'bg-yellow-100 text-yellow-800': currentForum === 'offtopic', 'text-gray-700 hover:bg-gray-100': currentForum !== 'offtopic'}">
               <div class="bg-yellow-100 p-2 rounded-lg mr-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-600" viewBox="0 0 20 20" fill="currentColor">
@@ -99,22 +90,52 @@
           <!-- Contenido del post -->
           <div class="p-4 md:p-6">
             <div class="max-w-4xl mx-auto">
+              <!-- Formulario de edición -->
+              <div v-if="editMode" class="bg-white rounded-2xl border border-yellow-300 p-8 mb-8 shadow-lg">
+                <h2 class="text-xl font-bold text-yellow-600 mb-4">Edit Post</h2>
+                <input
+                  v-model="editTitle"
+                  class="block w-full mb-4 border border-gray-300 bg-white rounded-lg p-3 text-lg focus:ring-yellow-400 focus:border-yellow-400"
+                  placeholder="Edit title"
+                />
+                <textarea
+                  v-model="editContent"
+                  rows="6"
+                  class="block w-full mb-4 border border-gray-300 bg-white rounded-lg p-3 text-base focus:ring-yellow-400 focus:border-yellow-400"
+                  placeholder="Edit content"
+                ></textarea>
+                <div class="flex space-x-3">
+                  <button
+                    @click="saveEdit"
+                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold transition"
+                  >
+                    Save
+                  </button>
+                  <button
+                    @click="editMode = false"
+                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+              <!-- Vista normal del post -->
               <div
-                v-if="post"
+                v-else-if="post"
                 class="bg-white rounded-2xl border border-gray-200 p-8 mb-8"
               >
                 <div class="flex items-center mb-6">
                   <img
-                    src="/src/assets/images/profile/otherProfile.png"
+                    :src="authorProfilePic"
                     alt="User Icon"
                     class="w-12 h-12 rounded-full mr-4 border-2 border-indigo-200"
                   />
                   <div>
                     <h3 class="font-semibold text-gray-800 text-lg">{{ post.author }}</h3>
                     <p class="text-xs text-gray-500">
-                      Publicado el {{ new Date(post.createdAt).toLocaleDateString() }}
+                      Published on {{ new Date(post.createdAt).toLocaleDateString() }}
                       <span v-if="post.editedAt && post.editedAt !== post.createdAt">
-                        | Editado: {{ new Date(post.editedAt).toLocaleString() }}
+                        | Edited: {{ new Date(post.editedAt).toLocaleString() }}
                       </span>
                     </p>
                   </div>
@@ -131,6 +152,22 @@
                     {{ post.subforum }}
                   </span>
                 </div>
+                <div class="flex items-center mb-6">
+                  <div v-if="getUsername() === post.author" class="ml-auto flex space-x-2">
+                    <button
+                      @click="startEdit"
+                      class="px-3 py-1 rounded bg-yellow-400 text-white text-xs font-semibold"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      @click="deletePost"
+                      class="px-3 py-1 rounded bg-red-500 text-white text-xs font-semibold"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
                 <h2 class="text-3xl font-extrabold text-gray-900 mb-4">{{ post.title }}</h2>
                 <div class="prose max-w-none text-gray-700 mb-8 text-lg leading-relaxed">
                   <p>{{ post.content }}</p>
@@ -143,21 +180,57 @@
                         <path stroke-linecap="round" stroke-linejoin="round"
                           d="M17 8h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V10a2 2 0 012-2h2M12 15v-6m0 0l-3 3m3-3l3 3" />
                       </svg>
-                      {{ post.answers }} respuestas
+                      {{ answers.length }} Answers
                     </span>
                   </div>
-                  <button class="text-red-500 text-xs font-semibold">
-                    Reportar post
-                  </button>
                 </div>
               </div>
               <div v-else class="text-center text-gray-500 py-10">
-                Cargando post...
+                Loading post...
               </div>
             </div>
           </div>
+
+          <!-- Caja para responder-->
+            <div class="max-w-4xl mx-auto mb-8">
+              <label for="message" class="block mb-2 text-sm font-medium text-gray-900">Your answer</label>
+              <textarea
+                id="message"
+                rows="4"
+                v-model="answerContent"
+                class="block w-full p-3 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                placeholder="Write your answer here."
+              ></textarea>
+              <div class="flex justify-end mt-3">
+                <button
+                  @click="sendAnswer"
+                  class="bg-indigo-600 text-white px-5 py-2 rounded-lg font-semibold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                >
+                  Send answer
+                </button>
+              </div>
+            </div>
           <!-- Comentarios -->
-           
+          <div class="bg-white p-4 sm:p-6 rounded-lg">
+            <h3 class="text-lg sm:text-xl text-center font-semibold text-gray-800 mb-4">Answers</h3>
+            <div v-if="answers.length > 0">
+              <AnswerComponent
+                v-for="answer in answers"
+                :key="answer._id"
+                :id="answer._id"
+                :post-id="answer.postId"
+                :author="answer.author"
+                :content="answer.content"
+                :createdAt="answer.createdAt"
+                :replies="answer.replies"
+                @answer-updated="fetchAnswers"
+                @answer-deleted="handleAnswerDeleted"
+              />
+            </div>
+            <div v-else class="text-gray-500  text-center text-sm sm:text-base">
+              There are no answers yet. Be the first to reply!
+            </div>
+          </div>
         </div>
       </div>
     </ion-content>
@@ -165,16 +238,167 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, Comment } from 'vue';
 import { IonContent, IonPage } from '@ionic/vue';
 import { useRoute } from 'vue-router';
+import AnswerComponent from '@/components/AnswerComponent.vue';
+import axios from 'axios';
 import * as dataController from '@/controllers/dataController';
+import { getUsername } from '@/controllers/userController';
+import { useRouter } from 'vue-router';
+import { getProfilePicByUsername } from '@/controllers/userController';
 
+const authorProfilePic = ref('/src/assets/images/profile/otherProfile.png');
+
+interface Comment {
+  _id?: string;        // ID del comentario
+  postId: string;      // ID del post al que pertenece
+  author: string;
+  content: string;
+  createdAt: string;
+  editedAt: string;
+  parentAnswerId?: string;  // ID de la respuesta padre si es una subrespuesta
+  replies?: Comment[];      // Respuestas hijas (anidadas)
+}
 const sidebarOpen = ref(false);
-const currentForum = ref('offtopic');
+const router = useRouter();
+
+const currentForum = ref('');
 
 const route = useRoute();
 const post = ref<any>(null);
+const answers = ref<Comment[]>([]); // Array para almacenar las respuestas
+const answerContent = ref('');
+const answersCount = ref(0);
+
+//const para edicion de post
+const editMode = ref(false);
+const editTitle = ref('');
+const editContent = ref('');
+
+const startEdit = () => {
+  editTitle.value = post.value.title;
+  editContent.value = post.value.content;
+  editMode.value = true;
+};
+
+//Actualiza el número de respuestas en el post cuando se elimina una respuesta
+const handleAnswerDeleted = async () => {
+  await axios.put(`http://localhost:3000/api/posts/${post.value._id}/answers`, {
+    answers: answers.value.length
+  });
+  post.value.answers = answers.value.length;
+};
+
+//función para guardar los cambios del post editado
+const saveEdit = async () => {
+  try {
+    const token = sessionStorage.getItem('session');
+    await axios.put(`http://localhost:3000/api/posts/${post.value._id}`, {
+      title: editTitle.value,
+      content: editContent.value,
+      editedAt: new Date().toISOString()
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    post.value.title = editTitle.value;
+    post.value.content = editContent.value;
+    post.value.editedAt = new Date().toISOString();
+    editMode.value = false;
+    alert('Post successfully edited.');
+    location.reload(); // Recargar la página para mostrar los cambios
+  } catch (error) {
+    alert('You do not have permission to edit this post.');
+    console.log('Error editing post:', error);
+    editMode.value = false; // Salir del modo de edición en caso de error
+  }
+};
+
+//Eliminar el post si el usuario es el autor
+const deletePost = async () => {
+  if (!confirm('Are you sure you want to delete this post?')) return;
+  try {
+    const token = sessionStorage.getItem('session');
+    await axios.delete(`http://localhost:3000/api/posts/${post.value._id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    alert('Post successfully deleted.');
+    router.push('/forumGeneral'); 
+  } catch (error) {
+    alert('You do not have permission to delete this post.');
+    console.log('Error deleting post:', error);
+  }
+};
+
+// Función para enviar la respuesta
+const sendAnswer = async () => {
+
+  // Validar que el usuario haya iniciado sesión
+  if (!getUsername() || getUsername() === 'nousername') {
+    alert('You must log in to reply.');
+    return;
+  }
+
+  // Validar que el contenido de la respuesta no esté vacío
+  if (!answerContent.value.trim()) {
+    alert('The response cannot be empty.');
+    return;
+  }
+
+  // Crear el objeto del comentario usando la interface
+  const comment: Comment = {
+    postId: post.value._id, // ID del post actual
+    author: getUsername() as string, // Cambiar por el autor real si está disponible
+    content: answerContent.value,
+    createdAt: new Date().toISOString(),
+    editedAt: new Date().toISOString(),
+  };
+
+  try {
+    // Enviar el comentario al servidor
+    const response = await axios.post('http://localhost:3000/api/Answers', comment, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Actualiza el número de respuestas en el post en la base de datos
+    await axios.put(`http://localhost:3000/api/posts/${post.value._id}/answers`, {
+      answers: answers.value.length + 1
+    });
+
+    console.log('Respuesta enviada exitosamente:', response.data);
+    alert('Answer sent successfully.');
+    answerContent.value = ''; // Limpiar el campo de respuesta
+    location.reload(); // Recargar la página para mostrar la nueva respuesta
+  } catch (error) {
+    console.error('Error al enviar la respuesta:', error);
+    alert('There was an error sending the answer.');
+  }
+};
+
+// Función para obtener las respuestas del post
+const fetchAnswers = async () => {
+  try {
+    // Verificar que el post esté cargado antes de intentar obtener las respuestas
+    if (!post.value || !post.value._id) {
+      console.error('El post no está cargado o no tiene un ID válido.');
+      return;
+    }
+
+    // Realizar la solicitud GET al servidor
+    const response = await axios.get<Comment[]>('http://localhost:3000/api/Answers', {
+      params: { postId: post.value._id }, // Pasar el ID del post como parámetro
+    });
+
+    // Guardar las respuestas en el array `answers`
+    answers.value = response.data;
+    console.log('Respuestas obtenidas:', answers.value);
+  } catch (error) {
+    console.error('Error al obtener las respuestas:', error);
+  }
+};
+
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
@@ -183,8 +407,13 @@ const toggleSidebar = () => {
 onMounted(async () => {
   const id = route.params.id as string;
   post.value = await dataController.getPostById(id);
+  if (post.value?.author) {
+    authorProfilePic.value = await getProfilePicByUsername(post.value.author);
+  }
+  fetchAnswers();
 });
 </script>
+
 
 <style scoped>
 .main {

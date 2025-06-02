@@ -35,7 +35,8 @@
     "mongodb": "^6.16.0",
     "swiper": "^11.2.4",
     "vue": "^3.3.0",
-    "vue-router": "^4.2.0"
+    "vue-router": "^4.2.0",
+    "vue-tournament-bracket": "^3.0.0"
   },
   "devDependencies": {
     "@capacitor/cli": "7.0.1",

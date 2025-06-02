@@ -143,6 +143,16 @@ export function getProfilePic(): string {
   return userState.value.profilePic || 'https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1'; // Devuelve la imagen del perfil o una predeterminada
 }
 
+export async function getProfilePicByUsername(username: string): Promise<string> {
+  try {
+    const response = await fetch(`http://localhost:3000/api/user/profilePic/${username}`);
+    const data = await response.json();
+    return data.profilePic || '/src/assets/images/profile/otherProfile.png';
+  } catch {
+    return '/src/assets/images/profile/otherProfile.png';
+  }
+}
+
 /*
 export function getJoinDate(): String  {
     return user.value?.createdAt.toString || "noimg";

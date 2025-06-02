@@ -3,12 +3,12 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="profile" href="/home/profile">
+        <ion-tab-button tab="profile" href="/profile">
           <ion-icon :icon="triangle" />
           <ion-label>Perfil</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="forum" href="/home/forumGeneral">
+        <ion-tab-button tab="forum" href="/forumGeneral">
           <ion-icon :icon="square" />
           <ion-label>Foro</ion-label>
         </ion-tab-button>

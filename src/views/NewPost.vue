@@ -12,24 +12,12 @@
             </svg>
           </button>
 
-          <!-- Perfil del usuario -->
-          <div class="flex items-center p-4 border-b border-gray-200">
-            <img 
-              class="w-12 h-12 rounded-lg object-cover mr-3 border-2 border-gray-200" 
-              src="/src/assets/images/profile/profilePic.png"
-            >
-            <div>
-              <h5 class="text-blue-600 font-semibold text-sm">Pokefan33</h5>
-              <p class="text-gray-500 text-xs">Miembro desde 10/02/2024</p>
-            </div>
-          </div>
-
           <!-- Categorías del foro -->
           <div class="p-4 space-y-2">
-            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categorías</h3>
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categories</h3>
             
             <router-link 
-              to="/home/forumGeneral" 
+              to="/forumGeneral" 
               class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-blue-100 text-blue-800': currentForum === 'general', 'text-gray-700 hover:bg-gray-100': currentForum !== 'general'}"
             >
@@ -42,7 +30,7 @@
             </router-link>
 
             <router-link 
-              to="/home/forumTorneos" 
+              to="/forumTorneos" 
               class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-red-100 text-red-800': currentForum === 'torneos', 'text-gray-700 hover:bg-gray-100': currentForum !== 'torneos'}"
             >
@@ -51,11 +39,11 @@
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11V7a1 1 0 10-2 0v1H7a1 1 0 100 2h2v1a1 1 0 102 0V9h2a1 1 0 100-2h-2z" clip-rule="evenodd" />
                 </svg>
               </div>
-              <span class="font-medium">Torneos</span>
+              <span class="font-medium">Tournaments</span>
             </router-link>
 
             <router-link 
-              to="/home/forumAyuda" 
+              to="/forumAyuda" 
               class="flex items-center p-3 rounded-lg transition-colors"
               :class="{'bg-green-100 text-green-800': currentForum === 'ayuda', 'text-gray-700 hover:bg-gray-100': currentForum !== 'ayuda'}"
             >
@@ -64,10 +52,10 @@
                   <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
                 </svg>
               </div>
-              <span class="font-medium">Ayuda</span>
+              <span class="font-medium">Help</span>
             </router-link>
 
-            <router-link to="/home/forumSpinoff" class="flex items-center p-3 rounded-lg transition-colors"
+            <router-link to="/forumSpinoff" class="flex items-center p-3 rounded-lg transition-colors"
                          :class="{'bg-purple-100 text-purple-800': currentForum === 'spinoff', 'text-gray-700 hover:bg-gray-100': currentForum !== 'spinoff'}">
               <div class="bg-purple-100 p-2 rounded-lg mr-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600" viewBox="0 0 20 20" fill="currentColor">
@@ -77,7 +65,7 @@
               <span class="font-medium">Spin-off</span>
             </router-link>
 
-            <router-link to="/home/forumOfftopic" class="flex items-center p-3 rounded-lg transition-colors"
+            <router-link to="/forumOfftopic" class="flex items-center p-3 rounded-lg transition-colors"
                          :class="{'bg-yellow-100 text-yellow-800': currentForum === 'offtopic', 'text-gray-700 hover:bg-gray-100': currentForum !== 'offtopic'}">
               <div class="bg-yellow-100 p-2 rounded-lg mr-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-600" viewBox="0 0 20 20" fill="currentColor">
@@ -109,36 +97,35 @@
             <div class="max-w-4xl mx-auto">
               <!-- Cabecera del formulario -->
               <div class="bg-white rounded-lg shadow-sm border-2 border-gray-300 p-6">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Crear un nuevo post</h2>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Create a new post</h2>
                 <p class="text-gray-600 text-sm mb-4">
-                  Comparte tus ideas, preguntas o cualquier tema relacionado con Pokémon en este foro.
+                  Share your thoughts, questions, or any Pokémon-related topics in this forum.                
                 </p>
-
                 <!-- Formulario para crear un post -->
                 <form class="space-y-4" @submit.prevent="savePost">
                   <!-- Título del post -->
                   <div>
-                    <label for="postTitle" class="block text-gray-800 font-semibold mb-2">Título del post</label>
+                    <label for="postTitle" class="block text-gray-800 font-semibold mb-2">Post Title</label>
                     <input 
                       v-model="postContent.title"
                       type="text" 
                       id="postTitle" 
                       name="postTitle" 
                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
-                      placeholder="Escribe el título aquí"
+                      placeholder="Write the post title here"
                     >
                   </div>
 
                   <!-- Contenido del post -->
                   <div>
-                    <label for="postContent" class="block text-gray-800 font-semibold mb-2">Contenido</label>
+                    <label for="postContent" class="block text-gray-800 font-semibold mb-2">Content</label>
                     <textarea 
                       v-model="postContent.content"
                       id="postContent" 
                       name="postContent" 
                       rows="6" 
                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
-                      placeholder="Escribe el contenido aquí"
+                      placeholder="Write the content here"
                     ></textarea>
                   </div>
 
@@ -148,7 +135,7 @@
                       type="submit" 
                       class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition"
                     >
-                      Publicar
+                      Post
                     </button>
                   </div>
                 </form>
@@ -166,6 +153,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios';
 import { IonContent, IonPage } from '@ionic/vue';
+import { getUser, getUsername } from '@/controllers/userController';
 
 const sidebarOpen = ref(false);
 const currentForum = ref('newPost');
@@ -176,7 +164,7 @@ const route = useRoute();
 
 const postContent = ref({
   title: '',
-  author: '',
+  author: getUsername(), // Obtener el nombre de usuario del controlador
   subforum: '',
   answers: 0,
   content: '',
@@ -187,20 +175,18 @@ const postContent = ref({
 const savePost = async (): Promise<void> => {
   // Validar que los campos requeridos estén completos
   if (!postContent.value.title || !postContent.value.content || !postContent.value.subforum) {
-    alert('Por favor, completa todos los campos antes de guardar.');
+    alert('Please complete all fields before saving.');
     return;
   }
 
   // Configurar el contenido del post
   postContent.value = {
     ...postContent.value,
-    author: 'USER', // Cambiar por el autor real si está disponible
+    author: getUsername(), // Cambiar por el autor real si está disponible
     answers: 0,
     createdAt: new Date().toISOString(),
     editedAt: new Date().toISOString(),
   };
-
-  console.log('Post a guardar:', postContent.value);
 
   try {
     // Enviar el post al servidor
@@ -213,11 +199,11 @@ const savePost = async (): Promise<void> => {
      // Intentar parsear solo si el texto no está vacío
     let data = null;
     
-    alert('Post guardado exitosamente.');
-    router.push(`/home/forumGeneral`);
+    alert('Post saved successfully.');
+    router.push(`/forumGeneral`);
   } catch (error) {
     console.error('Error al guardar el post:', error);
-    alert('Hubo un error al guardar el post, disculpa las molestias.');
+    alert('There was an error saving the post, sorry for the inconvenience. Please try again later.');
   }
 };
 
@@ -225,7 +211,6 @@ onMounted(() => {
   // Leer el parámetro 'subforum' de la URL
   const subforumParam = route.query.subforum as string || '';
   postContent.value.subforum = subforumParam;
-  console.log('Subforo seleccionado:', postContent.value.subforum);
 });
 
 const toggleSidebar = () => {

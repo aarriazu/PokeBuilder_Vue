@@ -410,6 +410,63 @@ app.post('/api/posts', async (req, res): Promise <any> => {
   }
 });
 
+app.put('/api/posts/:id', authenticateToken, async (req, res): Promise <any> => {
+  try {
+    const id = req.params.id;
+    const username = (req as any).user?.username;
+    const { title, content, editedAt } = req.body;
+
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("posts");
+
+    const post = await collection.findOne({ _id: new ObjectId(id) });
+    if (!post) return res.status(404).json({ error: "Post no encontrado" });
+
+    if (post.author !== username) {
+      return res.status(403).json({ error: "No autorizado para editar este post" });
+    }
+
+    await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { title, content, editedAt } }
+    );
+    res.status(200).json({ message: "Post editado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al editar el post" });
+  } finally {
+    await client.close();
+  }
+});
+
+// Ruta para eliminar un post
+app.delete('/api/posts/:id', authenticateToken, async (req, res): Promise<any> => {
+  try {
+    const id = req.params.id;
+    const username = (req as any).user?.username; // Usuario autenticado
+
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("posts");
+
+    // Busca el post
+    const post = await collection.findOne({ _id: new ObjectId(id) });
+    if (!post) return res.status(404).json({ error: "Post no encontrado" });
+
+    // Verifica autoría
+    if (post.author !== username) {
+      return res.status(403).json({ error: "No autorizado para eliminar este post" });
+    }
+
+    await collection.deleteOne({ _id: new ObjectId(id) });
+    res.status(200).json({ message: "Post eliminado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al eliminar el post" });
+  } finally {
+    await client.close();
+  }
+});
+
 app.get('/api/postsTorneo', async (req, res): Promise<any> => {
   try {
     // Conectar a la base de datos
@@ -446,6 +503,241 @@ app.post('/api/postsTorneo', async (req,res): Promise<any> => {
   }
 });
 
+app.get('/api/postsTorneo/:id', async (req, res): Promise<any> => {
+  try {
+    const id = req.params.id;
+
+    // Validar que el ID sea un ObjectId válido
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "ID no válido" });
+    }
+
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("postsTorneo");
+
+    const post = await collection.findOne({ _id: new ObjectId(id) });
+    if (!post) {
+      return res.status(404).json({ error: "Post de torneo no encontrado" });
+    }
+
+    res.status(200).json(post);
+  } catch (error) {
+    console.error("Error al obtener el post de torneo:", error);
+    res.status(500).json({ error: "Error al obtener el post de torneo" });
+  } finally {
+    await client.close();
+  }
+});
+
+// Editar un post de torneo
+app.put('/api/postsTorneo/:id', authenticateToken, async (req, res): Promise<any> => {
+  try {
+    const id = req.params.id;
+    const username = (req as any).user?.username;
+    const { title, description, participants, bracket, editedAt } = req.body;
+
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("postsTorneo");
+
+    const post = await collection.findOne({ _id: new ObjectId(id) });
+    if (!post) return res.status(404).json({ error: "Post de torneo no encontrado" });
+
+    if (post.author !== username) {
+      return res.status(403).json({ error: "No autorizado para editar este post de torneo" });
+    }
+
+    await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { title, description, participants, bracket, editedAt } }
+    );
+    res.status(200).json({ message: "Post de torneo editado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al editar el post de torneo" });
+  } finally {
+    await client.close();
+  }
+});
+
+// Eliminar un post de torneo
+app.delete('/api/postsTorneo/:id', authenticateToken, async (req, res): Promise<any> => {
+  try {
+    const id = req.params.id;
+    const username = (req as any).user?.username;
+
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("postsTorneo");
+
+    const post = await collection.findOne({ _id: new ObjectId(id) });
+    if (!post) return res.status(404).json({ error: "Post de torneo no encontrado" });
+
+    if (post.author !== username) {
+      return res.status(403).json({ error: "No autorizado para eliminar este post de torneo" });
+    }
+
+    await collection.deleteOne({ _id: new ObjectId(id) });
+    res.status(200).json({ message: "Post de torneo eliminado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al eliminar el post de torneo" });
+  } finally {
+    await client.close();
+  }
+});
+
+
+app.post('/api/Answers', async (req, res): Promise<any> => {
+  try {
+    console.log("Datos recibidos para la respuesta:", req.body);
+    const { postId, author, content, parentAnswerId, createdAt, editedAt } = req.body;
+    if (!postId || !author || !content || !createdAt || !editedAt) {
+      res.status(400).json({ error: "Faltan datos requeridos para guardar la respuesta." });
+      return;
+    }
+    const comment = req.body;
+    const insertedId = await dbClass.insertComment(comment);
+    // Responder con el ID del comentario insertado
+    res.status(201).json({ insertedId });
+  } catch (error) {
+    console.error("Error al guardar la respuesta:", error);
+    res.status(500).json({ error: "Error al guardar la respuesta." });
+  }
+});
+
+// Obtener todas las respuestas o filtrar por postId
+app.get('/api/Answers', async (req, res): Promise<any> => {
+  try {
+    console.log("Solicitud para obtener respuestas:", req.query);
+
+    // Conectar a la base de datos
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("Answers");
+
+    // Verificar si se proporciona un postId como query parameter
+    const { postId } = req.query;
+
+    let filter = {};
+    if (postId) {
+      filter = { postId: new ObjectId(postId as string) }; // Filtrar por postId
+    }
+
+    // Obtener las respuestas de la base de datos
+    const flatAnswers = await collection.find(filter).toArray();
+
+    // Crear un mapa por _id para facilitar la jerarquía
+    const answerMap = new Map<string, any>();
+    flatAnswers.forEach(ans => {
+      ans.replies = []; // Agregar array de subrespuestas
+      answerMap.set(ans._id.toString(), ans);
+    });
+
+    // Construir árbol jerárquico
+    const nestedAnswers: any[] = [];
+    flatAnswers.forEach(ans => {
+      if (ans.parentAnswerId) {
+        const parent = answerMap.get(ans.parentAnswerId.toString());
+        if (parent) {
+          parent.replies.push(ans);
+        }
+      } else {
+        nestedAnswers.push(ans); // Solo las respuestas raíz
+      }
+    });
+
+    res.status(200).json(nestedAnswers);
+  } catch (error) {
+    console.error("Error al obtener las respuestas:", error);
+    res.status(500).json({ error: "Error al obtener las respuestas." });
+  } finally {
+    await client.close();
+  }
+});
+
+app.put('/api/posts/:id/answers', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { answers } = req.body;
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("posts");
+    await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { answers } }
+    );
+    res.status(200).send({ message: 'Número de respuestas actualizado' });
+  } catch (error) {
+    console.error('Error al actualizar el número de respuestas:', error);
+    res.status(500).send({ error: 'Error al actualizar el número de respuestas' });
+  } finally {
+    await client.close();
+  }
+});
+
+app.put('/api/Answers/:id', authenticateToken, async (req, res): Promise<any> => {
+  try {
+    const id = req.params.id;
+    const username = (req as any).user?.username;
+    const { content, editedAt } = req.body;
+
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("Answers");
+
+    const answer = await collection.findOne({ _id: new ObjectId(id) });
+    if (!answer) return res.status(404).json({ error: "Respuesta no encontrada" });
+
+    if (answer.author !== username) {
+      return res.status(403).json({ error: "No autorizado para editar esta respuesta" });
+    }
+
+    await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { content, editedAt } }
+    );
+    res.status(200).json({ message: "Respuesta editada correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al editar la respuesta" });
+  } finally {
+    await client.close();
+  }
+});
+
+app.delete('/api/Answers/:id', authenticateToken, async (req, res): Promise <any> => {
+  try {
+    const id = req.params.id;
+    const username = (req as any).user?.username;
+
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const collection = db.collection("Answers");
+
+    const answer = await collection.findOne({ _id: new ObjectId(id) });
+    if (!answer) return res.status(404).json({ error: "Respuesta no encontrada" });
+
+    if (answer.author !== username) {
+      return res.status(403).json({ error: "No autorizado para eliminar esta respuesta" });
+    }
+
+    await collection.deleteOne({ _id: new ObjectId(id) });
+    res.status(200).json({ message: "Respuesta eliminada correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al eliminar la respuesta" });
+  } finally {
+    await client.close();
+  }
+});
+
+app.get('/api/user/profilePic/:username', async (req, res) => {
+  try {
+    const username = req.params.username;
+    const profilePic = await dbClass.getProfilePicByUsername(username);
+    res.json({ profilePic });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener la imagen de perfil' });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);

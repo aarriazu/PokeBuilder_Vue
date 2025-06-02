@@ -3,7 +3,7 @@
       <ion-card-header>
         <ion-card-title>{{ thread.title }}</ion-card-title>
         <ion-card-subtitle>
-          {{ thread.subforum }} • Publicado por {{ thread.author }} el {{ formatDate(thread.createdAt) }}
+          {{ thread.subforum }} • Created by {{ thread.author }} on {{ formatDate(thread.createdAt) }}
         </ion-card-subtitle>
       </ion-card-header>
   
@@ -11,7 +11,7 @@
         <p>{{ thread.description }}</p>
   
         <div class="mt-2">
-          <strong>Participantes:</strong>
+          <strong>Participants:</strong>
           <ion-chip v-for="(participant, index) in thread.participants" :key="index">
             {{ participant }}
           </ion-chip>
@@ -25,8 +25,8 @@
         </div>
   
         <div class="mt-2 flex justify-between items-center text-sm text-gray-600">
-          <span>Respuestas: {{ thread.answers }}</span>
-          <span>Última edición: {{ formatDate(thread.editedAt) }}</span>
+          <span>Answers: {{ thread.answers }}</span>
+          <span>Last edit: {{ formatDate(thread.editedAt) }}</span>
         </div>
       </ion-card-content>
     </ion-card>
