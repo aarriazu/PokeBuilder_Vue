@@ -27,13 +27,13 @@
           </div>
         </div>
         <p class="text-xs text-gray-500 mb-2">
-          Publicado el {{ new Date(createdAt).toLocaleString() }}
+          Published on: {{ new Date(createdAt).toLocaleString() }}
         </p>
         <!-- Modo edición -->
         <div v-if="editMode" class="mb-2">
           <textarea
             v-model="editContent"
-            class="block w-full p-2 text-sm border border-gray-300 rounded mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="block w-full p-2 text-sm border border-gray-300 rounded mb-2 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
             rows="2"
           ></textarea>
           <div class="flex space-x-2">
