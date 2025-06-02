@@ -1,37 +1,40 @@
 <template>
-    <ion-page>
+    <ion-page :key="route.fullPath">
       <ion-content>
         <div class="p-4">
           <!-- Barra de búsqueda -->
           <div class="mb-4">
             <IonInput
               v-model="searchQuery"
-              placeholder="Buscar Pokémon..."
+              placeholder="Search Pokemon..."
               clear-input
-              class="w-full border rounded px-4 py-2"
+              class="textBox bg-white w-full border rounded px-4 py-2"
             />
           </div>
   
           <!-- Filtros de tipo y generación -->
           <div class="flex space-x-4 mb-4">
-            <!-- Filtro por tipo -->
-            <IonSelect v-model="selectedType" placeholder="Filtrar por tipo" class="w-1/2">
+            <IonSelect v-model="selectedType" placeholder="Filter by type 1" class="w-1/2">
               <IonSelectOption v-for="type in pokemonTypes" :key="type" :value="type">
-                {{ dataController.typeTranslate(type, 'es') }}
+                {{ dataController.formatText(type) }}
+              </IonSelectOption>
+            </IonSelect>
+            <IonSelect v-model="selectedType2" placeholder="Filter by type 2" class="w-1/2">
+              <IonSelectOption v-for="type in pokemonTypes" :key="type" :value="type">
+                {{ dataController.formatText(type) }}
               </IonSelectOption>
             </IonSelect>
   
-            <!-- Filtro por generación -->
-            <IonSelect v-model="selectedGeneration" placeholder="Filtrar por generación" class="w-1/2">
+            <IonSelect v-model="selectedGeneration" placeholder="Filter by generation" class="w-1/2">
               <IonSelectOption v-for="generation in pokemonGenerations" :key="generation" :value="generation">
-                Generación {{ generation }}
+                Generation {{ generation }}
               </IonSelectOption>
             </IonSelect>
           </div>
   
           <!-- Botón para limpiar filtros -->
           <div class="mb-4">
-            <IonButton @click="clearFilters" color="danger">Limpiar filtros</IonButton>
+            <IonButton @click="clearFilters" color="danger">Clear Filters</IonButton>
           </div>
   
           <!-- Lista de Pokémon -->
@@ -45,18 +48,13 @@
                 size-lg="3"
                 class="flex justify-center mb-4"
               >
-                <div class="bg-white rounded-lg shadow-md p-4 w-full max-w-xs text-center">
+                <div class="bg-white rounded-lg shadow-md p-4 w-full max-w-xs text-center" @click="() => goToPokemonDetail(pokemon.name)">
                   <!-- Imagen del Pokémon -->
-                  <div class="flex justify-center items-center h-24">
-                    <img :src="pokemon.sprite || ''" :alt="pokemon.name" class="w-20 h-20" />
+                  <div class="flex justify-center items-center h-24" >
+                    <img :src="pokemon.sprite || ''" :alt="pokemon.name" class="w-20 h-20 cursor-pointer" />
                   </div>
                   <!-- Nombre del Pokémon -->
-                  <router-link
-                    :to="{ name: 'PokedexDetail', params: { name: pokemon.name } }"
-                    class="text-lg font-semibold text-indigo-600 capitalize hover:underline"
-                  >
-                    {{ pokemon.name }}
-                  </router-link>
+                  {{ dataController.formatText(pokemon.name) }}
                 </div>
               </ion-col>
             </ion-row>
@@ -65,11 +63,11 @@
           <!-- Controles de paginación -->
           <div class="flex justify-between items-center mt-4">
             <ion-button @click="goToPreviousPage" :disabled="currentPage === 1">
-              Anterior
+              Previous page
             </ion-button>
-            <span>Página {{ currentPage }} de {{ totalPages }}</span>
+            <span>Page {{ currentPage }} of {{ totalPages }}</span>
             <ion-button @click="goToNextPage" :disabled="currentPage === totalPages">
-              Siguiente
+              Next page
             </ion-button>
           </div>
         </div>
@@ -84,20 +82,18 @@
   import * as dataController from '@/controllers/dataController';
   
   // Configuración de la paginación
-  const itemsPerPage = 40; // Número de elementos por página
+  const itemsPerPage = 40;
   
-  // Acceso a la ruta y el router
   const route = useRoute();
   const router = useRouter();
   
   // Leer la página actual desde la URL o establecerla en 1 por defecto
   const currentPage = ref(Number(route.query.page) || 1);
-  
-  // Leer los filtros desde la URL o establecer valores predeterminados
 
-  const searchQuery = ref(Array.isArray(route.query.search) ? route.query.search[0] : route.query.search || ''); // Término de búsqueda
-  const selectedType = ref(route.query.type || ''); // Tipo seleccionado
-  const selectedGeneration = ref(route.query.generation || ''); // Generación seleccionada
+  const searchQuery = ref(Array.isArray(route.query.search) ? route.query.search[0] : route.query.search || ''); 
+  const selectedType = ref(route.query.type || '');
+  const selectedType2 = ref(route.query.type2 || '');
+  const selectedGeneration = ref(route.query.generation || ''); 
   
   const pokemonList = ref<{ name: string; sprite: string; types: string[]; generation: number }[]>([]);
   
@@ -106,38 +102,40 @@
   
   
   // Sincronizar los filtros y la página actual con la URL
-  watch([currentPage, searchQuery, selectedType, selectedGeneration], () => {
+  watch([currentPage, searchQuery, selectedType, selectedType2, selectedGeneration], () => {
     router.push({
       query: {
         ...route.query,
         page: currentPage.value,
-        search: searchQuery.value || undefined, // Elimina el parámetro si está vacío
+        search: searchQuery.value || undefined,
         type: selectedType.value || undefined,
+        type2: selectedType2.value || undefined,
         generation: selectedGeneration.value || undefined,
       },
     });
   });
   
-  // Opciones de tipos y generaciones
   const pokemonTypes = ['grass', 'fire', 'water', 'electric', 'rock', 'ground', 'psychic', 'dark', 'fairy', 'steel', 'flying', 'bug', 'poison', 'ghost', 'dragon', 'ice', 'fighting', 'normal'];
   const pokemonGenerations = ['1', '2', '3', '4', '5', '6', '7', '8'];
 
-  // Cargar la lista completa de Pokémon al montar el componente
-    onMounted(async () => {
+  onMounted(async () => {
+    
     try {
         pokemonList.value = await dataController.getAllPokemon() as { name: string; sprite: string , types: string[], generation: number;}[];
     } catch (error) {
         console.error("Error al cargar la lista de Pokémon:", error);
     }
-    });
+  });
   
   // Filtrar los Pokémon según el término de búsqueda, tipo y generación
   const filteredPokemon = computed(() => {
   return pokemonList.value.filter(pokemon => {
     const matchesSearch = pokemon.name.toLowerCase().includes((searchQuery.value || '').toLowerCase());
-    const matchesType = typeof selectedType.value === 'string' && selectedType.value !== '' ? pokemon.types.includes(selectedType.value) : true;
+    const matchesType1 = typeof selectedType.value === 'string' && selectedType.value !== '' ? pokemon.types.includes(selectedType.value) : true;
+    const matchesType2 = typeof selectedType2.value === 'string' && selectedType2.value !== '' ? pokemon.types.includes(selectedType2.value) : true;
     const matchesGeneration = selectedGeneration.value !== '' ? pokemon.generation === Number(selectedGeneration.value) : true;
-    return matchesSearch && matchesType && matchesGeneration;
+    currentPage.value = 1;
+    return matchesSearch && matchesType1 && matchesType2 && matchesGeneration;
   });
 });
   
@@ -165,8 +163,14 @@
   function clearFilters() {
     searchQuery.value = '';
     selectedType.value = '';
+    selectedType2.value = '';
     selectedGeneration.value = '';
-    currentPage.value = 1; // Reiniciar a la primera página
+    currentPage.value = 1;
+  }
+
+  // Navegar al detalle del Pokémon
+  function goToPokemonDetail(name: string) {
+    router.push({ name: 'PokedexDetail', params: { name } });
   }
 </script>
   

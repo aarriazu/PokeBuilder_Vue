@@ -221,7 +221,6 @@ app.put('/api/user/update', async (req: Request, res: Response): Promise<any> =>
   // Obtén los datos actualizados del usuario
   const updatedUser = await usersCollection.findOne({ username: newUsername || username });
 
-  // Genera el nuevo token
   const token = jwt.sign(
     {
       username: updatedUser!.username,
@@ -238,8 +237,6 @@ app.put('/api/user/update', async (req: Request, res: Response): Promise<any> =>
   res.status(200).send({ message: 'User updated successfully.', token });
   } catch (error) {
     res.status(500).send({ error: 'Internal server error.' });
-  } finally {
-    await client.close();
   }
 });
 
@@ -269,8 +266,6 @@ app.put('/api/user/lastLogin', async (req: Request, res: Response): Promise<any>
   } catch (error) {
     console.error('Error updating lastLogin:', error);
     res.status(500).send('Internal server error');
-  } finally {
-    await client.close();
   }
 });
 
@@ -289,8 +284,6 @@ app.get('/api/pokemon', async (req, res) => {
   } catch (error) {
     console.error("Error al obtener los Pokémon:", error);
     res.status(500).send({ error: "Error al obtener los Pokémon" });
-  } finally {
-    await client.close();
   }
 });
 
@@ -317,20 +310,145 @@ app.get('/api/pokemon/:identifier', async (req, res) => {
   } catch (error) {
     console.error("Error al obtener el Pokémon:", error);
     res.status(500).send({ error: "Error al obtener el Pokémon" });
-  } finally {
-    await client.close();
   }
 });
 
 //Recibir llamada para insertar equipo en la base de datos
-app.post('/api/teams', async (req: Request, res: Response) => {
+app.post('/api/teams', async (req: Request, res: Response): Promise<any> => {
   try {
-    const team = req.body; 
+    const team = req.body;
+
+    if (!team.ownerId) {
+      return res.status(400).send("El campo 'ownerId' es obligatorio.");
+    }
+    try {
+      team.ownerId = ObjectId.createFromHexString(team.ownerId);
+    } catch (error) {
+      return res.status(400).send("El campo 'ownerId' no es un ObjectId válido.");
+    }
+
     const insertedId = await dbClass.insertTeam(team);
     res.status(201).send({ insertedId });
   } catch (error) {
     console.error("Error al guardar el equipo:", error);
     res.status(500).send("Error al guardar el equipo");
+  }
+});
+
+//Recibir llamada para actualizar un equipo en la base de datos
+app.put('/api/teams/:id', async (req: Request, res: Response): Promise<any> => {
+  const { id } = req.params;
+  const updatedTeam = req.body;
+
+  try {
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const teamsCollection = db.collection("teams");
+
+    const objectId = new ObjectId(id);
+
+    if (updatedTeam.ownerId && typeof updatedTeam.ownerId === 'string') {
+      updatedTeam.ownerId = ObjectId.createFromHexString(updatedTeam.ownerId);
+    }
+
+    delete updatedTeam._id;
+
+    const result = await teamsCollection.updateOne(
+      { _id: objectId },
+      { $set: updatedTeam }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send("Team not found");
+    }
+
+    res.status(200).send("Team updated successfully");
+  } catch (error) {
+    console.error("Error updating team:", error);
+    res.status(500).send("Error updating team");
+  }
+});
+
+// Ruta para obtener equipos por ownerId
+app.get('/api/teams/:ownerId', async (req: Request, res: Response): Promise<any> => {
+  const { ownerId } = req.params;
+
+  try {
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const teamsCollection = db.collection("teams");
+
+    // Convertir ownerId a ObjectId
+    const objectId = new ObjectId(ownerId);
+
+    // Buscar equipos con el ownerId proporcionado
+    const teams = await teamsCollection.find({ ownerId: objectId }).toArray();
+
+    // Asegurarse de que todos los equipos tengan un _id
+    if (teams.some(team => !team._id)) {
+      console.error('Algunos equipos no tienen _id:', teams);
+    }
+
+    res.status(200).send(teams);
+  } catch (error) {
+    console.error("Error al obtener los equipos:", error);
+    res.status(500).send("Error al obtener los equipos");
+  }
+});
+
+//Ruta para actualizar el estado de favorito de un equipo
+app.put('/api/teams/:ownerId/favorite', async (req: Request, res: Response): Promise<any> => {
+  const { ownerId } = req.params;
+  const { teamId, favorite } = req.body;
+
+  try {
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const teamsCollection = db.collection("teams");
+
+    // Convertir teamId a ObjectId
+    const objectId = new ObjectId(teamId);
+
+    // Actualizar el estado de favorito del equipo
+    const result = await teamsCollection.updateOne(
+      { _id: objectId, ownerId: new ObjectId(ownerId) },
+      { $set: { favorite: favorite } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send("Equipo no encontrado");
+    }
+
+    res.status(200).send("Estado de favorito actualizado correctamente");
+  } catch (error) {
+    console.error("Error al actualizar el estado de favorito:", error);
+    res.status(500).send("Error al actualizar el estado de favorito");
+  }
+});
+
+// Ruta para eliminar un equipo por su ID
+app.delete('/api/teams/:id', async (req: Request, res: Response): Promise<any> => {
+  const { id } = req.params;
+
+  try {
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const teamsCollection = db.collection("teams");
+
+    // Convertir id a ObjectId
+    const objectId = new ObjectId(id);
+
+    // Eliminar el equipo
+    const result = await teamsCollection.deleteOne({ _id: objectId });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).send("Team not found");
+    }
+
+    res.status(200).send("Team deleted successfully");
+  } catch (error) {
+    console.error("Error deleting team:", error);
+    res.status(500).send("Error deleting team");
   }
 });
 
@@ -356,8 +474,6 @@ app.get('/api/posts/:id', async (req, res): Promise <any> => {
   } catch (error) {
     console.error("Error al obtener el post:", error);
     res.status(500).send({ error: "Error al obtener el post" });
-  } finally {
-    await client.close();
   }
 });
 
@@ -374,9 +490,6 @@ app.get('/api/posts', async (req, res) => {
   } catch (error) {
     console.error("Error al obtener los posts:", error);
     res.status(500).json({ error: "Error al obtener los posts" });
-  } finally {
-    // Cerrar la conexión con la base de datos
-    await client.close();
   }
 });
 
@@ -405,8 +518,6 @@ app.post('/api/posts', async (req, res): Promise <any> => {
   } catch (error) {
     console.error("Error al guardar el post:", error);
     res.status(500).send("Error al guardar el post");
-  } finally {
-    await client.close();
   }
 });
 
@@ -482,9 +593,6 @@ app.get('/api/postsTorneo', async (req, res): Promise<any> => {
   } catch (error) {
     console.error("Error al obtener los posts:", error);
     res.status(500).json({ error: "Error al obtener los posts" });
-  } finally {
-    // Cerrar la conexión con la base de datos
-    await client.close();
   }
 });
 
@@ -741,4 +849,9 @@ app.get('/api/user/profilePic/:username', async (req, res) => {
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
+});
+
+process.on('SIGINT', async () => {
+  await client.close(); // Cierra solo al apagar el servidor
+  process.exit();
 });

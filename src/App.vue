@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <headerComponent class="header" />
+    <headerComponent class="header"/>
     <ion-app class="app-content">
       <ion-router-outlet id="main-content" />
     </ion-app>
@@ -8,41 +8,65 @@
 </template>
 
 <script setup lang="ts">
-import { IonApp, IonRouterOutlet } from '@ionic/vue';
-import headerComponent from '@/components/headerComponent.vue';
-import footerComponent from '@/components/footerComponent.vue';
+  import { IonApp, IonRouterOutlet } from '@ionic/vue';
+  import headerComponent from '@/components/headerComponent.vue';
 </script>
 
-<style scoped>
+<style>
+
+:root {
+  --header-height: 60px; 
+}
+
+ion-modal {
+  background: transparent !important;
+  --background: transparent !important;
+  --box-shadow: none !important;
+  filter: none !important;
+}
+
+ion-modal .signup-modal {
+  max-width: 450px !important;
+  width: 90vw !important;
+}
+
+ion-modal .login-modal {
+  height: 80vh !important;
+  min-height: 600px !important;
+  max-height: 90vh !important;
+}
+
+ion-content {
+  --background: #e7fcff;
+  background: #e7fcff !important;
+  --box-shadow: none !important;
+}
+
 .app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Asegura que el contenedor ocupe toda la altura de la ventana */
+  min-height: 100vh;
 }
 
 .app-content {
-  flex: 1 0 auto; /* Hace que el contenido crezca y empuje el footer hacia abajo */
-  margin-top: 60px; /* Si tu header es fijo */
+  flex: 1 0 auto; 
+  margin-top: 56px; 
 }
 
 .header {
+  height: var(--header-height); 
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
-  background-color: white; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
 
 .footer {
-  position: relative; /* Cambia a relative para que se posicione dentro del flujo del documento */
+  position: relative;
   width: 100%;
   background-color: white;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.app-content {
-  margin-top: 60px; 
-}
 </style>

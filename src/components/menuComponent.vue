@@ -69,4 +69,10 @@
   
 <style scoped>
 
+ion-content {
+  --background: #ffffff;
+  background: #ffffff !important;
+  --box-shadow: none !important;
+}
+
 </style>

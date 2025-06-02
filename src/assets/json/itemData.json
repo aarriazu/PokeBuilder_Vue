@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Absorb Bulb",
+    "description": "An item to be held by a Pokémon. It boosts Sp.Atk if hit with a Water-type attack. It can only be used once."
+  },
+  {
+    "name": "Adamant Orb",
+    "description": "A brightly gleaming orb to be held by Dialga. It boosts the power of Dragon- and Steel-type moves when it is held."
+  },
+  {
+    "name": "Adrenaline Orb",
+    "description": "If held by a Pokémon, it boosts Speed when intimidated."
+  },
+  {
+    "name": "Air Balloon",
+    "description": "The holder will float in the air until hit. Once hit, this item will burst."
+  },
+  {
+    "name": "Assault Vest",
+    "description": "This offensive vest raises Sp.Def but prevents the use of status moves."
+  },
+  {
+    "name": "Big Root",
+    "description": "It boosts the amount of HP the holder recovers from HP-stealing moves."
+  },
+  {
+    "name": "Binding Band",
+    "description": "A band that increases the power of binding moves used by the holder."
+  },
+  {
+    "name": "Black Belt",
+    "description": "This belt helps the wearer to focus and boosts the power of Fighting-type moves."
+  },
+  {
+    "name": "Black Glasses",
+    "description": "A pair of shady-looking glasses that boost the power of Dark-type moves."
+  },
+  {
+    "name": "Black Sludge",
+    "description": "It gradually restores HP to Poison-type Pokémon. It damages any other type."
+  },
+  {
+    "name": "Blunder Policy",
+    "description": "Raises Speed sharply when a Pokémon misses with a move because of accuracy."
+  },
+  {
+    "name": "Bright Powder",
+    "description": "It casts a tricky glare that lowers the opposing Pokémon's accuracy."
+  },
+  {
+    "name": "Cell Battery",
+    "description": "It boosts Attack if hit with an Electric-type attack. It can only be used once."
+  },
+  {
+    "name": "Charcoal",
+    "description": "It’s a combustible fuel that boosts the power of Fire-type moves."
+  },
+  {
+    "name": "Choice Band",
+    "description": "This curious headband boosts Attack but only allows the use of one move."
+  },
+  {
+    "name": "Choice Scarf",
+    "description": "This curious scarf boosts Speed but only allows the use of one move."
+  },
+  {
+    "name": "Choice Specs",
+    "description": "These curious glasses boost Sp.Atk but only allow the use of one move."
+  },
+  {
+    "name": "Damp Rock",
+    "description": "It extends the duration of the move Rain Dance when used by the holder."
+  },
+  {
+    "name": "Dragon Fang",
+    "description": "This hard and sharp fang boosts the power of Dragon-type moves."
+  },
+  {
+    "name": "Eject Button",
+    "description": "If the holder is hit by an attack, it will be switched out of battle."
+  },
+  {
+    "name": "Eject Pack",
+    "description": "Enables Pokémon with a lowered stat to switch out of battle."
+  }
+]

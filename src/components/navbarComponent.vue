@@ -17,49 +17,67 @@
         <div class="w-1"></div>
         <span class="text-gray-900 font-semibold text-lg">PokeBuilder</span>
         <button v-if="!user" @click="showLogin = true" class="text-blue-600">Log in</button>
-        <button v-if="!user" @click="showSignin = true" class="text-blue-600 ml-2">Sign in</button>
+        <button v-if="!user" @click="showSignin = true" class="text-blue-600 ml-2">Sign up</button>
       </div>
 
       <!-- Login Modal -->
       <ion-modal :is-open="showLogin" @didDismiss="showLogin = false">
-        <ion-content class="ion-padding">
-          <div class="bg-white rounded-lg p-6 max-w-md mx-auto">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Login</h2>
-            <form class="space-y-4" @submit.prevent="handleLogin">
-              <div>
-                <label class="block text-gray-800 font-semibold mb-2">Username or email</label>
-                <input 
+        <div class="login-modal flex flex-col items-center mt-8">
+          <div class="flex bg-white bg-opacity-90 rounded-xl shadow-lg p-8">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYFPfcNmWqP1jCFAy_wtGIpeWBBz-3860teA&s"
+                alt="Login image"
+                class="w-100 h-100 object-contain hidden md:block" />
+            <ion-list lines="none" class="w-full max-w-md">
+              <ion-item>
+                <ion-label position="stacked" class="text-gray-800 font-semibold">Username or email</ion-label>
+                <ion-input
                   v-model="loginUserName"
                   type="text"
-                  class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  id="loginUserName"
+                  name="loginUserName"
                   placeholder="Enter your username or email"
-                >
-              </div>
-              <div>
-                <label class="block text-gray-800 font-semibold mb-2">Password</label>
-                <input 
+                  class="text-black"
+                  autocomplete="username"
+                ></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="stacked" class="text-gray-800 font-semibold">Password</ion-label>
+                <ion-input
                   v-model="loginPassword"
                   type="password"
-                  class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  id="loginPassword"
+                  name="loginPassword"
                   placeholder="Enter your password"
-                >
-              </div>
-              <p v-if="loginErrorMsg" class="text-red-500 mt-2">{{ loginErrorMsg }}</p>
+                  class="text-black"
+                  autocomplete="current-password"
+                ></ion-input>
+              </ion-item>
               <div class="text-center">
-                <ion-button type="submit" class="text-white font-semibold py-2 px-4 rounded-lg transition">
-                  Log in
+                <ion-button
+                  expand="block"
+                  @click="handleLogin"
+                  class="text-white font-semibold py-2 px-4 rounded-lg transition"
+                >
+                  Login
                 </ion-button>
+
+                <p v-if="loginErrorMsg" class="text-red-500 mt-2">{{ loginErrorMsg }}</p>
+                <p class="text-gray-600 mt-4 flex items-center">
+                  <ion-button fill="clear" size="small" @click="showSignin = true" class="text-blue-600 ml-2"> Don't have an account? Sign up</ion-button>
+                </p>
+                <p class="text-gray-600 mt-4 flex items-center">
+                  <ion-button fill="clear" size="small" @click="router.push('/forumGeneral')" class="text-blue-600 ml-2">Enter forum as guest</ion-button>
+                </p>
               </div>
-            </form>
+            </ion-list>
           </div>
-        </ion-content>
+        </div>
       </ion-modal>
 
       <!-- Signin Modal -->
       <ion-modal :is-open="showSignin" @didDismiss="showSignin = false">
-        <ion-content class="ion-padding">
-          <div class="bg-white rounded-lg p-6 max-w-md mx-auto">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Sign in</h2>
+          <div class="signup-modal bg-white rounded-lg p-6 max-w-4xl mx-auto">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Sign up</h2>
             <form class="space-y-4" @submit.prevent="handleSignin">
               <div>
                 <label class="block text-gray-800 font-semibold mb-2">Username</label>
@@ -100,12 +118,11 @@
               <p v-if="signinErrorMsg" class="text-red-500 mt-2">{{ signinErrorMsg }}</p>
               <div class="text-center">
                 <ion-button type="submit" class="text-white font-semibold py-2 px-4 rounded-lg transition">
-                  Sign in
+                  Sign up
                 </ion-button>
               </div>
             </form>
           </div>
-        </ion-content>
       </ion-modal>
 
       <!-- Menú normal para desktop -->
@@ -121,18 +138,6 @@
           class="text-gray-700 hover:text-indigo-600 transition-colors duration-300 font-medium"
         >
           Pokedex
-        </ion-button>
-        <ion-button 
-          @click="routerController.navigateTo(props.router, '/contact')" 
-          class="text-gray-700 hover:text-indigo-600 transition-colors duration-300 font-medium"
-        >
-          Contact
-        </ion-button>
-        <ion-button 
-          @click="routerController.navigateTo(props.router, '/help')" 
-          class="text-gray-700 hover:text-indigo-600 transition-colors duration-300 font-medium"
-        >
-          Help
         </ion-button>
       </ion-buttons>
 
@@ -179,20 +184,6 @@
           >
             <span class="font-medium">Pokedex</span>
           </button>
-          
-          <button 
-            @click="routerController.navigateToAndClose(props.router, '/contact')" 
-            class="w-full text-left px-4 py-3 rounded-lg hover:bg-indigo-50 text-gray-700 hover:text-indigo-600 transition-all duration-300 flex items-center"
-          >
-            <span class="font-medium">Contacto</span>
-          </button>
-          
-          <button 
-            @click="routerController.navigateToAndClose(props.router, '/help')" 
-            class="w-full text-left px-4 py-3 rounded-lg hover:bg-indigo-50 text-gray-700 hover:text-indigo-600 transition-all duration-300 flex items-center"
-          >
-            <span class="font-medium">Ayuda</span>
-          </button>
         </div>
       </div>
     </transition>
@@ -204,15 +195,7 @@ import { computed, ref } from 'vue';
 import { User } from '@/classes/User';
 import type { Router } from 'vue-router';
 import { PropType } from 'vue';
-import {
-  IonHeader,
-  IonToolbar,
-  IonButtons,
-  IonButton,
-  IonIcon,
-  IonModal,
-  IonContent,
-} from '@ionic/vue';
+import { IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonModal, IonList, IonItem, IonLabel, IonInput} from '@ionic/vue';
 import { menuOutline, closeOutline } from 'ionicons/icons';
 import * as routerController from '@/controllers/routerController';
 import * as userController from '@/controllers/userController';
@@ -233,6 +216,9 @@ const signinPasswordConfirm = ref('');
 const loginErrorMsg = ref('');
 const signinErrorMsg = ref(''); 
 
+const loginTempUsername = ref('');
+const loginTempPassword = ref('');
+
 const isMenuOpen = computed(() => mobileMenuState.value);
 
 const openMenu = async () => {
@@ -245,9 +231,13 @@ const toggleMobileMenu = () => {
 
 const handleLogin = async () => {
   loginErrorMsg.value = '';
+  loginTempUsername.value = loginUserName.value;
+  loginTempPassword.value = loginPassword.value;
   try {
-    await userController.login(loginUserName.value, loginPassword.value, props.router);
+    await userController.login(loginTempUsername.value, loginTempPassword.value, props.router);
     showLogin.value = false;
+    loginUserName.value = '';
+    loginPassword.value = '';
   } catch (error) {
     loginErrorMsg.value = (error instanceof Error ? error.message : 'Error al iniciar sesión');
   }
@@ -257,7 +247,13 @@ const handleSignin = async () => {
   signinErrorMsg.value = '';
   try {
     await userController.signin(signinUserName.value, signinEmail.value, signinPassword.value, signinPasswordConfirm.value);
+    loginTempUsername.value = signinUserName.value;
+    loginTempPassword.value = signinPassword.value;
     showSignin.value = false;
+    signinUserName.value = '';
+    signinEmail.value = '';
+    signinPassword.value = '';
+    signinPasswordConfirm.value = '';
     await userController.login(signinUserName.value, signinPassword.value, props.router);
   } catch (error) {
      signinErrorMsg.value = (error instanceof Error ? error.message : 'Error al registrar el usuario');
@@ -277,7 +273,9 @@ const props = defineProps({
 </script>
 
 <style scoped>
-/* Efecto de subrayado al hover para desktop */
+
+
+
 .hover-underline {
   position: relative;
 }

@@ -23,11 +23,11 @@ async function connectToDatabase() {
   }
 }
 
-// Función para insertar un equipo en la colección "teams", pero de momento inserta a "test"
+// Función para insertar un equipo en la colección "teams"
 export async function insertTeam(team: any) {
   try {
     const db = await connectToDatabase();
-    const collection = db.collection("test"); 
+    const collection = db.collection("teams"); 
     const result = await collection.insertOne(team);
     console.log("Equipo guardado en la base de datos:", result.insertedId);
     return result.insertedId; 

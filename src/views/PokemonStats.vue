@@ -1,35 +1,33 @@
 <template>
   <Suspense>
-    <ion-page :key="pokemonName"> <!--Se recarga el componente cuando cambia pokemonName-->
+    <ion-page :key="route.fullPath">
       <ion-content :fullscreen="true">
-        <pokeCard :pokemonName="pokemonName" @selectPokemon="handleSelectPokemon"></pokeCard>
+        <pokeCard :key="pokemonName" :pokemonName="pokemonName" @selectPokemon="handleSelectPokemon" />
       </ion-content>
     </ion-page>
   </Suspense>
 </template>
 
 <script setup lang="ts">
-import { IonContent, IonPage, IonGrid, IonRow, IonCol, IonButton } from '@ionic/vue';
-import { ref, watch, onMounted } from 'vue';
+import { IonContent, IonPage } from '@ionic/vue';
+import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import pokeCard from '@/components/pokeCard.vue';
 
-/*Recogemos el nombre del pokemon y lo guardamos
-para usarlo en el pokeCard. */ 
 const route = useRoute();
 const router = useRouter();
-let pokemonName = route.params.name as string; 
+let pokemonName = ref(route.params.name as string); 
 
 watch(
-  () => route.params.name, // Observa el parámetro "name"
+  () => route.params.name, 
   (newName) => {
-    pokemonName = newName as string; // Actualiza el nombre del Pokémon
+    pokemonName.value = newName as string; 
   }
 );
 
 function handleSelectPokemon(selectedPokemon: string) {
-  pokemonName = selectedPokemon;
-  router.push({ name: 'PokedexDetail', params: { name: pokemonName } });
+  pokemonName.value = selectedPokemon;
+  router.push({ name: 'PokedexDetail', params: { name: pokemonName.value } });
   console.log('Evento recibido:', selectedPokemon);
 }
 

@@ -5,6 +5,8 @@ import { User } from '@/classes/User';
 import axios, { get } from 'axios';
 import * as routerController from '@/controllers/routerController';
 import { userState } from '@/controllers/stateController';
+import { useTeamStore } from '@/stores/teamStore';
+
 
 //const username = ref<string | null>(null);
 //const user = ref<User | null>(null);
@@ -83,6 +85,9 @@ export const login = async (userName: string, password: string, router: ReturnTy
 };
   
 export function logout(router: ReturnType<typeof useRouter>) {
+  const teamStore = useTeamStore();
+  teamStore.setTeams([]);
+
   userState.value = null;
   console.log('Estado del usuario después de logout:', userState.value);
   sessionStorage.removeItem('session'); 
@@ -96,6 +101,18 @@ export async function getUser() {
     userState.value = jwtDecode(session) as User;
     console.log('Usuario:', userState.value.username);
     console.log('Token decodificado:', userState.value);
+
+    const teamStore = useTeamStore();
+    try {
+      const response = await fetch(`http://localhost:3000/api/teams/${userState.value._id}`);
+      const teams = await response.json();
+      console.log('Equipos obtenidos:', teams);
+      teamStore.setTeams(teams); // Actualiza el store con los equipos obtenidos
+    } catch (error) {
+      console.error('Error al obtener los equipos del usuario:', error);
+      teamStore.setTeams([]); // Vacía el store si ocurre un error
+    }
+
     return userState.value;
   } else {
     console.error('No session token found');
