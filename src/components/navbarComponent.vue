@@ -256,7 +256,7 @@ const handleSignin = async () => {
     signinEmail.value = '';
     signinPassword.value = '';
     signinPasswordConfirm.value = '';
-    await userController.login(signinUserName.value, signinPassword.value, props.router);
+    await userController.login(loginTempUsername.value, loginTempPassword.value, props.router);
   } catch (error) {
      signinErrorMsg.value = (error instanceof Error ? error.message : 'Error al registrar el usuario');
   }
