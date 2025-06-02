@@ -2,16 +2,14 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <!-- Título principal -->
-      <div class="absolute top-0 w-full text-center mt-16">
-        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-black">
-          Pokebuilder
-        </h1>
+      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 mt-4 text-center">
+        <img src="/src/assets/images/logo.png" class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-black">
       </div>
       <br><br><br><br><br><br><br><br><br><br>
 
       <div class="flex justify-center items-center mt-8">
         <div class="flex bg-white bg-opacity-90 rounded-xl shadow-lg p-8">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYFPfcNmWqP1jCFAy_wtGIpeWBBz-3860teA&s"
+          <img src="/src/assets/images/loginImage.jpg"
               alt="Login image"
               class="w-100 h-100 object-contain hidden md:block" />
           <ion-list lines="none" class="w-full max-w-md">

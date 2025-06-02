@@ -7,7 +7,7 @@
             <img
               :src="user?.profilePic || '/src/assets/images/guest.jpg'"
               alt="Profile Picture"
-              class="w-full h-full object-cover"
+              class="profilePic w-full h-full object-cover"
             />
           </button>
         </div>
@@ -15,7 +15,9 @@
 
       <div class="flex items-center space-x-2">
         <div class="w-1"></div>
-        <span class="text-gray-900 font-semibold text-lg">PokeBuilder</span>
+        <span class="text-gray-900 font-semibold text-lg">
+          <img src="/src/assets/images/logo.png" class="max-h-[60px] h-auto">
+        </span>
         <button v-if="!user" @click="showLogin = true" class="text-blue-600">Log in</button>
         <button v-if="!user" @click="showSignin = true" class="text-blue-600 ml-2">Sign up</button>
       </div>
@@ -24,7 +26,7 @@
       <ion-modal :is-open="showLogin" @didDismiss="showLogin = false">
         <div class="login-modal flex flex-col items-center mt-8">
           <div class="flex bg-white bg-opacity-90 rounded-xl shadow-lg p-8">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYFPfcNmWqP1jCFAy_wtGIpeWBBz-3860teA&s"
+            <img src="/src/assets/images/loginImage2.jpg"
                 alt="Login image"
                 class="w-100 h-100 object-contain hidden md:block" />
             <ion-list lines="none" class="w-full max-w-md">
@@ -295,18 +297,16 @@ const props = defineProps({
   width: 100%;
 }
 
-/* Mejora el contraste del menú hamburguesa */
 ion-toolbar {
-  --background: #e0e7ff; /* Color de fondo más claro */
-  --border-color: #c7d2fe; /* Borde sutil */
+  --background: #e0e7ff; 
+  --border-color: #c7d2fe; 
 }
 
-  /* Estilos personalizados para la imagen de perfil */
-  img {
+img {
   transition: transform 0.2s ease-in-out;
 }
 
-img:hover {
-  transform: scale(1.1); /* Efecto de zoom al pasar el cursor */
+img.profilePic:hover {
+  transform: scale(1.1);
 }
 </style>
