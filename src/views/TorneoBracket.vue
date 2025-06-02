@@ -17,7 +17,7 @@
               <input
                 type="text"
                 v-model="tournamentName"
-                placeholder="Introduce el nombre del torneo"
+                placeholder="Enter the name of the tournament"
                 class="w-full p-2 border rounded bg-white"
               />
             </div>
@@ -27,7 +27,7 @@
               <label class="block mb-1 font-medium">Tournament description</label>
               <textarea
                 v-model="tournamentDescription"
-                placeholder="Introduce la descripción del torneo, normas, modalidad, etc."
+                placeholder="Enter the tournament description, rules, modality, etc."
                 rows="4"
                 class="w-full p-2 border rounded bg-white resize-none"
               ></textarea>
@@ -49,12 +49,12 @@
               <input
                 type="text"
                 v-model="participants[index]"
-                :placeholder="`Participante ${index + 1}`"
+                :placeholder="`Participant ${index + 1}`"
                 class="w-full p-2 border rounded bg-white"
               />
             </div>
 
-            <ion-button expand="block" @click="generateBracket" class="mt-4">Crear Bracket</ion-button>
+            <ion-button expand="block" @click="generateBracket" class="mt-4">Create Bracket</ion-button>
           </div>
         </div>
 
@@ -63,7 +63,7 @@
           <div class="bg-white p-4 rounded-xl shadow-md">
             <h2 class="text-xl font-bold mb-4">Bracket</h2>
             <div v-if="bracket.length === 0">
-              <p class="text-gray-500">No se han generado emparejamientos.</p>
+              <p class="text-gray-500">No matches have been generated.</p>
             </div>
             <ul v-else class="space-y-2">
               <li
@@ -76,7 +76,7 @@
                 <span>{{ pair[1] }}</span>
               </li>
             </ul>
-            <ion-button expand="block" @click="saveBracket":disabled="bracket.length === 0" class="mt-4">Guardar Bracket</ion-button>
+            <ion-button expand="block" @click="saveBracket":disabled="bracket.length === 0" class="mt-4">Save Bracket</ion-button>
           </div>
         </div>
       </div>
@@ -96,6 +96,8 @@ import {
   IonContent,
   IonButton
 } from '@ionic/vue'
+
+import { getUser, getUsername } from '@/controllers/userController';
 
 // Estado y tipos
 const tournamentName = ref(''); // Nombre del torneo
@@ -121,7 +123,7 @@ const router = useRouter();
 // Actualizar cantidad de inputs según número de participantes
 const updateParticipants = (): void => {
   if (numParticipants.value % 2 !== 0 || numParticipants.value < 2) {
-    alert('El número de participantes debe ser par y mayor o igual a 2.')
+    alert('The number of participants must be even and greater than or equal to 2.')
     return
   }
 
@@ -135,7 +137,7 @@ const updateParticipants = (): void => {
 // Generar emparejamientos aleatorios
 const generateBracket = (): void => {
   if (participants.value.some(name => name.trim() === '')) {
-    alert('Por favor, escribe todos los nombres de los participantes.')
+    alert('Please write all the names of the participants.')
     return
   }
 
@@ -153,13 +155,13 @@ const generateBracket = (): void => {
   // Guardar el bracket en mongoDB como un post.
   const saveBracket = async (): Promise<void> => {
   if (!tournamentName.value || !tournamentDescription.value || participants.value.some(p => !p)) {
-    alert('Por favor, completa todos los campos antes de guardar.');
+    alert('Please complete all fields before saving.');
     return;
   }
   else {
     postTorneo.value = {
         title: tournamentName.value,
-        author: 'USER', 
+        author: getUsername() as string, 
         subforum: 'torneos',      
         description: tournamentDescription.value,
         participants: participants.value,
@@ -183,11 +185,11 @@ const generateBracket = (): void => {
     let data = null;
 
 
-    alert('Torneo guardado exitosamente.');
+    alert('Tournament saved successfully.');
     router.push('/forumTorneos');
   } catch (error) {
     console.error('Error al guardar el post:', error);
-    alert('Hubo un error al guardar el post, disculpa las molestias.');
+    alert('There was an error saving the post, sorry for the inconvenience..');
   }
 };
 

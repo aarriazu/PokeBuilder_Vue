@@ -14,7 +14,7 @@
 
           <!-- Categorías del foro -->
           <div class="p-4 space-y-2">
-            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categorías</h3>
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categories</h3>
             
             <router-link 
               to="/forumGeneral" 
@@ -39,7 +39,7 @@
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11V7a1 1 0 10-2 0v1H7a1 1 0 100 2h2v1a1 1 0 102 0V9h2a1 1 0 100-2h-2z" clip-rule="evenodd" />
                 </svg>
               </div>
-              <span class="font-medium">Torneos</span>
+              <span class="font-medium">Tournaments</span>
             </router-link>
 
             <router-link 
@@ -52,7 +52,7 @@
                   <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
                 </svg>
               </div>
-              <span class="font-medium">Ayuda</span>
+              <span class="font-medium">Help</span>
             </router-link>
             <router-link to="/forumSpinoff" class="flex items-center p-3 rounded-lg transition-colors"
                          :class="{'bg-purple-100 text-purple-800': currentForum === 'spinoff', 'text-gray-700 hover:bg-gray-100': currentForum !== 'spinoff'}">
@@ -97,26 +97,23 @@
             <div class="max-w-4xl mx-auto">
               <!-- Cabecera del foro -->
               <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Bienvenido al foro de Ayuda</h2>
-                <p class="text-gray-600 mb-6">
-                  Aquí puedes discutir temas relacionados con preguntas y respuestas sobre Pokémon. Participa en las conversaciones y ayuda a otros entrenadores.
-                </p>
-
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Welcome to the Help forum</h2>
+                <p class="text-gray-600 mb-6">Here you can discuss topics related to Pokémon questions and answers. Join the conversations and help other trainers.</p>
                 <!-- Botón Crear Post -->
-                <router-link 
-                  :to="{ path: '/newPost', query: { subforum: 'Ayuda' } }" 
+                <button
+                  @click="checkLogin"
                   class="inline-flex items-center bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                   </svg>
-                  Crear Post
-                </router-link>
+                  Create Post
+                </button>
               </div>
 
               <!-- Lista de posts -->
               <div class="space-y-6">
-                <h3 class="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2">Publicaciones recientes</h3>
+                <h3 class="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2">Recent Posts</h3>
                 
                 <router-link 
                   v-for="post in posts" 
@@ -148,7 +145,10 @@
 import { ref, onMounted } from 'vue';
 import { IonContent, IonPage, IonTitle } from '@ionic/vue';
 import PostItem from '@/components/PostItem.vue';
+import { useRouter } from 'vue-router';
+import { getUsername } from '@/controllers/userController';
 
+const router = useRouter();
 const sidebarOpen = ref(false);
 const currentForum = ref('ayuda'); // Rutas
 import * as dataController from '@/controllers/dataController';
@@ -175,6 +175,19 @@ const fetchAyudaPost = async () => {
   } catch (error) {
     console.error('Error al obtener los posts:', error);
   }
+};
+
+const checkLogin = (event: Event) => {
+  event.preventDefault(); // evitar navegación automática
+
+  const username = getUsername();
+  if (!username || username === 'nousername') {
+    alert('You must log in to create a post.');
+    return;
+  }
+  
+  // Navegar manualmente al enlace del router-link
+  router.push({ path: '/newPost', query: { subforum: 'Ayuda' } });
 };
 
 // Llamar a la función fetchPosts cuando el componente se monte

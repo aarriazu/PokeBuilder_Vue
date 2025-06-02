@@ -16,7 +16,7 @@
 
           <!-- Categorías del foro -->
           <div class="p-4 space-y-2">
-            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categorías</h3>
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categories</h3>
             
             <router-link 
               to="/forumGeneral" 
@@ -29,7 +29,6 @@
                 </svg>
               </div>
               <span class="font-medium">General</span>
-              <span class="ml-auto bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">24</span>
             </router-link>
 
             <router-link 
@@ -42,8 +41,7 @@
                   <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                 </svg>
               </div>
-              <span class="font-medium">Torneos</span>
-              <span class="ml-auto bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">12</span>
+              <span class="font-medium">Tournaments</span>
             </router-link>
 
             <router-link 
@@ -56,8 +54,7 @@
                   <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
                 </svg>
               </div>
-              <span class="font-medium">Ayuda</span>
-              <span class="ml-auto bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">8</span>
+              <span class="font-medium">Help</span>
             </router-link>
 
             <router-link 
@@ -71,7 +68,6 @@
                 </svg>
               </div>
               <span class="font-medium">Spin-off</span>
-              <span class="ml-auto bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">5</span>
             </router-link>
 
             <router-link 
@@ -85,7 +81,6 @@
                 </svg>
               </div>
               <span class="font-medium">Off-topic</span>
-              <span class="ml-auto bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">3</span>
             </router-link>
           </div>
         </div>
@@ -110,26 +105,24 @@
             <div class="max-w-4xl mx-auto">
               <!-- Cabecera del foro -->
               <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Bienvenido al foro general</h2>
-                <p class="text-gray-600 mb-6">
-                  Aquí puedes discutir temas generales relacionados con Pokémon. Participa en las conversaciones y comparte tus ideas con otros entrenadores.
-                </p>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Welcome to the general forum</h2>
+                <p class="text-gray-600 mb-6">Here you can discuss general topics related to Pokémon. Join in the conversations and share your ideas with other trainers.</p>
 
                 <!-- Botón Crear Post -->
-                <router-link 
-                  :to="{ path: '/newPost', query: { subforum: 'General' } }"  
+                <button
+                  @click="checkLogin"
                   class="inline-flex items-center bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                   </svg>
-                  Crear Post
-                </router-link>
+                  Create Post
+                </button>
               </div>
 
               <!-- Lista de posts -->
               <div class="space-y-6">
-                <h3 class="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2">Publicaciones recientes</h3>
+                <h3 class="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2">Recent Posts</h3>
                 
                 <router-link 
                   v-for="post in posts" 
@@ -161,7 +154,10 @@
 import { ref, onMounted } from 'vue';
 import { IonContent, IonPage } from '@ionic/vue';
 import PostItem from '@/components/PostItem.vue';
+import { getUsername } from '@/controllers/userController';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const sidebarOpen = ref(false);
 const currentForum = ref('general'); // Rutas
 import * as dataController from '@/controllers/dataController';
@@ -191,6 +187,19 @@ const fetchGeneralPost = async () => {
   }
   
 }
+
+const checkLogin = (event: Event) => {
+  event.preventDefault(); // evitar navegación automática
+
+  const username = getUsername();
+  if (!username || username === 'nousername') {
+    alert('You must log in to create a post.');
+    return;
+  }
+  
+  // Navegar manualmente al enlace del router-link
+  router.push({ path: '/newPost', query: { subforum: 'General' } });
+};
 
 // Llamar a la función fetchPosts cuando el componente se monte
 onMounted(() => {

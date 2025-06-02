@@ -149,6 +149,14 @@ export async function insertTorneoPost(post: any) {
   }
 }
 
+// Función para obtener la foto de perfil de un usuario por su nombre de usuario
+export async function getProfilePicByUsername(username: string): Promise<string | null> {
+  const db = await connectToDatabase();
+  const collection = db.collection("users");
+  const user = await collection.findOne({ username });
+  return user?.profilePic || null;
+}
+
 export function findPostByName(name: any) {
   throw new Error('Function not implemented.');
 }
