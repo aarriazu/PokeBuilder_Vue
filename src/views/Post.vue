@@ -410,7 +410,7 @@ onMounted(async () => {
   if (post.value?.author) {
     authorProfilePic.value = await getProfilePicByUsername(post.value.author);
   }
-  fetchAnswers();
+  /*fetchAnswers();*/
 });
 </script>
 

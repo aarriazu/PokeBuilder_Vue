@@ -10,6 +10,19 @@
 <script setup lang="ts">
   import { IonApp, IonRouterOutlet } from '@ionic/vue';
   import headerComponent from '@/components/headerComponent.vue';
+  import { onMounted } from 'vue';
+  import { userState } from '@/controllers/stateController';
+  import * as userController from '@/controllers/userController';
+
+  onMounted(async () => {
+  try {
+    userState.value = await userController.getUser();
+  } catch (error) {
+    userState.value = null;
+    console.error('Error fetching user:', error);
+  }
+});
+
 </script>
 
 <style>
