@@ -362,7 +362,6 @@ const sendAnswer = async () => {
       answers: answers.value.length + 1,
     });
 
-    console.log('Respuesta enviada exitosamente:', response.data);
     alert('Answer sent successfully.');
     answerContent.value = '';
     fetchAnswers();
