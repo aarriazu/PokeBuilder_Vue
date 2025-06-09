@@ -392,7 +392,6 @@ const fetchAnswers = async () => {
     });
 
     answers.value = response.data;
-    console.log('Respuestas obtenidas:', answers.value);
   } catch (error: any) {
     console.error('Error al obtener respuestas:', error);
     if (error.response) {

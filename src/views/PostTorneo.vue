@@ -240,6 +240,7 @@
                   :content="answer.content"
                   :createdAt="answer.createdAt"
                   :editedAt="answer.editedAt"
+                  :replies="answer.replies"
                   @answer-deleted="handleAnswerDeleted"
                   @answer-updated="handleAnswerUpdated"
                 />

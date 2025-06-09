@@ -32,7 +32,6 @@ export async function updateTorneoAnswers(id: string, answers: any) {
   );
 }
 
-
 export const updateAnswersCountById = async (id: string, answers: number) => {
   const db = await connectToDatabase();
   const collection = db.collection('postsTorneo');
