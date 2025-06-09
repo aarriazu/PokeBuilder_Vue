@@ -164,7 +164,7 @@ const route = useRoute();
 const postContent = ref({
   title: '',
   author: getUsername(),
-  subforum: '',
+  subforum: route.query.subforum as string,
   answers: 0,
   content: '',
   createdAt: '',

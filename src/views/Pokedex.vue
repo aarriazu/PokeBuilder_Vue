@@ -78,7 +78,7 @@
   <script setup lang="ts">
   import { ref, computed, watch, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { IonContent, IonPage, IonGrid, IonRow, IonCol, IonButton, IonInput, IonSelect, IonSelectOption } from '@ionic/vue';
+  import { IonContent, IonPage, IonGrid, IonRow, IonCol, IonButton, IonInput, IonSelect, IonSelectOption, IonSearchbar } from '@ionic/vue';
   import * as dataController from '@/controllers/dataController';
   
   // Configuración de la paginación
@@ -129,15 +129,18 @@
   
   // Filtrar los Pokémon según el término de búsqueda, tipo y generación
   const filteredPokemon = computed(() => {
-  return pokemonList.value.filter(pokemon => {
-    const matchesSearch = pokemon.name.toLowerCase().includes((searchQuery.value || '').toLowerCase());
-    const matchesType1 = typeof selectedType.value === 'string' && selectedType.value !== '' ? pokemon.types.includes(selectedType.value) : true;
-    const matchesType2 = typeof selectedType2.value === 'string' && selectedType2.value !== '' ? pokemon.types.includes(selectedType2.value) : true;
-    const matchesGeneration = selectedGeneration.value !== '' ? pokemon.generation === Number(selectedGeneration.value) : true;
-    currentPage.value = 1;
-    return matchesSearch && matchesType1 && matchesType2 && matchesGeneration;
+    return pokemonList.value.filter(pokemon => {
+      const matchesSearch = pokemon.name.toLowerCase().includes((searchQuery.value || '').toLowerCase());
+      const matchesType1 = typeof selectedType.value === 'string' && selectedType.value !== '' ? pokemon.types.includes(selectedType.value) : true;
+      const matchesType2 = typeof selectedType2.value === 'string' && selectedType2.value !== '' ? pokemon.types.includes(selectedType2.value) : true;
+      const matchesGeneration = selectedGeneration.value !== '' ? pokemon.generation === Number(selectedGeneration.value) : true;
+      return matchesSearch && matchesType1 && matchesType2 && matchesGeneration;
+    });
   });
-});
+
+  watch([searchQuery, selectedType, selectedType2, selectedGeneration], () => {
+    currentPage.value = 1;
+  });
   
   // Calcular los Pokémon visibles para la página actual
   const visiblePokemon = computed(() => {
