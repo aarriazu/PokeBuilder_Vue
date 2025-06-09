@@ -97,6 +97,7 @@ import {
   IonButton
 } from '@ionic/vue'
 
+import API from '@/controllers/api';
 import { getUser, getUsername } from '@/controllers/userController';
 
 // Estado y tipos
@@ -149,47 +150,35 @@ const generateBracket = (): void => {
   }
 
   bracket.value = pairs
-  alert(`Bracket creado para el torneo: ${tournamentName.value}`);
+  alert(`Bracket created: ${tournamentName.value}`);
 }
 
-  // Guardar el bracket en mongoDB como un post.
-  const saveBracket = async (): Promise<void> => {
+// Guardar el bracket en mongoDB como un post.
+const saveBracket = async (): Promise<void> => {
   if (!tournamentName.value || !tournamentDescription.value || participants.value.some(p => !p)) {
     alert('Please complete all fields before saving.');
     return;
   }
-  else {
-    postTorneo.value = {
-        title: tournamentName.value,
-        author: getUsername() as string, 
-        subforum: 'torneos',      
-        description: tournamentDescription.value,
-        participants: participants.value,
-        bracket: bracket.value,
-        answers: 0,
-        createdAt: new Date().toISOString(),
-        editedAt: new Date().toISOString(),
-      };
-      console.log('Post torneo:', postTorneo.value);
-  }
+
+  const newPost = {
+    title: tournamentName.value.trim(),
+    author: getUsername() || 'anonymous',
+    subforum: 'torneos',
+    description: tournamentDescription.value.trim(),
+    participants: participants.value.map(p => p.trim()),
+    bracket: bracket.value,
+    answers: 0,
+    createdAt: new Date().toISOString(),
+    editedAt: new Date().toISOString(),
+  };
 
   try {
-    
-    const response = await axios.post<{ insertedId: string }>('http://localhost:3000/api/postsTorneo', postTorneo.value, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    // Intentar parsear solo si el texto no está vacío
-    let data = null;
-
-
+    const response = await API.post('/postsTorneo', newPost);
     alert('Tournament saved successfully.');
     router.push('/forumTorneos');
   } catch (error) {
-    console.error('Error al guardar el post:', error);
-    alert('There was an error saving the post, sorry for the inconvenience..');
+    console.error('Error saving tournament post:', error);
+    alert('There was an error saving the post. Please try again.');
   }
 };
 

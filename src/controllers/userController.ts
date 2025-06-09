@@ -2,175 +2,201 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { jwtDecode } from 'jwt-decode';
 import { User } from '@/classes/User';
-import axios, { get } from 'axios';
-import * as routerController from '@/controllers/routerController';
-import { userState } from '@/controllers/stateController';
+import API from './api';
+import * as routerController from './routerController';
+import { userState } from './stateController';
 import { useTeamStore } from '@/stores/teamStore';
+import { Team } from '@/classes/Team';
 
+interface LoginResponse {
+  token: string;
+}
 
-//const username = ref<string | null>(null);
-//const user = ref<User | null>(null);
-//const token = ref<User | null>(null);
+interface RegisterResponse {
+  message: string;
+}
 
+interface UpdateUserResponse {
+  token?: string;
+  user?: User;  
+  message: string;
+  error?: string;
+}
+
+interface ProfilePicResponse {
+  profilePic: string;
+}
+
+//Login
 export const login = async (userName: string, password: string, router: ReturnType<typeof useRouter>) => {
-    try {
-      const response = await fetch('http://localhost:3000/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: userName, password: password }),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Server error');
-      }
-  
-      const data = await response.json();
-      console.log('Token recibido:', data.token);
-  
-      // Guarda el token en sessionStorage
-      sessionStorage.setItem('session', data.token);
-
-      // Actualiza el estado global del usuario
-      userState.value = jwtDecode(data.token) as User;
-      console.log('userState: ', userState.value);
-
-
-      // Actualiza el campo lastLogin en la base de datos
-      await fetch('http://localhost:3000/api/user/lastLogin', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${data.token}`, // Envía el token si es necesario
-        },
-        body: JSON.stringify({ username: userName }),
-      });
-
-      console.log('Campo lastLogin actualizado');
-
-  
-      // Redirige al perfil del usuario
-      routerController.navigateToAndClose(router, '/profile');
-    } catch (error) {
-      console.error('Error en login:', error);
-      throw error;
-    }
-  };
-
-  export const signin = async ( username: string, email: string, password: string, confirmPassword: string) => {
-    try {
-      const response = await fetch('http://localhost:3000/api/signin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-          confirmPassword,
-        }),
+  try {
+    const response = await API.post<LoginResponse>('/login', {
+      username: userName,
+      password: password,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Server error');
-    }
+    const token = response.data.token;
+    sessionStorage.setItem('session', token);
+    userState.value = jwtDecode(token) as User;
 
-    const data = await response.json();
-    console.log('Usuario registrado:', data);
-    return data;
+    await API.put('/user/lastLogin', {
+      username: userName,
+    });
+
+    routerController.navigateToAndClose(router, '/profile');
   } catch (error) {
-    console.error('Error en signIn:', error);
+    console.error('Error en login:', error);
     throw error;
   }
 };
-  
+
+// Registro de nuevo usuario
+export const signin = async (username: string, email: string, password: string, confirmPassword: string) => {
+  try {
+    const { data } = await API.post('/signin', {
+      username,
+      email,
+      password,
+      confirmPassword
+    });
+    return data;
+  } catch (error) {
+    console.error('Signin error:', error);
+    throw error;
+  }
+};
+
+
+// Logout
 export function logout(router: ReturnType<typeof useRouter>) {
   const teamStore = useTeamStore();
   teamStore.setTeams([]);
-
   userState.value = null;
-  console.log('Estado del usuario después de logout:', userState.value);
-  sessionStorage.removeItem('session'); 
+  sessionStorage.removeItem('session');
   routerController.navigateToAndClose(router, '/login');
 }
 
+// Obtener usuario actual desde token
 export async function getUser() {
   const session = sessionStorage.getItem('session');
-  console.log('Token de sesión:', session);
-  if (session) {
-    userState.value = jwtDecode(session) as User;
-    console.log('Usuario:', userState.value.username);
-    console.log('Token decodificado:', userState.value);
+  
+  if (!session) {
+    console.error('No session token found');
+    return null;
+  }
 
-    const teamStore = useTeamStore();
-    try {
-      const response = await fetch(`http://localhost:3000/api/teams/${userState.value._id}`);
-      const teams = await response.json();
-      teamStore.setTeams(teams); // Actualiza el store con los equipos obtenidos
-    } catch (error) {
-      console.error('Error al obtener los equipos del usuario:', error);
-      teamStore.setTeams([]); // Vacía el store si ocurre un error
+  try {
+    // Decodificar el token para obtener el _id del usuario
+    const decodedToken = jwtDecode(session) as any;
+    const userId = decodedToken._id; // Asegúrate de que el token incluya el _id
+    
+    if (!userId) {
+      throw new Error('User ID not found in token');
     }
 
+    // Obtener los datos completos del usuario
+    const { data: userData } = await API.get<User>(`/users/${userId}`);
+    userState.value = userData;
+    
+    // Obtener los equipos usando el _id del usuario
+    const { data } = await API.get<Team[]>(`/teams/${userId}`);
+    
+    const teamStore = useTeamStore();
+    
+    // Convertir los datos a instancias de Team
+    const teams = data.map(team => 
+      Team.fromFullData(
+        team._id,
+        team.pokemon,
+        team.name,
+        team.ownerId,
+        team.favorite,
+        new Date(team.createdAt),
+        new Date(team.updatedAt)
+      )
+    );
+    
+    teamStore.setTeams(teams);
     return userState.value;
-  } else {
-    console.error('No session token found');
+    
+  } catch (error) {
+    console.error('Error getting user data:', error);
+    const teamStore = useTeamStore();
+    teamStore.setTeams([]);
     return null;
   }
 }
 
+
+// Actualizar usuario
 export const updateUser = async (
   username: string,
-  updateFields: any,
-  currentPassword: string
-) => {
-  const response = await fetch('http://localhost:3000/api/user/update', {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+  updateData: {
+    newUsername?: string;
+    newEmail?: string;
+    newPassword?: string;
+    newProfilePic?: string;
+    currentPassword: string;
+  }
+): Promise<UpdateUserResponse> => {
+  try {
+    const { data } = await API.put<UpdateUserResponse>('/user/update', {
       username,
-      ...updateFields,
-      currentPassword,
-    }),
-  });
+      ...updateData
+    });
 
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.error || 'Error updating user');
+    if (data.token && data.user) {
+      sessionStorage.setItem('session', data.token);
+      
+      // Crear una instancia de User con los datos actualizados
+      const updatedUser = new User(
+        data.user._id,
+        data.user.username,
+        data.user.password,
+        data.user.email
+      );
+      
+      // Actualizar propiedades adicionales
+      updatedUser.setProfilePic = data.user.profilePic;
+      updatedUser.setUpdatedAt = new Date(data.user.lastLogin);
+      
+      userState.value = updatedUser;
+    }
+
+    return {
+      token: data.token,
+      user: data.user,
+      message: data.message || 'User updated successfully'
+    };
+    
+  } catch (error: any) {
+    console.error('Update user error:', error);
+    return {
+      message: 'Error updating user',
+      error: error.response?.data?.error || 'Unknown error'
+    };
   }
-  // Guarda el nuevo token si existe
-  if (data.token) {
-    sessionStorage.setItem('session', data.token);
-  }
-  return data;
 };
 
-export function getUsername(): String  {
-  getUser();
-  return userState.value?.username || "nousername";
+// Obtener username
+export function getUsername(): string {
+  return userState.value?.username || 'nousername';
 }
 
+// Imagen de perfil del usuario actual
 export function getProfilePic(): string {
   if (!userState.value) {
-    console.error('El usuario no está definido');
-    return 'https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1'; // Devuelve una imagen predeterminada
+    return '/src/assets/images/guest.jpg';
   }
-
-  return userState.value.profilePic || 'https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1'; // Devuelve la imagen del perfil o una predeterminada
+  return userState.value.profilePic || '/src/assets/images/guest.jpg';
 }
 
+// Imagen de perfil por nombre de usuario
 export async function getProfilePicByUsername(username: string): Promise<string> {
   try {
-    const response = await fetch(`http://localhost:3000/api/user/profilePic/${username}`);
-    const data = await response.json();
-    return data.profilePic || '/src/assets/images/guest.jpg';
+    const response = await API.get<ProfilePicResponse>(`/user/profilePic/${username}`);
+    return response.data.profilePic || '/src/assets/images/guest.jpg';
   } catch {
     return '/src/assets/images/guest.jpg';
   }
 }
-
-/*
-export function getJoinDate(): String  {
-    return user.value?.createdAt.toString || "noimg";
-}
-*/

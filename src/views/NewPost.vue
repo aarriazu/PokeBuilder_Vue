@@ -150,21 +150,20 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router'
-import axios from 'axios';
-import { IonContent, IonPage } from '@ionic/vue';
-import { getUser, getUsername } from '@/controllers/userController';
+import { IonPage, IonContent } from '@ionic/vue';
+import { useRouter, useRoute } from 'vue-router';
+import { createPost, PostData } from '@/controllers/postController';
+import { getUsername } from '@/controllers/userController';
 
 const sidebarOpen = ref(false);
 const currentForum = ref('newPost');
 
-// Obtener instancia del router
 const router = useRouter();
 const route = useRoute();
 
 const postContent = ref({
   title: '',
-  author: getUsername(), // Obtener el nombre de usuario del controlador
+  author: getUsername(),
   subforum: '',
   answers: 0,
   content: '',
@@ -173,42 +172,31 @@ const postContent = ref({
 });
 
 const savePost = async (): Promise<void> => {
-  // Validar que los campos requeridos estén completos
   if (!postContent.value.title || !postContent.value.content || !postContent.value.subforum) {
     alert('Please complete all fields before saving.');
     return;
   }
 
-  // Configurar el contenido del post
   postContent.value = {
     ...postContent.value,
-    author: getUsername(), // Cambiar por el autor real si está disponible
+    author: getUsername(),
     answers: 0,
     createdAt: new Date().toISOString(),
     editedAt: new Date().toISOString(),
   };
 
   try {
-    // Enviar el post al servidor
-    const response = await axios.post<{ insertedId: string }>('http://localhost:3000/api/posts', postContent.value, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-     // Intentar parsear solo si el texto no está vacío
-    let data = null;
-    
+    await createPost(postContent.value);
     alert('Post saved successfully.');
-    router.push(`/forumGeneral`);
+    router.push('/forumGeneral');
   } catch (error) {
     console.error('Error al guardar el post:', error);
-    alert('There was an error saving the post, sorry for the inconvenience. Please try again later.');
+    alert('There was an error saving the post. Please try again later.');
   }
 };
 
+
 onMounted(() => {
-  // Leer el parámetro 'subforum' de la URL
   const subforumParam = route.query.subforum as string || '';
   postContent.value.subforum = subforumParam;
 });

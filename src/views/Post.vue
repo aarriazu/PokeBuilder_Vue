@@ -247,6 +247,7 @@ import * as dataController from '@/controllers/dataController';
 import { getUsername } from '@/controllers/userController';
 import { useRouter } from 'vue-router';
 import { getProfilePicByUsername } from '@/controllers/userController';
+import API from '@/controllers/api';
 
 const authorProfilePic = ref('/src/assets/images/guest.jpg');
 
@@ -284,33 +285,36 @@ const startEdit = () => {
 
 //Actualiza el número de respuestas en el post cuando se elimina una respuesta
 const handleAnswerDeleted = async () => {
-  await axios.put(`http://localhost:3000/api/posts/${post.value._id}/answers`, {
-    answers: answers.value.length
+  await API.put(`/posts/${post.value._id}/answers`, {
+    answers: answers.value.length - 1
   });
-  post.value.answers = answers.value.length;
+
+  post.value.answers = answers.value.length - 1;
+  await fetchAnswers(); // recargar las respuestas para reflejar el cambio
 };
 
 //función para guardar los cambios del post editado
 const saveEdit = async () => {
   try {
-    const token = sessionStorage.getItem('session');
-    await axios.put(`http://localhost:3000/api/posts/${post.value._id}`, {
+    await API.put(`/posts/${post.value._id}`, {
       title: editTitle.value,
       content: editContent.value,
       editedAt: new Date().toISOString()
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
     });
+    
     post.value.title = editTitle.value;
     post.value.content = editContent.value;
     post.value.editedAt = new Date().toISOString();
     editMode.value = false;
     alert('Post successfully edited.');
-    location.reload(); // Recargar la página para mostrar los cambios
-  } catch (error) {
-    alert('You do not have permission to edit this post.');
+  } catch (error: any) {
+    if (error.response) {
+      alert(error.response.data?.error || 'You do not have permission to edit this post.');
+    } else {
+      alert('An error occurred while editing the post');
+    }
     console.log('Error editing post:', error);
-    editMode.value = false; // Salir del modo de edición en caso de error
+    editMode.value = false;
   }
 };
 
@@ -318,84 +322,82 @@ const saveEdit = async () => {
 const deletePost = async () => {
   if (!confirm('Are you sure you want to delete this post?')) return;
   try {
-    const token = sessionStorage.getItem('session');
-    await axios.delete(`http://localhost:3000/api/posts/${post.value._id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    await API.delete(`/posts/${post.value._id}`);
     alert('Post successfully deleted.');
     router.push('/forumGeneral'); 
-  } catch (error) {
-    alert('You do not have permission to delete this post.');
+  } catch (error: any) {
+    if (error.response) {
+      alert(error.response.data?.error || 'You do not have permission to delete this post.');
+    } else {
+      alert('An error occurred while deleting the post');
+    }
     console.log('Error deleting post:', error);
   }
 };
 
 // Función para enviar la respuesta
 const sendAnswer = async () => {
-
-  // Validar que el usuario haya iniciado sesión
   if (!getUsername() || getUsername() === 'nousername') {
     alert('You must log in to reply.');
     return;
   }
 
-  // Validar que el contenido de la respuesta no esté vacío
   if (!answerContent.value.trim()) {
     alert('The response cannot be empty.');
     return;
   }
 
-  // Crear el objeto del comentario usando la interface
   const comment: Comment = {
-    postId: post.value._id, // ID del post actual
-    author: getUsername() as string, // Cambiar por el autor real si está disponible
+    postId: post.value._id,
+    author: getUsername() as string,
     content: answerContent.value,
     createdAt: new Date().toISOString(),
     editedAt: new Date().toISOString(),
   };
 
   try {
-    // Enviar el comentario al servidor
-    const response = await axios.post('http://localhost:3000/api/Answers', comment, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await API.post('/Answers', comment);
 
-    // Actualiza el número de respuestas en el post en la base de datos
-    await axios.put(`http://localhost:3000/api/posts/${post.value._id}/answers`, {
-      answers: answers.value.length + 1
+    await API.put(`/posts/${post.value._id}/answers`, {
+      answers: answers.value.length + 1,
     });
 
     console.log('Respuesta enviada exitosamente:', response.data);
     alert('Answer sent successfully.');
-    answerContent.value = ''; // Limpiar el campo de respuesta
-    location.reload(); // Recargar la página para mostrar la nueva respuesta
-  } catch (error) {
+    answerContent.value = '';
+    fetchAnswers();
+  } catch (error: any) {
     console.error('Error al enviar la respuesta:', error);
-    alert('There was an error sending the answer.');
+    if (error.response) {
+      alert(`Error: ${error.response.data?.error || 'Failed to send answer'}`);
+    } else if (error.request) {
+      alert('Network error - please check your connection');
+    } else {
+      alert('An unexpected error occurred');
+    }
   }
 };
+
 
 // Función para obtener las respuestas del post
 const fetchAnswers = async () => {
   try {
-    // Verificar que el post esté cargado antes de intentar obtener las respuestas
     if (!post.value || !post.value._id) {
       console.error('El post no está cargado o no tiene un ID válido.');
       return;
     }
 
-    // Realizar la solicitud GET al servidor
-    const response = await axios.get<Comment[]>('http://localhost:3000/api/Answers', {
-      params: { postId: post.value._id }, // Pasar el ID del post como parámetro
+    const response = await API.get<Comment[]>(`/Answers`, {
+      params: { postId: post.value._id },
     });
 
-    // Guardar las respuestas en el array `answers`
     answers.value = response.data;
     console.log('Respuestas obtenidas:', answers.value);
-  } catch (error) {
-    console.error('Error al obtener las respuestas:', error);
+  } catch (error: any) {
+    console.error('Error al obtener respuestas:', error);
+    if (error.response) {
+      console.error('Detalles del error:', error.response.data);
+    }
   }
 };
 
@@ -410,7 +412,7 @@ onMounted(async () => {
   if (post.value?.author) {
     authorProfilePic.value = await getProfilePicByUsername(post.value.author);
   }
-  /*fetchAnswers();*/
+  fetchAnswers();
 });
 </script>
 

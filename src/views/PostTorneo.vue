@@ -254,220 +254,229 @@
     </ion-page>
   </template>
   
-  <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
-  import { IonContent, IonPage } from '@ionic/vue';
-  import { useRoute } from 'vue-router';
-  import axios from 'axios';
-  import AnswerComponent from '@/components/AnswerComponent.vue';
-  import { getUsername } from '@/controllers/userController'; 
-  import { getProfilePicByUsername } from '@/controllers/userController';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { IonContent, IonPage } from '@ionic/vue';
+import { useRoute, useRouter } from 'vue-router';
+import AnswerComponent from '@/components/AnswerComponent.vue';
+import { getUsername } from '@/controllers/userController';
+import { getProfilePicByUsername } from '@/controllers/userController';
+import API from '@/controllers/api';
 
-  const authorProfilePic = ref('/src/assets/images/guest.jpg');
+const authorProfilePic = ref('/src/assets/images/guest.jpg');
+const sidebarOpen = ref(false);
+const currentForum = ref('torneos');
+const router = useRouter();
 
-  // Estado para el sidebar
-  const sidebarOpen = ref(false);
-  const currentForum = ref('');
+// Edit mode state
+const editMode = ref(false);
+const editTitle = ref('');
+const editDescription = ref('');
+const editParticipants = ref('');
+const editBracket = ref('');
 
-  // Estados para el modo de edición
-  import { useRouter } from 'vue-router';
-  const router = useRouter();
+interface PostTorneo {
+  _id: string;
+  title: string;
+  author: string;
+  description: string;
+  participants: string[];
+  bracket: string[][];
+  createdAt: string;
+  editedAt: string;
+  answers?: number;
+}
 
-  const editMode = ref(false);
-  const editTitle = ref('');
-  const editDescription = ref('');
-  const editParticipants = ref('');
-  const editBracket = ref('');
-  
-  const toggleSidebar = () => {
-      sidebarOpen.value = !sidebarOpen.value;
-  };
+interface Comment {
+  _id?: string;
+  postId: string;
+  author: string;
+  content: string;
+  createdAt: string;
+  editedAt: string;
+  parentAnswerId?: string;
+  replies?: Comment[];
+}
 
-  const startEdit = () => {
-    editTitle.value = post.value?.title || '';
-    editDescription.value = post.value?.description || '';
-    editParticipants.value = post.value?.participants.join('\n') || '';
-    editBracket.value = post.value?.bracket.map(match => match.join(',')).join('\n') || '';
-    editMode.value = true;
-  };
-  
-  // Interface para el post de torneo
-  interface PostTorneo {
-      _id: string;
-      title: string;
-      author: string;
-      description: string;
-      participants: string[];
-      bracket: string[][];
-      createdAt: string;
-      editedAt: string;
-  }
-  
-  // Interface para las respuestas
-  interface Comment {
-      _id?:string; // ID del comentario
-      postId: string;
-      author: string;
-      content: string;
-      createdAt: string;
-      editedAt: string;
-  }
-  
-  const route = useRoute();
-  const post = ref<PostTorneo | null>(null); // Datos del post de torneo
-  const answers = ref<Comment[]>([]); // Respuestas asociadas al post
-  const answerContent = ref('');
+const route = useRoute();
+const post = ref<PostTorneo | null>(null);
+const answers = ref<Comment[]>([]);
+const answerContent = ref('');
 
-  const handleAnswerDeleted = async () => {
-    await fetchAnswers();
-  };
-  const handleAnswerUpdated = async () => {
-    await fetchAnswers();
-  };
-  
-  // Función para obtener los datos del post de torneo
-  const fetchPost = async () => {
-      try {
-          const id = route.params.id as string;
-          const response = await axios.get<PostTorneo>(`http://localhost:3000/api/postsTorneo/${id}`);
-          post.value = response.data;
-          console.log('Post de torneo obtenido:', post.value);
-      } catch (error) {
-          console.error('Error al obtener el post de torneo:', error);
-      }
-  };
-  
-  // Función para obtener las respuestas del post
-  const fetchAnswers = async () => {
-      try {
-          if (!post.value || !post.value._id) {
-              console.error('El post no está cargado o no tiene un ID válido.');
-              return;
-          }
-  
-          const response = await axios.get<Comment[]>('http://localhost:3000/api/Answers', {
-              params: { postId: post.value._id },
-          });
-          
-          // Mapea _id a id para que AnswerComponent reciba el prop correcto
-          answers.value = response.data.map(a => ({
-              ...a,
-              id: (a as any)._id, 
-              postId: a.postId,   
-          }));
-          console.log('Respuestas obtenidas:', answers.value);
-      } catch (error) {
-          console.error('Error al obtener las respuestas:', error);
-      }
-  };
-  
-  // Función para enviar una respuesta
-  const sendAnswer = async () => {
+const toggleSidebar = () => {
+  sidebarOpen.value = !sidebarOpen.value;
+};
 
-      if (!getUsername() || getUsername() === 'nousername') {
-        alert('You must log in to reply.');
-        return;
-      }
+const startEdit = () => {
+  editTitle.value = post.value?.title || '';
+  editDescription.value = post.value?.description || '';
+  editParticipants.value = post.value?.participants.join('\n') || '';
+  editBracket.value = post.value?.bracket.map(match => match.join(',')).join('\n') || '';
+  editMode.value = true;
+};
 
-      if (!answerContent.value.trim()) {
-          alert('The response cannot be empty.');
-          return;
-      }
-  
-      const comment: Comment = {
-          postId: post.value!._id,
-          author: getUsername() as string,
-          content: answerContent.value,
-          createdAt: new Date().toISOString(),
-          editedAt: new Date().toISOString(),
-      };
-  
-      try {
-          const response = await axios.post('http://localhost:3000/api/Answers', comment, {
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-          });
-  
-          console.log('Respuesta enviada exitosamente:', response.data);
-          alert('Respuesta enviada exitosamente.');
-          answerContent.value = '';
-          location.reload(); // Recargar la página para mostrar la nueva respuesta
-      } catch (error) {
-          console.error('Error al enviar la respuesta:', error);
-          alert('Hubo un error al enviar la respuesta.');
-      }
-  };
-
-  // Guardar cambios del post de torneo
-  const saveEdit = async () => {
-    try {
-      const token = sessionStorage.getItem('session');
-      // Procesar participantes y bracket
-      const participants = editParticipants.value
-        .split('\n')
-        .map(p => p.trim())
-        .filter(p => p.length > 0);
-
-      const bracket = editBracket.value
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => line.length > 0 && line.includes(','))
-        .map(line => {
-          const [p1, p2] = line.split(',').map(p => p.trim());
-          return [p1, p2];
-        })
-        .filter(pair => pair.length === 2 && pair[0] && pair[1]);
-
-      await axios.put(`http://localhost:3000/api/postsTorneo/${post.value!._id}`, {
-        title: editTitle.value,
-        description: editDescription.value,
-        participants,
-        bracket,
-        editedAt: new Date().toISOString()
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      post.value!.title = editTitle.value;
-      post.value!.description = editDescription.value;
-      post.value!.participants = participants;
-      post.value!.bracket = bracket;
-      post.value!.editedAt = new Date().toISOString();
-      editMode.value = false;
-      alert('Post de torneo editado correctamente.');
-    } catch (error) {
-      alert('No tienes permiso para editar este post de torneo.');
-      editMode.value = false;
-    }
-  };  
-
-  // Eliminar post de torneo
-  const deletePost = async () => {
-  if (!confirm('Are you sure you want to delete this tournament?')) return;
+const saveEdit = async () => {
   try {
-    const token = sessionStorage.getItem('session');
-    await axios.delete(`http://localhost:3000/api/postsTorneo/${post.value!._id}`, {
-      headers: { Authorization: `Bearer ${token}` }
+    // Process participants and bracket
+    const participants = editParticipants.value
+      .split('\n')
+      .map(p => p.trim())
+      .filter(p => p.length > 0);
+
+    const bracket = editBracket.value
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0 && line.includes(','))
+      .map(line => {
+        const [p1, p2] = line.split(',').map(p => p.trim());
+        return [p1, p2];
+      })
+      .filter(pair => pair.length === 2 && pair[0] && pair[1]);
+
+    await API.put(`/postsTorneo/${post.value?._id}`, {
+      title: editTitle.value,
+      description: editDescription.value,
+      participants,
+      bracket,
+      editedAt: new Date().toISOString()
     });
-    alert('Tournament successfully deleted.');
-    router.push('/forumTorneos'); 
-  } catch (error) {
-    alert('You do not have permission to delete this Tournament.');
-    console.log('Error deleting tournament post:', error);
+
+    if (post.value) {
+      post.value.title = editTitle.value;
+      post.value.description = editDescription.value;
+      post.value.participants = participants;
+      post.value.bracket = bracket;
+      post.value.editedAt = new Date().toISOString();
+    }
+    
+    editMode.value = false;
+    alert('Tournament successfully edited.');
+  } catch (error: any) {
+    if (error.response) {
+      alert(error.response.data?.error || 'You do not have permission to edit this tournament.');
+    } else {
+      alert('An error occurred while editing the tournament');
+    }
+    console.error('Error editing tournament:', error);
+    editMode.value = false;
   }
 };
-  
-  // Obtener los datos al montar el componente
+
+const deletePost = async () => {
+  if (!confirm('Are you sure you want to delete this tournament?')) return;
+  try {
+    await API.delete(`/postsTorneo/${post.value?._id}`);
+    alert('Tournament successfully deleted.');
+    router.push('/forumTorneos');
+  } catch (error: any) {
+    if (error.response) {
+      alert(error.response.data?.error || 'You do not have permission to delete this tournament.');
+    } else {
+      alert('An error occurred while deleting the tournament');
+    }
+    console.error('Error deleting tournament:', error);
+  }
+};
+
+const handleAnswerDeleted = async () => {
+  if (post.value?._id) {
+    await API.put(`/postsTorneo/${post.value._id}/answers`, {
+      answers: answers.value.length - 1
+    });
+    await fetchAnswers();
+  }
+};
+
+const handleAnswerUpdated = async () => {
+  await fetchAnswers();
+};
+
+const sendAnswer = async () => {
+  if (!getUsername() || getUsername() === 'nousername') {
+    alert('You must log in to reply.');
+    return;
+  }
+
+  if (!answerContent.value.trim()) {
+    alert('The response cannot be empty.');
+    return;
+  }
+
+  const comment: Comment = {
+    postId: post.value?._id || '',
+    author: getUsername() as string,
+    content: answerContent.value,
+    createdAt: new Date().toISOString(),
+    editedAt: new Date().toISOString(),
+  };
+
+  try {
+    await API.post('/Answers', comment);
+
+    if (post.value?._id) {
+      await API.put(`/postsTorneo/${post.value._id}/answers`, {
+        answers: answers.value.length + 1,
+      });
+    }
+
+    alert('Answer sent successfully.');
+    answerContent.value = '';
+    await fetchAnswers();
+  } catch (error: any) {
+    console.error('Error sending answer:', error);
+    if (error.response) {
+      alert(`Error: ${error.response.data?.error || 'Failed to send answer'}`);
+    } else {
+      alert('An unexpected error occurred');
+    }
+  }
+};
+
+const fetchAnswers = async () => {
+  try {
+    if (!post.value?._id) {
+      console.error('Tournament not loaded or has invalid ID.');
+      return;
+    }
+
+    const response = await API.get<Comment[]>(`/Answers`, {
+      params: { postId: post.value._id },
+    });
+
+    answers.value = response.data;
+  } catch (error: any) {
+    console.error('Error fetching answers:', error);
+    if (error.response) {
+      console.error('Error details:', error.response.data);
+    }
+  }
+};
+
+const fetchPost = async () => {
+    try {
+      const id = route.params.id as string;
+      const response = await API.get<PostTorneo>(`/postsTorneo/${id}`);
+      post.value = response.data;
+      
+      if (post.value?.author) {
+        authorProfilePic.value = await getProfilePicByUsername(post.value.author);
+      }
+    } catch (error: any) {
+      console.error('Error fetching tournament:', error);
+      if (error.response) {
+        console.error('Error details:', error.response.data);
+      }
+    }
+  };
+
   onMounted(async () => {
     await fetchPost();
-    if (post.value?.author) {
-      authorProfilePic.value = await getProfilePicByUsername(post.value.author);
-    }
     await fetchAnswers();
   });
-  </script>
+</script>
+
   
-  <style scoped>
+<style scoped>
   .main {
     min-height: 100vh;
   }

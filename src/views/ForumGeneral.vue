@@ -151,11 +151,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { IonContent, IonPage } from '@ionic/vue';
 import PostItem from '@/components/PostItem.vue';
 import { getUsername } from '@/controllers/userController';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute  } from 'vue-router';
 
 const router = useRouter();
 const sidebarOpen = ref(false);
@@ -175,6 +175,7 @@ interface post{
 }
 
 const posts = ref<post[]>([]); // Array de publicaciones
+const route = useRoute();
 
 //Recoger los post con subforum "General"
 const fetchGeneralPost = async () => {
@@ -205,6 +206,15 @@ const checkLogin = (event: Event) => {
 onMounted(() => {
   fetchGeneralPost();
 });
+
+watch(
+  () => route.fullPath,
+  (newVal, oldVal) => {
+    if (route.path === '/forumGeneral') {
+      fetchGeneralPost();
+    }
+  }
+);
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
