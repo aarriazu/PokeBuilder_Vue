@@ -2,7 +2,7 @@
   <div class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6">
     <div class="flex items-center mb-4">
       <img 
-        :src="authorProfilePic" 
+        :src="getProfilePicUrl(authorProfilePic)"
         alt="User Icon" 
         class="w-10 h-10 rounded-full mr-3"
       />
@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, watch } from 'vue';
-import { getProfilePicByUsername } from '@/controllers/userController';
+import { getProfilePicByUsername, getProfilePicUrl } from '@/controllers/userController';
 
 
 const props = defineProps({

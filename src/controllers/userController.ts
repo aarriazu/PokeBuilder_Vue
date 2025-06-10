@@ -169,8 +169,44 @@ export async function getProfilePicByUsername(username: string): Promise<string>
   }
 }
 
-/*
-export function getJoinDate(): String  {
-    return user.value?.createdAt.toString || "noimg";
+export async function getProfilePicById(userId: string): Promise<string> {
+  try {
+    const response = await fetch(`http://localhost:3000/api/user/profilePic/id/${userId}`);
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Error al obtener la imagen de perfil');
+    }
+    
+    return data.profilePic || '/src/assets/images/guest.jpg';
+  } catch (error) {
+    console.error('Error al obtener la imagen de perfil por ID:', error);
+    return '/src/assets/images/guest.jpg';
+  }
 }
-*/
+
+// Función para construir la URL completa de la imagen de perfil
+export const getProfilePicUrl = (profilePic?: string) => {
+  if (!profilePic) {
+    return '/src/assets/images/guest.jpg';
+  }
+  
+  // Si la imagen ya viene con la URL completa del servidor
+  if (profilePic.startsWith('http')) {
+    return profilePic;
+  }
+  
+  // Si es una ruta relativa del servidor, construir URL completa
+  if (profilePic.startsWith('/uploads/')) {
+    return `http://localhost:3000${profilePic}`;
+  }
+  
+  // Si es otra cosa, usar imagen por defecto
+  return '/src/assets/images/guest.jpg';
+};
+
+// Función para manejar errores de carga de imagen
+export const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement;
+  img.src = '/src/assets/images/guest.jpg'; // Imagen de fallback
+};

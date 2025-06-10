@@ -126,7 +126,7 @@
               >
                 <div class="flex items-center mb-6">
                   <img
-                    :src="authorProfilePic"
+                    :src="getProfilePicUrl(authorProfilePic)"
                     alt="User Icon"
                     class="w-12 h-12 rounded-full mr-4 border-2 border-indigo-200"
                   />
@@ -246,7 +246,7 @@ import axios from 'axios';
 import * as dataController from '@/controllers/dataController';
 import { getUsername } from '@/controllers/userController';
 import { useRouter } from 'vue-router';
-import { getProfilePicByUsername } from '@/controllers/userController';
+import { getProfilePicByUsername, getProfilePicUrl } from '@/controllers/userController';
 
 const authorProfilePic = ref('/src/assets/images/guest.jpg');
 

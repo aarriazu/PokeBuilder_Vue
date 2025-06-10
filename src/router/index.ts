@@ -32,9 +32,9 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/pokedex/:name',
-    name: 'PokedexDetail',
+    name: 'PokemonDetail',
     sensitive: true,
-    component: () => import('@/views/PokemonStats.vue')
+    component: () => import('@/views/PokemonDetail.vue')
   },
   {
     path: '/profile',

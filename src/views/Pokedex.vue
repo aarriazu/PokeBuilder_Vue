@@ -1,5 +1,5 @@
 <template>
-    <ion-page :key="route.fullPath">
+    <ion-page>
       <ion-content>
         <div class="p-4">
           <!-- Barra de búsqueda -->
@@ -170,7 +170,7 @@
 
   // Navegar al detalle del Pokémon
   function goToPokemonDetail(name: string) {
-    router.push({ name: 'PokedexDetail', params: { name } });
+    router.push({ name: 'PokemonDetail', params: { name } });
   }
 </script>
   
