@@ -45,7 +45,7 @@
 <script setup lang="ts">
   import * as userController from '@/controllers/userController';
   import { IonContent, IonPage, IonToolbar, IonMenu, IonMenuButton, IonHeader, IonLabel, IonItem, IonList, IonButtons, IonTitle } from '@ionic/vue';
-  import { PropType } from 'vue';
+  import { PropType, watch } from 'vue';
   import { User } from '@/classes/User';
   import type { Router } from 'vue-router';
   import * as routerController from '@/controllers/routerController';
@@ -61,10 +61,6 @@
       required: false,
     },
   });
-
-  const openMenu = async () => {
-  await menuController.open(); // Abre el menú lateral
-};
 
 </script>
   

@@ -11,6 +11,7 @@ import { useTeamStore } from '@/stores/teamStore';
 //const username = ref<string | null>(null);
 //const user = ref<User | null>(null);
 //const token = ref<User | null>(null);
+let isGettingUser = false;
 
 export const login = async (userName: string, password: string, router: ReturnType<typeof useRouter>) => {
     try {
@@ -94,6 +95,110 @@ export function logout(router: ReturnType<typeof useRouter>) {
   routerController.navigateToAndClose(router, '/login');
 }
 
+export async function getUser(): Promise<User | null> {
+  console.log('🚨 getUser() called - Stack trace:', new Error().stack);
+  sessionStorage.removeItem('token');
+  localStorage.removeItem('token');
+
+  // Evitar múltiples llamadas simultáneas
+    if (isGettingUser) {
+        console.log('getUser already in progress, waiting...');
+        // Esperar a que termine la llamada actual
+        while (isGettingUser) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        return userState.value;
+    }
+
+    isGettingUser = true;
+    
+    try {
+        const session = sessionStorage.getItem('session');
+        console.log('Token de sesión:', session);
+        
+        if (!session) {
+            console.log('No session token found');
+            userState.value = null;
+            return null;
+        }
+
+        // ✅ SOLUCIÓN: Decodificar en variable temporal primero
+        let decodedUser: User;
+        try {
+            decodedUser = jwtDecode(session) as User;
+            console.log('Usuario decodificado:', decodedUser.username);
+        } catch (decodeError) {
+            console.error('Error decodificando token:', decodeError);
+            sessionStorage.removeItem('session');
+            userState.value = null;
+            return null;
+        }
+
+        // Configurar timeout para evitar que se cuelgue
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+            console.log('Request timeout, aborting...');
+            controller.abort();
+        }, 3000); // Reducir timeout a 3 segundos
+
+        // Obtener los equipos del usuario
+        const teamStore = useTeamStore();
+        try {
+            console.log('Fetching user teams...');
+            const response = await fetch(`http://localhost:3000/api/teams/${decodedUser._id}`, {
+                signal: controller.signal,
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Authorization': `Bearer ${session}` // Agregar autorización
+                }
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    console.log('Token invalid while fetching teams, removing from sessionStorage');
+                    sessionStorage.removeItem('session');
+                    userState.value = null;
+                    return null;
+                }
+                // Si es otro error, continuar sin equipos
+                console.warn(`Teams request failed with status ${response.status}, continuing without teams`);
+                teamStore.setTeams([]);
+            } else {
+                const teams = await response.json();
+                teamStore.setTeams(teams);
+                console.log('Teams loaded successfully');
+            }
+            
+        } catch (teamError) {
+            clearTimeout(timeoutId);
+            if (teamError instanceof Error && teamError.name === 'AbortError') {
+                console.error('Teams request aborted due to timeout');
+                sessionStorage.removeItem('session');
+                userState.value = null;
+                return null;
+            } else {
+                console.error('Error al obtener los equipos del usuario:', teamError);
+                teamStore.setTeams([]);
+                // Continuar sin equipos en lugar de fallar completamente
+            }
+        }
+
+        // ✅ Solo establecer userState cuando todo esté OK
+        userState.value = decodedUser;
+        return userState.value;
+
+    } catch (error) {
+        console.error('Error general en getUser:', error);
+        sessionStorage.removeItem('session');
+        userState.value = null;
+        return null;
+    } finally {
+      isGettingUser = false;
+    }
+}
+/*
 export async function getUser() {
   const session = sessionStorage.getItem('session');
   console.log('Token de sesión:', session);
@@ -118,6 +223,7 @@ export async function getUser() {
     return null;
   }
 }
+  */
 
 export const updateUser = async (
   username: string,
@@ -146,7 +252,6 @@ export const updateUser = async (
 };
 
 export function getUsername(): String  {
-  getUser();
   return userState.value?.username || "nousername";
 }
 

@@ -32,24 +32,6 @@
               class="w-1/2 px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-black"
               placeholder="Enter your new password"
             >
-
-          <p class="text-gray-600 mb-2">Change profile picture</p>
-          <div class="flex items-center mb-4">
-            <input 
-              ref="fileInput"
-              type="file" 
-              accept="image/*"
-              @change="handleFileSelect"
-              class="w-1/2 px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
-            >
-            <ion-button 
-              @click="uploadProfilePic"
-              :disabled="!selectedFile || uploading"
-              class="ml-2"
-            >
-              {{ uploading ? 'Uploading...' : 'Upload' }}
-            </ion-button>
-          </div>
         <br>
 
         <p class="text-gray-600 mb-2">REQUIRED - Current password</p>
@@ -66,7 +48,28 @@
               class="w-1/2 text-white py-2 px-4 rounded-lg"
             >
               Update
-            </ion-button>       
+         </ion-button>
+         <br><br><br>
+         
+         <p class="text-gray-600 mb-2">Change profile picture</p>
+          <div class="flex items-center mb-4">
+            <input 
+              ref="fileInput"
+              type="file" 
+              accept="image/*"
+              @change="handleFileSelect"
+              class="w-1/2 px-4 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
+            >
+            <ion-button 
+              @click="uploadProfilePic"
+              :disabled="!selectedFile || uploading"
+              class="ml-2"
+            >
+              {{ uploading ? 'Uploading...' : 'Upload' }}
+            </ion-button>
+          </div>
+            
+        
       </div>
     </ion-content>
   </ion-page>
@@ -100,47 +103,6 @@ const handleFileSelect = (event: Event) => {
   }
 };
 
-/*
-const uploadProfilePic = async () => {
-  if (!selectedFile.value) {
-    alert('Selecciona un archivo primero');
-    return;
-  }
-
-  uploading.value = true;
-  
-  try {
-    const formData = new FormData();
-    formData.append('profilePic', selectedFile.value);
-    formData.append('username', userState.value!.username);
-
-    const token = localStorage.getItem('token');
-    const response = await axios.post('http://localhost:3000/api/user/upload-profile-pic', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    const data = response.data as { token?: string };
-    if (data.token) {
-      localStorage.setItem('token', data.token);
-      userState.value = await userController.getUser();
-    }
-
-    alert('Foto de perfil actualizada correctamente');
-    selectedFile.value = null;
-    if (fileInput.value) {
-      fileInput.value.value = '';
-    }
-  } catch (error: any) {
-    console.error('Error al subir la foto:', error);
-    alert('Error al subir la foto de perfil');
-  } finally {
-    uploading.value = false;
-  }
-};
-*/
 const uploadProfilePic = async () => {
   if (!selectedFile.value) {
     alert('Selecciona un archivo primero');
@@ -152,14 +114,10 @@ const uploadProfilePic = async () => {
   try {
     const token = sessionStorage.getItem('session');
     
-    // Debug: verificar que el token existe
     if (!token) {
       alert('No hay token de autenticación');
       return;
     }
-    
-    console.log('Token:', token); // Para debug
-    console.log('Username:', userState.value?.username); // Para debug
 
     const formData = new FormData();
     formData.append('profilePic', selectedFile.value);
@@ -168,16 +126,17 @@ const uploadProfilePic = async () => {
     const response = await axios.post('http://localhost:3000/api/user/upload-profile-pic', formData, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        // No incluyas 'Content-Type': 'multipart/form-data' - axios lo maneja automáticamente
       }
     });
 
     const data = response.data as { token?: string };
     if (data.token) {
-      localStorage.setItem('token', data.token);
-      userState.value = await userController.getUser();
+      sessionStorage.setItem('session', data.token);
     }
 
+    // Forzar actualización del estado global
+    userState.value = await userController.getUser();
+    
     alert('Foto de perfil actualizada correctamente');
     selectedFile.value = null;
     if (fileInput.value) {
@@ -185,7 +144,6 @@ const uploadProfilePic = async () => {
     }
   } catch (error: any) {
     console.error('Error completo:', error);
-    console.error('Respuesta del servidor:', error.response?.data);
     alert(`Error al subir la foto: ${error.response?.data?.error || error.message}`);
   } finally {
     uploading.value = false;

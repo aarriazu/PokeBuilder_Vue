@@ -41,7 +41,8 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Profile',
     component: () => import('@/views/Profile.vue'),
     beforeEnter: ((to, from, next) => {
-      if (to.path === '/profile' && !userState.value) {
+      const session = sessionStorage.getItem('session');
+      if (to.path === '/profile' && !session) {
         next('/login');
       } else {
         next();
@@ -54,7 +55,8 @@ const routes: Array<RouteRecordRaw> = [
     sensitive: true,
     component: () => import('@/views/TeamBuilder.vue'),
     beforeEnter: ((to, from, next) => {
-      if (to.path === '/teambuilder' && !userState.value) {
+      const session = sessionStorage.getItem('session');
+      if (to.path === '/teambuilder' && !session) {
         next('/login');
       } else {
         next();
@@ -67,7 +69,8 @@ const routes: Array<RouteRecordRaw> = [
     sensitive: true,
     component: () => import('@/views/Settings.vue'),
     beforeEnter: ((to, from, next) => {
-      if (to.path === '/settings' && !userState.value) {
+      const session = sessionStorage.getItem('session');
+      if (to.path === '/settings' && !session) {
         next('/login');
       } else {
         next();
@@ -115,7 +118,8 @@ const routes: Array<RouteRecordRaw> = [
     name: 'newPost',
     sensitive: true,
     beforeEnter: ((to, from, next) => {
-      if (to.path === '/newPost' && !userState.value) {
+      const session = sessionStorage.getItem('session');
+      if (to.path === '/newPost' && !session) {
         next('/login');
       } else {
         next();
@@ -128,7 +132,8 @@ const routes: Array<RouteRecordRaw> = [
     name: 'TorneoBracket',
     sensitive: true,
     beforeEnter: ((to, from, next) => {
-      if (to.path === '/torneoBracket' && !userState.value) {
+      const session = sessionStorage.getItem('session');
+      if (to.path === '/torneoBracket' && !session) {
         next('/login');
       } else {
         next();
