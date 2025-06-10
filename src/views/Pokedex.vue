@@ -80,6 +80,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import { IonContent, IonPage, IonGrid, IonRow, IonCol, IonButton, IonInput, IonSelect, IonSelectOption, IonSearchbar } from '@ionic/vue';
   import * as dataController from '@/controllers/dataController';
+  import API from '@/controllers/api';
   
   // Configuración de la paginación
   const itemsPerPage = 40;
@@ -118,13 +119,17 @@
   const pokemonTypes = ['grass', 'fire', 'water', 'electric', 'rock', 'ground', 'psychic', 'dark', 'fairy', 'steel', 'flying', 'bug', 'poison', 'ghost', 'dragon', 'ice', 'fighting', 'normal'];
   const pokemonGenerations = ['1', '2', '3', '4', '5', '6', '7', '8'];
 
+  const fetchPokemon = async () => {
+  try {
+    const response = await API.get('/pokemon');
+    pokemonList.value = response.data as { name: string; sprite: string , types: string[], generation: number;}[];
+  } catch (error) {
+    console.error("Error al cargar la lista de Pokémon:", error);
+  }
+};
+
   onMounted(async () => {
-    
-    try {
-        pokemonList.value = await dataController.getAllPokemon() as { name: string; sprite: string , types: string[], generation: number;}[];
-    } catch (error) {
-        console.error("Error al cargar la lista de Pokémon:", error);
-    }
+    fetchPokemon();
   });
   
   // Filtrar los Pokémon según el término de búsqueda, tipo y generación

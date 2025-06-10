@@ -38,16 +38,6 @@ export async function getPokemon(identifier: string | number) {
   }
 }
 
-export async function getAllPokemon() {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/pokemon`);
-    return response.data;
-  } catch (error) {
-    console.error("Error al obtener la lista de Pokémon:", error);
-    throw error;
-  }
-}
-
 export function formatText(text: string): string {
   const modText = text[0].toUpperCase() + text.slice(1);
   return modText.replace('-', ' ');
