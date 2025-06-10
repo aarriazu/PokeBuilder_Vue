@@ -1,5 +1,11 @@
-import express from 'express';
 import cors from 'cors';
+import express, { Request, Response, NextFunction } from 'express';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { connectToDatabase, closeDatabaseConnection } from './utils/DB.js'; 
 import userRoutes from './routes/userRoutes.js';
 import postRoutes from './routes/postRoutes.js';
@@ -8,6 +14,10 @@ import answerRoutes from './routes/answerRoutes.js';
 import teamRoutes from './routes/teamRoutes.js';
 import pokemonRoutes from './routes/pokemonRoutes.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+//---------------------------------------------------------
 
 const app = express();
 const PORT = 3000;

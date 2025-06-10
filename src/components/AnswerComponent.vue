@@ -3,7 +3,7 @@
     <div class="flex items-start">
       <!-- Imagen de perfil a la izquierda, ocupa toda la altura -->
       <img
-        :src="authorProfilePic"
+        :src="getProfilePicUrl(authorProfilePic)"
         alt="User Icon"
         class="w-12 h-12 rounded-full border border-indigo-200 object-cover mr-4 flex-shrink-0"
       />
@@ -102,7 +102,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import { getUsername, getProfilePicByUsername } from '@/controllers/userController';
+import { getUsername, getProfilePicByUsername, getProfilePicUrl } from '@/controllers/userController';
 import API from '@/controllers/api'; 
 import AnswerComponent from './AnswerComponent.vue';
 

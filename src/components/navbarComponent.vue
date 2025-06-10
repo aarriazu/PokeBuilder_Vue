@@ -5,8 +5,8 @@
         <div v-if="user">
           <button @click="openMenu" class="relative w-10 h-10 rounded-full border-2 border-gray-200 overflow-hidden bg-white">
             <img
-              :src="user?.profilePic || '/src/assets/images/guest.jpg'"
-              alt="Profile Picture"
+              :src="userController.getProfilePicUrl(user.profilePic)"
+              @error="userController.handleImageError"
               class="profilePic w-full h-full object-cover"
             />
           </button>
