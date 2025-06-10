@@ -4,7 +4,16 @@ import express, { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import * as dbClass from './DB.js';
 import bcrypt from 'bcrypt';
+//------------------------------------------------------------
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+//---------------------------------------------------------
 
 const app = express();
 const port = 3000;
@@ -43,6 +52,127 @@ export interface User {
   createdAt: Date;
   lastLogin: Date;
 }
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // Cambiar la ruta para que esté dentro del servidor compilado
+    const uploadDir = path.join(__dirname, 'uploads/profile-pics');
+    // Crear directorio si no existe
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const username = req.body.username || 'user';
+    const timestamp = Date.now();
+    const extension = path.extname(file.originalname);
+    cb(null, `${username}_${timestamp}${extension}`);
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB límite
+  },
+  fileFilter: (req, file, cb) => {
+    // Solo permitir imágenes
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Solo se permiten archivos de imagen'));
+    }
+  }
+});
+
+// Middleware para verificar el token
+function authenticateToken(req: Request & { user?: CustomJwtPayload }, res: Response, next: NextFunction): void {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader?.split(' ')[1];
+
+  if (!token) {
+    res.status(401).send('Token no proporcionado');
+    return;
+  }
+
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) {
+      res.status(403).send('Token inválido');
+      return;
+    }
+
+    req.user = user as CustomJwtPayload;
+    next();
+  });
+}
+
+// Nueva ruta para subir foto de perfil
+app.post('/api/user/upload-profile-pic', authenticateToken, upload.single('profilePic'), async (req: Request & { user?: CustomJwtPayload }, res: Response): Promise<any> => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No se subió ningún archivo' });
+    }
+
+    const username = req.user?.username;
+    if (!username) {
+      return res.status(401).json({ error: 'Usuario no autenticado' });
+    }
+
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const usersCollection = db.collection('users');
+
+    // Obtener el usuario actual para eliminar la foto anterior
+    const currentUser = await usersCollection.findOne({ username });
+    if (currentUser?.profilePic && currentUser.profilePic.startsWith('/uploads/')) {
+      const oldFilePath = path.join(__dirname, currentUser.profilePic);
+      if (fs.existsSync(oldFilePath)) {
+        fs.unlinkSync(oldFilePath); // Eliminar archivo anterior
+      }
+    }
+
+    // Actualizar la ruta de la imagen en la base de datos
+    const profilePicPath = `/uploads/profile-pics/${req.file.filename}`;
+    
+    await usersCollection.updateOne(
+      { username },
+      { $set: { profilePic: profilePicPath } }
+    );
+
+    // Generar nuevo token con la imagen actualizada
+    const updatedUser = await usersCollection.findOne({ username });
+    const token = jwt.sign(
+      {
+        _id: updatedUser!._id,
+        username: updatedUser!.username,
+        email: updatedUser!.email,
+        profilePic: updatedUser!.profilePic,
+        createdAt: updatedUser!.createdAt,
+        lastLogin: updatedUser!.lastLogin,
+        isMod: updatedUser!.isMod,
+      },
+      SECRET_KEY,
+      { expiresIn: '1h' }
+    );
+
+    res.status(200).json({ 
+      message: 'Foto de perfil actualizada correctamente',
+      profilePic: profilePicPath,
+      token
+    });
+  } catch (error) {
+    console.error('Error al subir foto de perfil:', error);
+    res.status(500).json({ error: 'Error al subir la foto de perfil' });
+  }
+});
+
+// Servir archivos estáticos de las imágenes de perfil
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+//-------------------------------------------------------------------------------
+
+
 
 // Ruta para iniciar sesión y generar un token
 app.post('/login', async (req: Request, res: Response): Promise<any> => {
@@ -132,27 +262,6 @@ app.post('/api/signin', async (req: Request, res: Response): Promise<any> => {
   }
 });
 
-// Middleware para verificar el token
-function authenticateToken(req: Request & { user?: CustomJwtPayload }, res: Response, next: NextFunction): void {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader?.split(' ')[1];
-
-  if (!token) {
-    res.status(401).send('Token no proporcionado');
-    return;
-  }
-
-  jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) {
-      res.status(403).send('Token inválido');
-      return;
-    }
-
-    req.user = user as CustomJwtPayload;
-    next();
-  });
-}
-
 // Ruta protegida
 app.get('/profile', authenticateToken, (req: Request & { user?: CustomJwtPayload }, res: Response) => {
   if (req.user) {
@@ -183,7 +292,7 @@ app.post('/api/user', async (req: Request, res: Response): Promise<any> => {
 });
 
 app.put('/api/user/update', async (req: Request, res: Response): Promise<any> => {
-  const { username, newUsername, newEmail, newPassword, newProfilePic, currentPassword } = req.body;
+  const { username, newUsername, newEmail, newPassword, currentPassword } = req.body;
 
   try {
     await client.connect();
@@ -203,7 +312,6 @@ app.put('/api/user/update', async (req: Request, res: Response): Promise<any> =>
     const updateFields: any = {};
     if (newUsername && newUsername !== username) updateFields.username = newUsername;
     if (newEmail && newEmail !== user.email) updateFields.email = newEmail;
-    if (newProfilePic) updateFields.profilePic = newProfilePic;
     if (newPassword) {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       updateFields.password = hashedPassword;
@@ -214,27 +322,27 @@ app.put('/api/user/update', async (req: Request, res: Response): Promise<any> =>
     }
 
     await usersCollection.updateOne(
-  { username },
-  { $set: updateFields }
-);
+      { username },
+      { $set: updateFields }
+    );
 
-  // Obtén los datos actualizados del usuario
-  const updatedUser = await usersCollection.findOne({ username: newUsername || username });
+    const updatedUser = await usersCollection.findOne({ username: newUsername || username });
 
-  const token = jwt.sign(
-    {
-      username: updatedUser!.username,
-      email: updatedUser!.email,
-      profilePic: updatedUser!.profilePic,
-      createdAt: updatedUser!.createdAt,
-      lastLogin: updatedUser!.lastLogin,
-      isMod: updatedUser!.isMod,
-    },
-    SECRET_KEY,
-    { expiresIn: '1h' }
-  );
+    const token = jwt.sign(
+      {
+        _id: updatedUser!._id,
+        username: updatedUser!.username,
+        email: updatedUser!.email,
+        profilePic: updatedUser!.profilePic,
+        createdAt: updatedUser!.createdAt,
+        lastLogin: updatedUser!.lastLogin,
+        isMod: updatedUser!.isMod,
+      },
+      SECRET_KEY,
+      { expiresIn: '1h' }
+    );
 
-  res.status(200).send({ message: 'User updated successfully.', token });
+    res.status(200).send({ message: 'User updated successfully.', token });
   } catch (error) {
     res.status(500).send({ error: 'Internal server error.' });
   }
@@ -843,6 +951,23 @@ app.get('/api/user/profilePic/:username', async (req, res) => {
     const profilePic = await dbClass.getProfilePicByUsername(username);
     res.json({ profilePic });
   } catch (error) {
+    res.status(500).json({ error: 'Error al obtener la imagen de perfil' });
+  }
+});
+
+app.get('/api/user/profilePic/id/:userId', async (req, res): Promise<any> => {
+  try {
+    const userId = req.params.userId;
+    
+    // Validar que el ID sea un ObjectId válido
+    if (!ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: 'ID de usuario no válido' });
+    }
+    
+    const profilePic = await dbClass.getProfilePicById(userId);
+    res.json({ profilePic });
+  } catch (error) {
+    console.error('Error al obtener la imagen de perfil por ID:', error);
     res.status(500).json({ error: 'Error al obtener la imagen de perfil' });
   }
 });

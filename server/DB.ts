@@ -89,9 +89,8 @@ export async function insertPost(post: any) {
 export async function insertComment(comment: any) {
   try {
     const db = await connectToDatabase();
-    const collection = db.collection("Answers"); // Usamos la colección "Answers"
+    const collection = db.collection("Answers");
 
-    // Convertir postId a ObjectId si es necesario
     if (comment.postId && typeof comment.postId === 'string') {
       comment.postId = ObjectId.createFromHexString(comment.postId);
     }
@@ -112,7 +111,7 @@ export async function insertComment(comment: any) {
 export async function getUserData(identifier: string) {
   try {
     const db = await connectToDatabase();
-    const collection = db.collection("users"); // Asegúrate de que la colección sea la correcta
+    const collection = db.collection("users");
 
     // Buscar por nombre de usuario o email
     const query = typeof identifier === "string" && identifier.includes("@")
@@ -155,6 +154,23 @@ export async function getProfilePicByUsername(username: string): Promise<string 
   const collection = db.collection("users");
   const user = await collection.findOne({ username });
   return user?.profilePic || null;
+}
+
+// Función para obtener la foto de perfil de un usuario por su _id
+export async function getProfilePicById(userId: string): Promise<string | null> {
+  try {
+    const db = await connectToDatabase();
+    const collection = db.collection("users");
+    
+    // Convertir el string a ObjectId
+    const objectId = new ObjectId(userId);
+    const user = await collection.findOne({ _id: objectId });
+    
+    return user?.profilePic || null;
+  } catch (error) {
+    console.error("Error al obtener la foto de perfil por ID:", error);
+    return null;
+  }
 }
 
 export function findPostByName(name: any) {
