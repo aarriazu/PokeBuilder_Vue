@@ -261,6 +261,18 @@ interface Comment {
   parentAnswerId?: string;  // ID de la respuesta padre si es una subrespuesta
   replies?: Comment[];      // Respuestas hijas (anidadas)
 }
+
+interface post {
+  _id: string;
+  title: string;
+  author: string;
+  subforum: string;
+  content: string;
+  answers: number;
+  createdAt: string;
+  editedAt: string;
+}
+
 const sidebarOpen = ref(false);
 const router = useRouter();
 
@@ -406,9 +418,19 @@ const toggleSidebar = () => {
 
 onMounted(async () => {
   const id = route.params.id as string;
-  post.value = await dataController.getPostById(id);
-  if (post.value?.author) {
-    authorProfilePic.value = await getProfilePicByUsername(post.value.author);
+  try {
+    const id = route.params.id as string;
+    const response = await API.get<post>(`/posts/${id}`);
+    post.value = response.data;
+    
+    if (post.value?.author) {
+      authorProfilePic.value = await getProfilePicByUsername(post.value.author);
+    }
+  } catch (error: any) {
+    console.error('Error fetching post:', error);
+    if (error.response) {
+      console.error('Error details:', error.response.data);
+    }
   }
   fetchAnswers();
 });

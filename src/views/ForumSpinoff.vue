@@ -154,7 +154,8 @@ import { IonContent, IonPage } from '@ionic/vue';
 import PostItem from '@/components/PostItem.vue';
 import { getUsername } from '@/controllers/userController';
 import { useRouter } from 'vue-router';
-
+import API
+ from '@/controllers/api';
 const router = useRouter();
 const sidebarOpen = ref(false);
 const currentForum = ref('spinoff'); // Rutas
@@ -175,14 +176,16 @@ interface post {
 const posts = ref<post[]>([]); // Array de publicaciones
 
 // Recoger los post con subforum "Ayuda"
-const fetchAyudaPost = async () => {
+const fetchSpinoffPost = async () => {
   try {
-    posts.value = await dataController.getPosts() as post[];
-    posts.value = posts.value.filter((post) => post.subforum === 'Spinoff');
+    const response = await API.get<post[]>('/posts'); // Usa la ruta definida en tu backend
+    // Filtra los posts para obtener solo los del subforo "General"
+    posts.value = response.data.filter((post: post) => post.subforum === 'Spinoff');
   } catch (error) {
     console.error('Error al obtener los posts:', error);
   }
 };
+
 
 const checkLogin = (event: Event) => {
   event.preventDefault(); // evitar navegación automática
@@ -199,7 +202,7 @@ const checkLogin = (event: Event) => {
 
 // Llamar a la función fetchPosts cuando el componente se monte
 onMounted(() => {
-  fetchAyudaPost();
+  fetchSpinoffPost();
 });
 
 const toggleSidebar = () => {

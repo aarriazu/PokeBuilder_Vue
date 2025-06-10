@@ -137,9 +137,9 @@
 import { ref, onMounted } from 'vue';
 import { IonContent, IonPage } from '@ionic/vue';
 import PostItem from '@/components/PostItem.vue'; // Importar el componente PostItem
-import * as dataController from '@/controllers/dataController';
 import { useRouter } from 'vue-router';
 import { getUsername } from '@/controllers/userController';
+import API from '@/controllers/api';
 
 const router = useRouter();
 const sidebarOpen = ref(false);
@@ -161,11 +161,12 @@ interface post {
 const posts = ref<post[]>([]);
 
 // Función para obtener los posts desde el servidor
-const fetchPosts = async ()  => {
+const fetchPosts = async () => {
   try {
-    posts.value = await dataController.getPostsTorneo() as post[]; // Llamar al servicio para obtener los posts
+    const response = await API.get('/postsTorneo');
+    posts.value = response.data as post[];
   } catch (error) {
-    console.error('Error al obtener los posts:', error);
+    console.error('Error fetching tournament posts:', error);
   }
 };
 

@@ -156,6 +156,7 @@ import { IonContent, IonPage } from '@ionic/vue';
 import PostItem from '@/components/PostItem.vue';
 import { getUsername } from '@/controllers/userController';
 import { useRouter, useRoute  } from 'vue-router';
+import API from '@/controllers/api'; // Asegúrate de que la ruta a tu API sea correcta
 
 const router = useRouter();
 const sidebarOpen = ref(false);
@@ -179,15 +180,15 @@ const route = useRoute();
 
 //Recoger los post con subforum "General"
 const fetchGeneralPost = async () => {
-  try{
-    posts.value = await dataController.getPosts() as post[];
-    posts.value = posts.value.filter((post) => post.subforum === 'General');   
-  }
-  catch (error) {
+  try {
+    const response = await API.get<post[]>('/posts'); // Usa la ruta definida en tu backend
+    // Filtra los posts para obtener solo los del subforo "General"
+    posts.value = response.data.filter((post: post) => post.subforum === 'General');
+  } catch (error) {
     console.error('Error al obtener los posts:', error);
   }
-  
-}
+};
+
 
 const checkLogin = (event: Event) => {
   event.preventDefault(); // evitar navegación automática
