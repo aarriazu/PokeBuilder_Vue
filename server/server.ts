@@ -1,7 +1,6 @@
 import cors from 'cors';
 import express, { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import * as dbClass from './DB.js';
 import bcrypt from 'bcrypt';
 import multer from 'multer';
 import path from 'path';
