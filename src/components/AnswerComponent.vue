@@ -102,12 +102,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import { getUsername } from '@/controllers/userController';
-import axios from 'axios';
+import { getUsername, getProfilePicByUsername, getProfilePicUrl } from '@/controllers/userController';
+import API from '@/controllers/api'; 
 import AnswerComponent from './AnswerComponent.vue';
-
-import { getProfilePicByUsername, getProfilePicUrl } from '@/controllers/userController';
-
 
 const props = defineProps({
   id: { type: String, required: false },
@@ -120,19 +117,27 @@ const props = defineProps({
   replies: { type: Array as () => any[], required: false, default: () => [] }
 });
 
-const authorProfilePic = ref('/src/assets/images/guest.jpg'); // Default profile picture
 const emit = defineEmits(['answer-updated', 'answer-deleted']);
 
 const editMode = ref(false);
 const editContent = ref(props.content);
-
 const replying = ref(false);
 const replyContent = ref('');
+const authorProfilePic = ref('/src/assets/images/guest.jpg');
 
 const isLoggedIn = computed(() => {
   const username = getUsername();
   return username && username !== 'nousername';
 });
+
+const loadProfilePic = async () => {
+  if (props.author) {
+    authorProfilePic.value = await getProfilePicByUsername(props.author);
+  }
+};
+
+onMounted(loadProfilePic);
+watch(() => props.author, loadProfilePic);
 
 const toggleReply = () => {
   replying.value = !replying.value;
@@ -147,44 +152,29 @@ const cancelEdit = () => {
   editMode.value = false;
 };
 
-const loadProfilePic = async () => {
-  if (props.author) {
-    authorProfilePic.value = await getProfilePicByUsername(props.author);
-  }
-};
-
-onMounted(loadProfilePic);
-watch(() => props.author, loadProfilePic);
-
 const saveEdit = async () => {
   try {
-    const token = sessionStorage.getItem('session');
-    await axios.put(`http://localhost:3000/api/Answers/${props.id}`, {
+    await API.put(`/answers/${props.id}`, {
       content: editContent.value,
       editedAt: new Date().toISOString()
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
     });
     emit('answer-updated');
     editMode.value = false;
   } catch (error) {
     alert('You do not have permission to edit this comment.');
-    console.log(error);
+    console.error(error);
   }
 };
 
 const deleteAnswer = async () => {
   if (!confirm('Are you sure you want to delete this comment?')) return;
   try {
-    const token = sessionStorage.getItem('session');
-    await axios.delete(`http://localhost:3000/api/Answers/${props.id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    await API.delete(`/answers/${props.id}`);
     emit('answer-deleted');
     alert('Comment deleted successfully.');
-    window.location.reload();
   } catch (error) {
     alert('You do not have permission to delete this comment.');
+    console.error(error);
   }
 };
 
@@ -194,16 +184,13 @@ const submitReply = async () => {
     return;
   }
   try {
-    const token = sessionStorage.getItem('session');
-    await axios.post('http://localhost:3000/api/Answers', {
+    await API.post('/answers', {
       postId: props.postId,
       content: replyContent.value,
       author: getUsername(),
       parentAnswerId: props.id,
       createdAt: new Date().toISOString(),
       editedAt: new Date().toISOString()
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
     });
     emit('answer-updated');
     replyContent.value = '';
@@ -214,3 +201,4 @@ const submitReply = async () => {
   }
 };
 </script>
+

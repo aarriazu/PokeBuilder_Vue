@@ -2,13 +2,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "noEmit": false, // Permitir la generación de archivos .js
-    "outDir": "./dist/",
-    "rootDir": "./",
+    "outDir": "./dist/server",
+    "rootDir": "./server",
     "baseUrl": "./",
     "composite": true
   },
   "include": [
-    "server/server.ts",
-    "server/DB.ts" 
+    "server/**/*.ts"
   ]
 }

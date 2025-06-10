@@ -152,12 +152,14 @@ const uploadProfilePic = async () => {
 
 const profileUpdate = async () => {
   updateMsg.value = '';
+  
   if (!currentPassword.value) {
     updateMsg.value = 'You must enter your current password.';
     return;
   }
 
   // Solo envía los campos que el usuario ha rellenado
+  /*
   const updateFields: any = {};
   if (changeUserName.value) updateFields.newUsername = changeUserName.value;
   if (changeEmail.value) updateFields.newEmail = changeEmail.value;
@@ -179,11 +181,46 @@ const profileUpdate = async () => {
       currentPassword.value = '';
       alert("Parameters updated.");
       routerController.navigateTo(router, "/profile")
+      */
+      
+  // Prepare update fields object
+  const updateFields = {
+    newUsername: changeUserName.value,
+    newEmail: changeEmail.value,
+    newPassword: changePassword.value,
+    currentPassword: currentPassword.value
+  };
+
+  try {
+    const username = userState.value?.username || '';
+    const result = await userController.updateUser(username, updateFields);
+    
+    if (result.error) {
+      updateMsg.value = result.error;
+      return;
     }
+
+    updateMsg.value = result.message || 'Profile updated successfully';
+    
+    // Clear form fields
+    changeUserName.value = '';
+    changeEmail.value = '';
+    changePassword.value = '';
+    currentPassword.value = '';
+    
+    // Show success message
+    alert("Profile updated successfully");
+    
+    // Navigate to profile
+    router.push('/profile');
+    
   } catch (error: any) {
-    updateMsg.value = error.message || 'Error al actualizar los datos';
+    updateMsg.value = error.message || 'Error updating profile';
+    console.error('Update error:', error);
   }
 };
+
+
 
 </script>
 

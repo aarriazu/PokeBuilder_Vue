@@ -151,6 +151,7 @@ import { getUsername } from '@/controllers/userController';
 const router = useRouter();
 const sidebarOpen = ref(false);
 const currentForum = ref('ayuda'); // Rutas
+import API from '@/controllers/api'; // Asegúrate de que la ruta a tu API sea correcta
 import * as dataController from '@/controllers/dataController';
 
 interface post {
@@ -170,12 +171,14 @@ const posts = ref<post[]>([]); // Array de publicaciones
 // Recoger los post con subforum "Ayuda"
 const fetchAyudaPost = async () => {
   try {
-    posts.value = await dataController.getPosts() as post[];
-    posts.value = posts.value.filter((post) => post.subforum == 'Ayuda');
+    const response = await API.get<post[]>('/posts'); // Usa la ruta definida en tu backend
+    // Filtra los posts para obtener solo los del subforo "General"
+    posts.value = response.data.filter((post: post) => post.subforum === 'Ayuda');
   } catch (error) {
     console.error('Error al obtener los posts:', error);
   }
 };
+
 
 const checkLogin = (event: Event) => {
   event.preventDefault(); // evitar navegación automática
@@ -201,7 +204,6 @@ const toggleSidebar = () => {
 </script>
 
 <style scoped>
-/* Asegurar que el contenido ocupe toda la altura disponible */
 .main {
   min-height: 100vh;
 }
