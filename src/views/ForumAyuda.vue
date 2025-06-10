@@ -201,7 +201,6 @@ const toggleSidebar = () => {
 </script>
 
 <style scoped>
-/* Asegurar que el contenido ocupe toda la altura disponible */
 .main {
   min-height: 100vh;
 }

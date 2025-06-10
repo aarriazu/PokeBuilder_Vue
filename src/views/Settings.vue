@@ -82,40 +82,52 @@ const router = useRouter();
 
 const profileUpdate = async () => {
   updateMsg.value = '';
+  
   if (!currentPassword.value) {
     updateMsg.value = 'You must enter your current password.';
     return;
   }
 
-  // Solo envía los campos que el usuario ha rellenado
-  const updateFields: any = {};
-  if (changeUserName.value) updateFields.newUsername = changeUserName.value;
-  if (changeEmail.value) updateFields.newEmail = changeEmail.value;
-  if (changePassword.value) updateFields.newPassword = changePassword.value;
-  if (changeProfilePic.value) updateFields.newProfilePic = changeProfilePic.value;
+  // Prepare update fields object
+  const updateFields = {
+    newUsername: changeUserName.value,
+    newEmail: changeEmail.value,
+    newPassword: changePassword.value,
+    newProfilePic: changeProfilePic.value,
+    currentPassword: currentPassword.value
+  };
 
   try {
-    const username = String(userController.getUsername());
-    const result = await userController.updateUser(
-      username,
-      updateFields,
-      currentPassword.value
-    );
-    updateMsg.value = 'Datos actualizados correctamente';
-    if (result.token) {
-      userState.value = await userController.getUser();
-      changeUserName.value = '';
-      changeEmail.value = '';
-      changePassword.value = '';
-      changeProfilePic.value = '';
-      currentPassword.value = '';
-      alert("Parameters updated.");
-      routerController.navigateTo(router, "/profile")
+    const username = userState.value?.username || '';
+    const result = await userController.updateUser(username, updateFields);
+    
+    if (result.error) {
+      updateMsg.value = result.error;
+      return;
     }
+
+    updateMsg.value = result.message || 'Profile updated successfully';
+    
+    // Clear form fields
+    changeUserName.value = '';
+    changeEmail.value = '';
+    changePassword.value = '';
+    changeProfilePic.value = '';
+    currentPassword.value = '';
+    
+    // Show success message
+    alert("Profile updated successfully");
+    
+    // Navigate to profile
+    router.push('/profile');
+    
   } catch (error: any) {
-    updateMsg.value = error.message || 'Error al actualizar los datos';
+    updateMsg.value = error.message || 'Error updating profile';
+    console.error('Update error:', error);
   }
 };
+
+
 
 </script>
 

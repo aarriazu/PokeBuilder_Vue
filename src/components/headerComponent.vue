@@ -1,5 +1,5 @@
 <template>
-    <navbarComponent :router="router" :user="user"/>
+    <navbarComponent :router="router" :user="user"/> 
     <menuComponent v-if="user !== null" :router="router" :user="user"/>
 </template>
 
@@ -11,10 +11,10 @@
     import { userState } from '@/controllers/stateController';
     import { useRouter } from "vue-router";
 
-    const user = computed(() => userState.value); // Computed para reaccionar a los cambios en el estado global
+    const user = userState; // Computed para reaccionar a los cambios en el estado global
     const router = useRouter();
 
-    onMounted(async () => {
+   /* onMounted(async () => {
     try {
         userState.value = await userController.getUser();
     } catch (error) {
@@ -22,6 +22,7 @@
         userState.value = null;
     }
     });
+    */
 </script>
 <style>
 </style>
