@@ -1,13 +1,13 @@
 <template>
     <div class="teamDiv bg-white p-4 rounded-md shadow outline outline-1 outline-gray-300">
       <p>{{ props.teamName }}</p>
-      <ul class="flex space-x-4">
+      <ul class="flex flex-wrap gap-2">
         <li v-for="(pokemon, index) in teamPokemon" :key="index" class="relative group">
           <img
             v-if="pokemon.species"
             :src="pokemon!.species.sprite || 'https://www.models-resource.com/resources/big_icons/73/72850.png?updated=1720523981'"
             :alt="pokemon!.name"
-            class="w-24 h-24"
+            class="max-w-[60px] h-auto sm:max-w-[80px] md:max-w-[100px]"
             @mouseenter="(e) => {
               tooltip.show = true;
               tooltip.text =

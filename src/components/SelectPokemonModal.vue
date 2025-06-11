@@ -62,7 +62,7 @@
   <script setup lang="ts">
   import { modalController, IonList, IonItem, IonButton, IonContent, IonPage, IonInput, IonSelect, IonSelectOption } from '@ionic/vue';
   import { defineProps, ref, computed, onMounted } from 'vue';
-  import * as dataController from '@/controllers/dataController';
+  import API from '@/controllers/api';
   
   // Barra de búsqueda
   const searchQuery = ref('');
@@ -76,13 +76,18 @@
   const pokemonTypes = ['grass', 'fire', 'water', 'electric', 'rock', 'ground', 'psychic', 'dark', 'fairy', 'steel', 'flying', 'bug', 'poison', 'ghost', 'dragon', 'ice', 'fighting', 'normal'];
   const pokemonGenerations = [1, 2, 3, 4, 5, 6, 7, 8];
 
+  const fetchPokemon = async () => {
+  try {
+    const response = await API.get('/pokemon');
+    pokemonList.value = response.data as {id: number; name: string; sprite: string , types: string[], generation: number;}[];
+  } catch (error) {
+    console.error("Error al cargar la lista de Pokémon:", error);
+  }
+};
+
   const pokemonList = ref<{id: number; name: string; sprite: string; types: string[]; generation: number }[]>([]);
   onMounted(async () => {
-    try {
-        pokemonList.value = await dataController.getAllPokemon() as {id: number; name: string; sprite: string , types: string[], generation: number;}[];
-    } catch (error) {
-        console.error("Error al cargar la lista de Pokémon:", error);
-    }
+    fetchPokemon();
   });
   
   // Filtrar Pokémon en tiempo real

@@ -137,7 +137,6 @@
 import { ref, onMounted } from 'vue';
 import { IonContent, IonPage } from '@ionic/vue';
 import PostItem from '@/components/PostItem.vue';
-import * as dataController from '@/controllers/dataController';
 import { getUsername } from '@/controllers/userController';
 import { useRouter } from 'vue-router';
 import API from '@/controllers/api';

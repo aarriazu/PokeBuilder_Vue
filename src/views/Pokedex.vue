@@ -119,7 +119,7 @@
   const pokemonTypes = ['grass', 'fire', 'water', 'electric', 'rock', 'ground', 'psychic', 'dark', 'fairy', 'steel', 'flying', 'bug', 'poison', 'ghost', 'dragon', 'ice', 'fighting', 'normal'];
   const pokemonGenerations = ['1', '2', '3', '4', '5', '6', '7', '8'];
 
-  const fetchPokemon = async () => {
+const fetchPokemon = async () => {
   try {
     const response = await API.get('/pokemon');
     pokemonList.value = response.data as { name: string; sprite: string , types: string[], generation: number;}[];

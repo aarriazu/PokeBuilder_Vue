@@ -152,7 +152,6 @@ const router = useRouter();
 const sidebarOpen = ref(false);
 const currentForum = ref('ayuda'); // Rutas
 import API from '@/controllers/api'; // Asegúrate de que la ruta a tu API sea correcta
-import * as dataController from '@/controllers/dataController';
 
 interface post {
   _id: string;

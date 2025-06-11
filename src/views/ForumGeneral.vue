@@ -161,7 +161,6 @@ import API from '@/controllers/api'; // Asegúrate de que la ruta a tu API sea c
 const router = useRouter();
 const sidebarOpen = ref(false);
 const currentForum = ref('general'); // Rutas
-import * as dataController from '@/controllers/dataController';
 
 interface post{
   _id: string;

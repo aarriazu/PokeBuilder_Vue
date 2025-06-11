@@ -242,8 +242,6 @@ import { ref, onMounted, Comment } from 'vue';
 import { IonContent, IonPage } from '@ionic/vue';
 import { useRoute } from 'vue-router';
 import AnswerComponent from '@/components/AnswerComponent.vue';
-import axios from 'axios';
-import * as dataController from '@/controllers/dataController';
 import { getUsername } from '@/controllers/userController';
 import { useRouter } from 'vue-router';
 import { getProfilePicByUsername } from '@/controllers/userController';

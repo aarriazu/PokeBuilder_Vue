@@ -159,7 +159,6 @@ import API
 const router = useRouter();
 const sidebarOpen = ref(false);
 const currentForum = ref('spinoff'); // Rutas
-import * as dataController from '@/controllers/dataController';
 
 interface post {
   _id: string;
