@@ -1,5 +1,5 @@
 <template>
-    <ion-page :key="route.fullPath">
+    <ion-page>
       <ion-content>
         <div class="p-4">
           <!-- Barra de búsqueda -->
@@ -96,7 +96,7 @@
   const selectedType2 = ref(route.query.type2 || '');
   const selectedGeneration = ref(route.query.generation || ''); 
   
-  const pokemonList = ref<{ name: string; sprite: string; types: string[]; generation: number }[]>([]);
+  const pokemonList = ref<{ id: number, name: string; sprite: string; types: string[]; generation: number }[]>([]);
   
   // Calcular el total de páginas basado en los Pokémon filtrados
   const totalPages = computed(() => Math.ceil(filteredPokemon.value.length / itemsPerPage));
@@ -122,7 +122,7 @@
 const fetchPokemon = async () => {
   try {
     const response = await API.get('/pokemon');
-    pokemonList.value = response.data as { name: string; sprite: string , types: string[], generation: number;}[];
+    pokemonList.value = response.data as { id: number, name: string; sprite: string , types: string[], generation: number;}[];
   } catch (error) {
     console.error("Error al cargar la lista de Pokémon:", error);
   }
@@ -134,17 +134,18 @@ const fetchPokemon = async () => {
   
   // Filtrar los Pokémon según el término de búsqueda, tipo y generación
   const filteredPokemon = computed(() => {
-    return pokemonList.value.filter(pokemon => {
+    const filtered = pokemonList.value.filter(pokemon => {
       const matchesSearch = pokemon.name.toLowerCase().includes((searchQuery.value || '').toLowerCase());
       const matchesType1 = typeof selectedType.value === 'string' && selectedType.value !== '' ? pokemon.types.includes(selectedType.value) : true;
       const matchesType2 = typeof selectedType2.value === 'string' && selectedType2.value !== '' ? pokemon.types.includes(selectedType2.value) : true;
       const matchesGeneration = selectedGeneration.value !== '' ? pokemon.generation === Number(selectedGeneration.value) : true;
+      
       return matchesSearch && matchesType1 && matchesType2 && matchesGeneration;
     });
-  });
 
-  watch([searchQuery, selectedType, selectedType2, selectedGeneration], () => {
-    currentPage.value = 1;
+    return filtered.sort((a, b) => {
+      return (a.id || 0) - (b.id || 0);
+    });
   });
   
   // Calcular los Pokémon visibles para la página actual
@@ -178,7 +179,7 @@ const fetchPokemon = async () => {
 
   // Navegar al detalle del Pokémon
   function goToPokemonDetail(name: string) {
-    router.push({ name: 'PokedexDetail', params: { name } });
+    router.push({ name: 'PokemonDetail', params: { name } });
   }
 </script>
   

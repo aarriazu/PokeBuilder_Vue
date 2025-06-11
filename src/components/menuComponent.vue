@@ -6,7 +6,8 @@
           <div v-if="props.user"> 
             <img 
               class="w-12 h-12 rounded-lg object-cover mr-3 border-2 border-gray-200" 
-              :src="props.user!.profilePic! || '/src/assets/images/guest.jpg'"
+              :src="userController.getProfilePicUrl(props.user.profilePic)"
+              @error="userController.handleImageError"
             >
             <div>
               <h5 class="text-blue-600 font-semibold text-sm">{{ props.user!.username }}</h5>
@@ -17,7 +18,7 @@
           <div v-else>
             <img 
               class="w-12 h-12 rounded-lg object-cover mr-3 border-2 border-gray-200" 
-              :src="'https://i.pinimg.com/474x/2c/47/d5/2c47d5dd5b532f83bb55c4cd6f5bd1ef.jpg'"
+              :src="'src/assets/images/guest.jpg'"
             >
             <div>
               <h5 class="text-blue-600 font-semibold text-sm">Guest</h5>
@@ -43,12 +44,11 @@
   
 <script setup lang="ts">
   import * as userController from '@/controllers/userController';
-  import { IonContent, IonPage, IonToolbar, IonMenu, IonMenuButton, IonHeader, IonLabel, IonItem, IonList, IonButtons, IonTitle } from '@ionic/vue';
-  import { PropType } from 'vue';
+  import { IonContent, IonPage, IonToolbar, IonMenu, IonLabel, IonItem, IonList } from '@ionic/vue';
+  import { PropType, watch } from 'vue';
   import { User } from '@/classes/User';
   import type { Router } from 'vue-router';
   import * as routerController from '@/controllers/routerController';
-  import { menuController } from '@ionic/vue'; 
 
   const props = defineProps({
     router: {
@@ -60,10 +60,6 @@
       required: false,
     },
   });
-
-  const openMenu = async () => {
-  await menuController.open(); // Abre el menú lateral
-};
 
 </script>
   
