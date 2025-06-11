@@ -68,6 +68,9 @@ export const signin = async (username: string, email: string, password: string, 
   }
 };
 
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 
 // Logout
 export function logout(router: ReturnType<typeof useRouter>) {
@@ -145,7 +148,6 @@ export async function getUser(): Promise<User | null> {
                     userState.value = null;
                     return null;
                 }
-                // Si es otro error, continuar sin equipos
                 console.warn(`Teams request failed with status ${response.status}, continuing without teams`);
                 teamStore.setTeams([]);
             } else {
@@ -164,11 +166,9 @@ export async function getUser(): Promise<User | null> {
             } else {
                 console.error('Error al obtener los equipos del usuario:', teamError);
                 teamStore.setTeams([]);
-                // Continuar sin equipos en lugar de fallar completamente
             }
         }
 
-        // ✅ Solo establecer userState cuando todo esté OK
         userState.value = decodedUser;
         return userState.value;
 
@@ -181,58 +181,9 @@ export async function getUser(): Promise<User | null> {
       isGettingUser = false;
     }
 }
-/*
-export async function getUser() {
-  const session = sessionStorage.getItem('session');
-  
-  if (!session) {
-    console.error('No session token found');
-    return null;
-  }
-
-  try {
-    // Decodificar el token para obtener el _id del usuario
-    const decodedToken = jwtDecode(session) as any;
-    const userId = decodedToken._id; // Asegúrate de que el token incluya el _id
-    
-    if (!userId) {
-      throw new Error('User ID not found in token');
-    }
-
-    // Obtener los datos completos del usuario
-    const { data: userData } = await API.get<User>(`/users/${userId}`);
-    userState.value = userData;
-    
-    // Obtener los equipos usando el _id del usuario
-    const { data } = await API.get<Team[]>(`/teams/${userId}`);
-    
-    const teamStore = useTeamStore();
-    
-    // Convertir los datos a instancias de Team
-    const teams = data.map(team => 
-      Team.fromFullData(
-        team._id,
-        team.pokemon,
-        team.name,
-        team.ownerId,
-        team.favorite,
-        new Date(team.createdAt),
-        new Date(team.updatedAt)
-      )
-    );
-    
-    teamStore.setTeams(teams);
-    return userState.value;
-    
-  } catch (error) {
-    console.error('Error getting user data:', error);
-    const teamStore = useTeamStore();
-    teamStore.setTeams([]);
-    return null;
-  }
-}
-  */
-
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 
 // Actualizar usuario
 export const updateUser = async (
@@ -306,6 +257,9 @@ export async function getProfilePicByUsername(username: string): Promise<string>
   }
 }
 
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 export async function getProfilePicById(userId: string): Promise<string> {
   try {
     const response = await fetch(`http://localhost:3000/api/user/profilePic/id/${userId}`);
@@ -347,3 +301,7 @@ export const handleImageError = (event: Event) => {
   const img = event.target as HTMLImageElement;
   img.src = '/src/assets/images/guest.jpg'; // Imagen de fallback
 };
+
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------

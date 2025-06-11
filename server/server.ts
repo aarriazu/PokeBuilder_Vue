@@ -17,13 +17,151 @@ import pokemonRoutes from './routes/pokemonRoutes.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-//---------------------------------------------------------
-
 const app = express();
 const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
+
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+
+import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb';
+
+const SECRET_KEY = 'mi-secreto'; // Cambia esto por una clave segura
+const uri = "mongodb+srv://pokeadmin:Yg4FDgNGHoNuZ6Ov@pokebuilderdb.1iko4rb.mongodb.net/?retryWrites=true&w=majority&appName=PokeBuilderDB";
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // Cambiar la ruta para que esté dentro del servidor compilado
+    const uploadDir = path.join(__dirname, 'uploads/profile-pics');
+    // Crear directorio si no existe
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const username = req.body.username || 'user';
+    const timestamp = Date.now();
+    const extension = path.extname(file.originalname);
+    cb(null, `${username}_${timestamp}${extension}`);
+  }
+});
+
+interface CustomJwtPayload extends JwtPayload {
+  username?: string;
+  [key: string]: any;
+}
+
+function authenticateToken(req: Request & { user?: CustomJwtPayload }, res: Response, next: NextFunction): void {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader?.split(' ')[1];
+
+  if (!token) {
+    res.status(401).send('Token no proporcionado');
+    return;
+  }
+
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) {
+      res.status(403).send('Token inválido');
+      return;
+    }
+
+    req.user = user as CustomJwtPayload;
+    next();
+  });
+}
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB límite
+  },
+  fileFilter: (req, file, cb) => {
+    // Solo permitir imágenes
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Solo se permiten archivos de imagen'));
+    }
+  }
+});
+
+app.post('/api/user/upload-profile-pic', authenticateToken, upload.single('profilePic'), async (req: Request & { user?: CustomJwtPayload }, res: Response): Promise<any> => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No se subió ningún archivo' });
+    }
+
+    const username = req.user?.username;
+    if (!username) {
+      return res.status(401).json({ error: 'Usuario no autenticado' });
+    }
+
+    await client.connect();
+    const db = client.db("PokeBuilderDB");
+    const usersCollection = db.collection('users');
+
+    // Obtener el usuario actual para eliminar la foto anterior
+    const currentUser = await usersCollection.findOne({ username });
+    if (currentUser?.profilePic && currentUser.profilePic.startsWith('/uploads/')) {
+      const oldFilePath = path.join(__dirname, currentUser.profilePic);
+      if (fs.existsSync(oldFilePath)) {
+        fs.unlinkSync(oldFilePath); // Eliminar archivo anterior
+      }
+    }
+
+    // Actualizar la ruta de la imagen en la base de datos
+    const profilePicPath = `/uploads/profile-pics/${req.file.filename}`;
+    
+    await usersCollection.updateOne(
+      { username },
+      { $set: { profilePic: profilePicPath } }
+    );
+
+    // Generar nuevo token con la imagen actualizada
+    const updatedUser = await usersCollection.findOne({ username });
+    const token = jwt.sign(
+      {
+        _id: updatedUser!._id,
+        username: updatedUser!.username,
+        email: updatedUser!.email,
+        profilePic: updatedUser!.profilePic,
+        createdAt: updatedUser!.createdAt,
+        lastLogin: updatedUser!.lastLogin,
+        isMod: updatedUser!.isMod,
+      },
+      SECRET_KEY,
+      { expiresIn: '1h' }
+    );
+
+    res.status(200).json({ 
+      message: 'Foto de perfil actualizada correctamente',
+      profilePic: profilePicPath,
+      token
+    });
+  } catch (error) {
+    console.error('Error al subir foto de perfil:', error);
+    res.status(500).json({ error: 'Error al subir la foto de perfil' });
+  }
+});
+
+// Servir archivos estáticos de las imágenes de perfil
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 
 connectToDatabase()
   .then(() => {
