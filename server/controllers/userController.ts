@@ -46,7 +46,39 @@ export async function getUserById(req: Request, res: Response) {
   }
 }
 
-export async function updateProfile(req: Request, res: Response) {
+export async function updateProfile(req: Request, res: Response): Promise<void> {
+  try {
+    const { username, ...updateData } = req.body;
+    const updatedUser = await UserService.updateUser(username, updateData);
+   
+    if (!updatedUser) {
+      res.status(404).json({ error: 'User not found after update' });
+      return;
+    }
+
+    const token = jwt.sign(
+      {
+        _id: updatedUser._id,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        profilePic: updatedUser.profilePic,
+        createdAt: updatedUser.createdAt,
+        lastLogin: new Date(),
+        isMod: updatedUser.isMod,
+      },
+      SECRET_KEY,
+      { expiresIn: '1h' }
+    );
+
+    res.json({ user: updatedUser, token, message: 'User updated successfully' });
+  } catch (error) {
+    const errorMsg =
+      error && typeof error === 'object' && 'message' in error
+        ? (error as any).message
+        : 'Error updating user';
+    res.status(400).json({ error: errorMsg });
+  }
+  /*
   try {
     const { username, ...updates } = req.body;
     await UserService.updateUser(username, updates);
@@ -54,6 +86,7 @@ export async function updateProfile(req: Request, res: Response) {
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
+    */
 }
 
 export async function lastLogin(req: Request, res: Response) {

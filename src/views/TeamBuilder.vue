@@ -10,12 +10,111 @@
           </div>
         </div>
 
-        <div class="team-name p-4 rounded-md flex items-center ">
+        <div v-if="isMobile" class="team-name p-4 rounded-md flex items-center">
           <p>Team Name:</p>
-          <input type="text" class="textBox bg-white border border-gray-300 rounded px-3 py-2 w-10" v-model="teamName" placeholder="Write the team name" />
+          <input type="text" class="textBox bg-white border border-gray-300 rounded px-3 py-2 w-10"
+                 v-model="teamName" placeholder="Write the team name" />
         </div>
 
-        <ion-grid class="custom-grid">
+        <!-- EN ESCRITORIO: el input en su posición original -->
+        <div v-else class="team-name p-4 rounded-md flex items-center">
+          <p>Team Name:</p>
+          <input type="text" class="textBox bg-white border border-gray-300 rounded px-3 py-2 w-10"
+                 v-model="teamName" placeholder="Write the team name" />
+        </div>
+
+        <!-- SOLO EN MÓVIL: cada Pokémon en una pestaña -->
+        <div v-if="isMobile">
+          <ion-segment v-model="activeTab" class="segment-scroll">
+            <ion-segment-button
+              v-for="(pokemon, idx) in team"
+              :key="idx"
+              :value="String(idx)"
+            >
+              <span>{{ idx + 1 }}</span>
+            </ion-segment-button>
+          </ion-segment>
+          <div v-for="(pokemon, idx) in team" :key="idx">
+            <div v-if="activeTab === String(idx)">
+              <div class="flex flex-col items-center focus:outline-none">
+                <ion-button color="light" size="large" class="addPokemonButton" @click="openModal(idx)">
+                  Select Pokemon
+                </ion-button>
+                <div v-if="pokemon.name" class="bg-white p-4 rounded-md shadow outline outline-1 outline-gray-300">
+                  <div class="flex justify-center">
+                    <img :src="pokemon!.species.sprite || ''" :alt="pokemon!.name" class="w-24 h-24" />
+                  </div>
+                  <p>Name</p>
+                  <input type="text" class="textBox bg-white" v-model="pokemon.name">
+
+                  <p>Item</p>
+                  <select class="textBox bg-white" v-model="pokemon.item">
+                    <option v-for="item in dataController.ItemArray" :key="item.name" :value="item.description">
+                      {{ dataController.formatText(item.name) }}
+                    </option>
+                  </select>
+
+                  <p>Ability</p>
+                  <select class="textBox bg-white" v-model="pokemon.ability">
+                    <option v-for="ability in pokemon.species.abilities" :key="ability" :value="ability">
+                      {{ dataController.formatText(ability) }}
+                    </option>
+                  </select>
+
+                  <p>Nature</p>
+                  <select class="textBox bg-white" v-model="pokemon.nature">
+                    <option v-for="nature in dataController.natureArray" :key="nature.id" :value="nature.name">
+                      {{ dataController.formatText(nature.name) }}
+                    </option>
+                  </select>
+
+                  <p>Moves</p>
+                  <div v-for="(move, moveIndex) in pokemon.moves" :key="moveIndex">
+                    <select class="textBox bg-white" v-model="pokemon.moves[moveIndex]">
+                      <option v-for="availableMove in pokemon.species.moves" :key="availableMove" :value="availableMove">
+                        {{ dataController.formatText(availableMove) }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <p>IVs</p>
+                  <div class="stat-container">
+                    <div class="stat-subsection" v-for="(iv, stat) in pokemon.iv" :key="stat">
+                      <p>{{ iv.name }}</p>
+                      <input
+                        type="range"
+                        class="stat-slider"
+                        v-model="iv.amount"
+                        min="0"
+                        max="31"
+                      />
+                      <span class="stat-value">{{ iv.amount }}</span>
+                    </div>
+                  </div>  
+
+                  <p>EVs</p>
+                  <div class="stat-container">
+                    <div class="stat-subsection" v-for="(ev, statIndex) in pokemon.ev" :key="statIndex">
+                      <p>{{ ev.name }}</p>
+                      <input
+                        type="range"
+                        class="stat-slider"
+                        v-model="ev.amount"
+                        :min="0"
+                        :max="calculateRemainingEVs(ev.amount, pokemon)"
+                        @input="updateEVTotal(pokemon)"
+                      />
+                      <span class="stat-value">{{ ev.amount }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EN ESCRITORIO: grid como siempre -->
+        <ion-grid class="custom-grid" v-else>
           <ion-row>
             <ion-col size="2" v-for="(pokemon, index) in team" :key="index">
               <div class="flex flex-col items-center focus:outline-none">
@@ -101,8 +200,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { IonModal, IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonList, IonItem } from '@ionic/vue';
+import { nextTick, onMounted, onUnmounted, ref } from 'vue';
+import { IonModal, IonButton, IonContent, IonPage, IonGrid, IonRow, IonCol, IonSegment, IonSegmentButton } from '@ionic/vue';
 import { PokemonInterface } from '@/interfaces/pokemonInterface';
 import { TeamPokemon } from '@/classes/TeamPokemon';
 import { Team } from '@/classes/Team';
@@ -113,8 +212,11 @@ import { modalController } from '@ionic/vue';
 import SelectPokemonModal from '@/components/SelectPokemonModal.vue';
 import axios from 'axios';
 import { teamEditData } from '@/stores/teamEditStore';
+import { API_BASE_URL } from '@/controllers/api';
 
 const router = useRouter();
+
+const activeTab = ref('0'); // Para controlar la pestaña activa
 
 const blankPokemon = () => new TeamPokemon(
   '' as unknown as PokemonInterface,
@@ -222,7 +324,7 @@ async function saveTeam() {
 
     //enviar datos al backend con axios
     try {
-      const response = await axios.post<{ insertedId: string }>('http://localhost:3000/api/teams', newTeam, {
+      const response = await axios.post<{ insertedId: string }>(`${API_BASE_URL}:3000/api/teams`, newTeam, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -258,7 +360,7 @@ async function saveTeam() {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/teams/${teamId.value}`,
+        `${API_BASE_URL}:3000/api/teams/${teamId.value}`,
         updatedTeam,
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -298,7 +400,26 @@ onMounted(() => {
     teamEdit.value = false;
     team.value = [blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon(), blankPokemon()];
   }
+  window.addEventListener('resize', handleResize);
+  nextTick(() => {
+    const segment = document.querySelector('.segment-scroll');
+    if (segment) segment.scrollLeft = 0;
+  });
 });
+
+const isMobile = ref(window.innerWidth <= 768);
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
+
+function handleResize() {
+  isMobile.value = window.innerWidth <= 768;
+  // Si el tab activo no existe, resetea a '0'
+  if (parseInt(activeTab.value) >= team.value.length) {
+    activeTab.value = '0';
+  }
+}
 
 </script>
 
@@ -335,5 +456,17 @@ onMounted(() => {
 .stat-value {
   font-size: 0.9rem;
   margin-top: 5px;
+}
+
+.segment-scroll ::v-deep(.segment-button) {
+  min-width: 40px;
+  padding: 0 4px;
+}
+
+.segment-scroll {
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
 }
 </style>

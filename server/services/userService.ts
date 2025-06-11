@@ -11,7 +11,10 @@ export async function loginUser(identifier: string, password: string) {
 
 export async function registerUser(data: any) {
   const existingUser = await UserModel.findUserByUsernameOrEmail(data.username);
-  if (existingUser) throw new Error('Username or email already exists');
+  if (existingUser) throw new Error('Username already exists');
+
+  const existingEmail = await UserModel.findUserByUsernameOrEmail(data.email);
+  if (existingEmail) throw new Error('Email already exists');
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
   const newUser = {
@@ -32,17 +35,62 @@ export async function getUserById(userId: string) {
   return user;
 }
 
+/*
 export async function updateUser(username: string, data: any) {
   const updates: any = {};
   
-  if (data.newUsername) updates.username = data.newUsername;
-  if (data.newEmail) updates.email = data.newEmail;
+  if (data.newUsername) {
+    const existingUser = await UserModel.findUserByUsernameOrEmail(data.newUsername);
+    if (existingUser && existingUser.username !== username) {
+      throw new Error('Username already exists');
+    }
+    updates.username = data.newUsername;
+  }
+  if (data.newEmail) {
+    const existingEmail = await UserModel.findUserByUsernameOrEmail(data.newEmail);
+    if (existingEmail && existingEmail.email !== username) {
+      throw new Error('Email already exists');
+    }
+    updates.email = data.newEmail;
+  }
   if (data.newPassword) {
     updates.password = await bcrypt.hash(data.newPassword, 10);
   }
   if (data.newProfilePic) updates.profilePic = data.newProfilePic;
   
   return UserModel.updateUser(username, updates);
+}
+*/
+export async function updateUser(username: string, data: any) {
+  const updates: any = {};
+
+  if (data.newUsername) {
+    const existingUser = await UserModel.findUserByUsernameOrEmail(data.newUsername);
+    if (existingUser && existingUser.username !== username) {
+      throw new Error('Username already exists');
+    }
+    updates.username = data.newUsername;
+  }
+  if (data.newEmail) {
+    const existingEmail = await UserModel.findUserByUsernameOrEmail(data.newEmail);
+    if (existingEmail && existingEmail.username !== username) {
+      throw new Error('Email already exists');
+    }
+    updates.email = data.newEmail;
+  }
+  if (data.newPassword) {
+    updates.password = await bcrypt.hash(data.newPassword, 10);
+  }
+  if (data.newProfilePic) updates.profilePic = data.newProfilePic;
+
+  // Realiza la actualización
+  await UserModel.updateUser(username, updates);
+
+  // Busca el usuario actualizado por el nuevo username si cambió, si no por el anterior
+  const finalUsername = updates.username || username;
+  const updatedUser = await UserModel.findUserByUsernameOrEmail(finalUsername);
+
+  return updatedUser;
 }
 
 export async function updateLoginTime(username: string) {

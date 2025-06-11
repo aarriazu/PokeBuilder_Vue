@@ -147,7 +147,13 @@ const handleLogin = async () => {
     loginUserName.value = '';
     loginPassword.value = '';
   } catch (error) {
-    loginErrorMsg.value = (error instanceof Error ? error.message : 'Error al iniciar sesión');
+    if (error.response && error.response.data && error.response.data.error) {
+      loginErrorMsg.value = error.response.data.error;
+    } else if (error.message) {
+      loginErrorMsg.value = error.message;
+    } else {
+      loginErrorMsg.value = 'Something went wrong';
+    }
   }
 };
 
@@ -165,7 +171,13 @@ const handleSignin = async () => {
     signinPasswordConfirm.value = '';
     await userController.login(loginTempUsername.value, loginTempPassword.value, router);
   } catch (error) {
-     signinErrorMsg.value = (error instanceof Error ? error.message : 'Error al registrar el usuario');
+     if (error.response && error.response.data && error.response.data.error) {
+      signinErrorMsg.value = error.response.data.error;
+    } else if (error.message) {
+      signinErrorMsg.value = error.message;
+    } else {
+      signinErrorMsg.value = 'Something went wrong';
+    }
   }
 };
 </script>

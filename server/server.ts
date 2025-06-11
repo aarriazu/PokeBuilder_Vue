@@ -13,6 +13,7 @@ import torneoPostRoutes from './routes/torneoPostRoutes.js';
 import answerRoutes from './routes/answerRoutes.js';
 import teamRoutes from './routes/teamRoutes.js';
 import pokemonRoutes from './routes/pokemonRoutes.js';
+import https from 'https';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,6 +24,59 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
+// ✅ Configurar CORS para permitir acceso desde la red local
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',           // Frontend en desarrollo local
+    'http://127.0.0.1:5173',
+    'http://DESKTOP-6LECRFO:5173',       // Tu IP de red local (cambiar por la tuya)
+    'https://DESKTOP-6LECRFO:5173',      // Si usas HTTPS
+    'http://desktop-6lecrfo:5173',  
+    'https://desktop-6lecrfo:5173',
+    //'http://192.168.2.*:5173',         // Permitir cualquier IP en tu subred
+  ],
+  credentials: true,                   // Permitir cookies/auth headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+};
+
+
+
+
+// ✅ Aplicar middleware CORS
+app.use(cors(corsOptions));
+
+
+
+
+// ✅ Middleware para headers adicionales (backup)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://DESKTOP-6LECRFO:5173',
+    'https://DESKTOP-6LECRFO:5173',
+    'http://desktop-6lecrfo:5173',  
+    'https://desktop-6lecrfo:5173',
+  ];
+ 
+  if (typeof origin ==='string' && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+ 
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+ 
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
+
 //-----------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------
@@ -30,7 +84,8 @@ app.use(express.json());
 import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb';
 
 const SECRET_KEY = 'mi-secreto'; // Cambia esto por una clave segura
-const uri = "mongodb+srv://pokeadmin:Yg4FDgNGHoNuZ6Ov@pokebuilderdb.1iko4rb.mongodb.net/?retryWrites=true&w=majority&appName=PokeBuilderDB";
+//const uri = "mongodb+srv://pokeadmin:Yg4FDgNGHoNuZ6Ov@pokebuilderdb.1iko4rb.mongodb.net/?retryWrites=true&w=majority&appName=PokeBuilderDB";
+const uri = 'mongodb://localhost:27017';
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -186,6 +241,16 @@ app.get('/', (_req, res) => {
   res.send('PokeBuilder Backend is running!');
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+const httpsOptions = {
+  key: fs.readFileSync('./server-key.pem'),      // Ajusta la ruta si es necesario
+  cert: fs.readFileSync('./server-cert.pem'),    // Ajusta la ruta si es necesario
+};
+
+https.createServer(httpsOptions, app).listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor HTTPS escuchando en https://0.0.0.0:${PORT}`);
 });
+/*
+app.listen(PORT, '0.0.0.0', () => {
+     console.log(`Servidor escuchando en http://0.0.0.0:${PORT}`);
+});
+*/

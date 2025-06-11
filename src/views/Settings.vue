@@ -49,6 +49,7 @@
             >
               Update
          </ion-button>
+         <p v-if="updateMsg" class="text-red-600 mb-2">{{ updateMsg }}</p>
          <br><br><br>
          
          <p class="text-gray-600 mb-2">Change profile picture</p>
@@ -83,6 +84,7 @@ import { ref } from 'vue';
 import { IonButton, IonContent, IonPage } from '@ionic/vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { API_BASE_URL } from '@/controllers/api';
 
 const changeUserName = ref('');
 const changeEmail = ref('');
@@ -123,7 +125,7 @@ const uploadProfilePic = async () => {
     formData.append('profilePic', selectedFile.value);
     formData.append('username', userState.value!.username);
 
-    const response = await axios.post('http://localhost:3000/api/user/upload-profile-pic', formData, {
+    const response = await axios.post(`${API_BASE_URL}:3000/api/user/upload-profile-pic`, formData, {
       headers: {
         'Authorization': `Bearer ${token}`,
       }
@@ -200,6 +202,14 @@ const profileUpdate = async () => {
       return;
     }
 
+    if (result.user) {
+      userState.value = result.user;
+    }
+
+    if (result.token) {
+      sessionStorage.setItem('session', result.token);
+    }
+
     updateMsg.value = result.message || 'Profile updated successfully';
     
     // Clear form fields
@@ -215,7 +225,13 @@ const profileUpdate = async () => {
     router.push('/profile');
     
   } catch (error: any) {
-    updateMsg.value = error.message || 'Error updating profile';
+    if (error.response && error.response.data && error.response.data.error) {
+      updateMsg.value = error.response.data.error;
+    } else if (error.message) {
+      updateMsg.value = error.message;
+    } else {
+      updateMsg.value = 'Error updating profile';
+    }
     console.error('Update error:', error);
   }
 };

@@ -6,7 +6,7 @@ import API from './api';
 import * as routerController from './routerController';
 import { userState } from './stateController';
 import { useTeamStore } from '@/stores/teamStore';
-import { Team } from '@/classes/Team';
+import { API_BASE_URL } from '@/controllers/api';
 
 interface LoginResponse {
   token: string;
@@ -131,7 +131,7 @@ export async function getUser(): Promise<User | null> {
         const teamStore = useTeamStore();
         try {
             console.log('Fetching user teams...');
-            const response = await fetch(`http://localhost:3000/api/teams/${decodedUser._id}`, {
+            const response = await fetch(`${API_BASE_URL}:3000/api/teams/${decodedUser._id}`, {
                 signal: controller.signal,
                 headers: {
                     'Cache-Control': 'no-cache',
@@ -192,7 +192,6 @@ export const updateUser = async (
     newUsername?: string;
     newEmail?: string;
     newPassword?: string;
-    newProfilePic?: string;
     currentPassword: string;
   }
 ): Promise<UpdateUserResponse> => {
@@ -202,6 +201,7 @@ export const updateUser = async (
       ...updateData
     });
 
+    /*
     if (data.token && data.user) {
       sessionStorage.setItem('session', data.token);
       
@@ -218,6 +218,12 @@ export const updateUser = async (
       updatedUser.setUpdatedAt = new Date(data.user.lastLogin);
       
       userState.value = updatedUser;
+    }
+      */
+    if (data.token) {
+      sessionStorage.setItem('session', data.token);
+      // Decodifica el token actualizado y actualiza userState
+      userState.value = jwtDecode(data.token) as User;
     }
 
     return {
@@ -262,7 +268,7 @@ export async function getProfilePicByUsername(username: string): Promise<string>
 //-----------------------------------------------------------------------------------------------------------------------
 export async function getProfilePicById(userId: string): Promise<string> {
   try {
-    const response = await fetch(`http://localhost:3000/api/user/profilePic/id/${userId}`);
+    const response = await fetch(`${API_BASE_URL}:3000/api/user/profilePic/id/${userId}`);
     const data = await response.json();
     
     if (!response.ok) {
@@ -289,7 +295,7 @@ export const getProfilePicUrl = (profilePic?: string) => {
   
   // Si es una ruta relativa del servidor, construir URL completa
   if (profilePic.startsWith('/uploads/')) {
-    return `http://localhost:3000${profilePic}`;
+    return `${API_BASE_URL}:3000${profilePic}`;
   }
   
   // Si es otra cosa, usar imagen por defecto

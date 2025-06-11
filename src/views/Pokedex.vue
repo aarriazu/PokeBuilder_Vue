@@ -101,7 +101,11 @@
   // Calcular el total de páginas basado en los Pokémon filtrados
   const totalPages = computed(() => Math.ceil(filteredPokemon.value.length / itemsPerPage));
   
-  
+   // Vuelve a la página 1 al cambiar cualquier filtro
+  watch([searchQuery, selectedType, selectedType2, selectedGeneration], () => {
+    currentPage.value = 1;
+  });
+
   // Sincronizar los filtros y la página actual con la URL
   watch([currentPage, searchQuery, selectedType, selectedType2, selectedGeneration], () => {
     router.push({

@@ -43,6 +43,7 @@ import { User } from '@/classes/User';
 import axios from 'axios';
 import { Team } from '@/classes/Team';
 import { useTeamStore } from '@/stores/teamStore';
+import { API_BASE_URL } from '@/controllers/api';
 
 const router = useRouter();
 
@@ -57,7 +58,7 @@ onMounted(async () => {
 
     if (user.value && user.value._id) {
       // Llamar al backend para obtener los equipos del usuario
-      const response = await axios.get(`http://localhost:3000/api/teams/${user.value._id}`);
+      const response = await axios.get(`${API_BASE_URL}:3000/api/teams/${user.value._id}`);
       console.log('Respuesta del backend:', response.data); // Verifica los datos aquí
       teamStore.setTeams(response.data as Team[]);
       //teams.value = response.data as Team[]; // Asignar los equipos obtenidos

@@ -45,43 +45,46 @@
               </p>
             </div>
           </div>
-          <div>
-            <div><strong>Egg Groups:</strong> 
-              <div class="grid grid-cols-2 md:grid-cols-2 gap-2 text-sm text-gray-700">
-                <span 
-                  v-for="eggGroup in pokemon.eggGroups" 
-                  :key="eggGroup" 
-                  class="bg-gray-200 rounded px-2 py-1 capitalize"
-                >
-                  {{ dataController.formatText(eggGroup) }}
-                </span>
-              </div>
-            </div>
-            <div><strong>Abilities:</strong> 
-              <div class="grid grid-cols-2 md:grid-cols-2 gap-2 text-sm text-gray-700">
-                <span 
-                  v-for="ability in pokemon.abilities" 
-                  :key="ability" 
-                  class="bg-gray-200 rounded px-2 py-1 capitalize relative cursor-pointer"
-                  @mouseenter="(e) => {
-                    tooltip.show = true;
-                    tooltip.text = getAbilityEffect(ability);
-                    tooltip.x = e.clientX;
-                    tooltip.y = e.pageY - 60;
-                  }"
-                  @mouseleave="tooltip.show = false"
-                >
-                  {{ dataController.formatText(ability) }}
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
-
         <div class="mt-4 grid grid-cols-2 text-sm">
           <div><strong>Weight:</strong> {{ pokemon.weight }} kg</div>
           <div><strong>Height:</strong> {{ pokemon.height }} m</div>
         </div>
+
+
+        <div>
+          <div><strong>Egg Groups:</strong>
+            <div class="grid grid-cols-2 md:grid-cols-2 gap-2 text-sm text-gray-700">
+              <span 
+                v-for="eggGroup in pokemon.eggGroups" 
+                :key="eggGroup" 
+                class="bg-gray-200 rounded px-2 py-1 capitalize"
+              >
+                {{ dataController.formatText(eggGroup) }}
+              </span>
+            </div>
+          </div>
+          <div><strong>Abilities:</strong>
+            <div class="grid grid-cols-2 md:grid-cols-2 gap-2 text-sm text-gray-700">
+              <span 
+                v-for="ability in pokemon.abilities" 
+                :key="ability" 
+                class="bg-gray-200 rounded px-2 py-1 capitalize relative cursor-pointer has-tooltip"
+                @mouseenter="(e) => {
+                  tooltip.show = true;
+                  tooltip.text = getAbilityEffect(ability);
+                  tooltip.x = e.clientX;
+                  tooltip.y = e.pageY - 60;
+                }"
+                @mouseleave="tooltip.show = false"
+                @click="(e) => showTooltip(e, getAbilityEffect(ability), true)"
+              >
+                {{ dataController.formatText(ability) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
 
         <div class="mt-4">
           <h3 class="font-semibold mb-2">Stats</h3>
@@ -107,24 +110,16 @@
               :style="{
                 backgroundColor: getTypeColor(getMoveData(move)?.type || '')
               }"
-              class="rounded px-2 py-1 capitalize relative cursor-pointer"
+              class="rounded px-2 py-1 capitalize relative cursor-pointer has-tooltip"
               @mouseenter="(e) => {
-                const data = getMoveData(move);
                 tooltip.show = true;
-                tooltip.text = data
-                  ? `<strong>Type:</strong> ${dataController.formatText(data.type)}<br>
-                    <strong>Class:</strong> ${dataController.formatText(data.damage_class)}<br>
-                    <strong>Effect:</strong> ${data.short_effect}<br>
-                    <strong>Power:</strong> ${data.power ?? '-'}<br>
-                    <strong>Accuracy:</strong> ${data.accuracy ?? '-'}<br>
-                    <strong>PP:</strong> ${data.pp}<br>
-                    <strong>Priority:</strong> ${data.priority}`
-                  : 'No move data';
+                tooltip.text = getMoveTooltipHtml(move);
                 tooltip.x = e.clientX;
                 tooltip.y = e.pageY - 60;
               }"
               @mouseleave="tooltip.show = false"
-            >
+              @click="(e) => showTooltip(e, getMoveTooltipHtml(move), true)"
+           >
               {{ dataController.formatText(move) }}
             </span>
           </div>
@@ -194,6 +189,7 @@ const tooltip = ref({
   text: '',
   x: 0,
   y: 0,
+  persistent: false,
 });
 
 // Variables reactivas para almacenar los datos del Pokémon y sus evoluciones
@@ -214,6 +210,7 @@ async function loadPokemonData() {
     nextPokemon.value = null;
 
     const pokemonName = route.params.name as string;
+    if (!pokemonName) return;
     
     // Obtener los datos del Pokémon actual
     pokemon.value = await dataController.getPokemon(pokemonName) as PokemonInterface;
@@ -261,7 +258,9 @@ async function loadPokemonData() {
 watch(
   () => route.params.name,
   () => {
-    loadPokemonData();
+    if (route.params.name) {
+      loadPokemonData();
+    }
   }
 );
 
@@ -298,7 +297,50 @@ function handlePokemonRedirect(pokemonName: string) {
   router.push({ name: 'PokemonDetail', params: { name: pokemonName } });
 }
 
-onMounted(loadPokemonData);
+function showTooltip(e: MouseEvent, text: string, persistent = false) {
+  tooltip.value.show = true;
+  tooltip.value.text = text;
+  tooltip.value.x = e.clientX;
+  tooltip.value.y = e.pageY - 60;
+  tooltip.value.persistent = persistent;
+}
+
+function hideTooltip() {
+  // Solo oculta si no es persistente (clic)
+  if (!tooltip.value.persistent) {
+    tooltip.value.show = false;
+  }
+}
+
+function getMoveTooltipHtml(moveName: string) {
+  const data = getMoveData(moveName);
+  return data
+    ? `<strong>Type:</strong> ${dataController.formatText(data.type)}<br>
+      <strong>Class:</strong> ${dataController.formatText(data.damage_class)}<br>
+      <strong>Effect:</strong> ${data.short_effect}<br>
+      <strong>Power:</strong> ${data.power ?? '-'}<br>
+      <strong>Accuracy:</strong> ${data.accuracy ?? '-'}<br>
+      <strong>PP:</strong> ${data.pp}<br>
+      <strong>Priority:</strong> ${data.priority}`
+    : 'No move data';
+}
+
+// Ocultar tooltip al hacer clic fuera si fue abierto por click
+function handleDocumentClick(event: MouseEvent) {
+  if (
+    tooltip.value.show &&
+    tooltip.value.persistent &&
+    !(event.target as HTMLElement).closest('.has-tooltip')
+  ) {
+    tooltip.value.show = false;
+    tooltip.value.persistent = false;
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleDocumentClick);
+  loadPokemonData();
+});
 
 onUnmounted(() => {
   // Limpia los datos reactivos
@@ -311,6 +353,7 @@ onUnmounted(() => {
   tooltip.value.text = '';
   tooltip.value.x = 0;
   tooltip.value.y = 0;
+  document.removeEventListener('click', handleDocumentClick);
 });
 </script>
 

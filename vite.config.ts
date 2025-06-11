@@ -23,9 +23,10 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0', // 👈 Permite acceso desde IP externa
+    port: 5173, // Puerto por defecto de Vite
     https: {
-      key: fs.readFileSync('./localhost-key.pem'),
-      cert: fs.readFileSync('./localhost.pem'),
+      key: fs.readFileSync('./server-key.pem'),
+      cert: fs.readFileSync('./server-cert.pem'),
     }
   }
 })

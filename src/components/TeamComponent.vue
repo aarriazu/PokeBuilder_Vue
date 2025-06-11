@@ -51,6 +51,7 @@
   import axios from 'axios';
   import { teamEditData } from '@/stores/teamEditStore';
   import router from '@/router';
+  import { API_BASE_URL } from '@/controllers/api';
 
   
   const props = defineProps({
@@ -89,7 +90,7 @@
       isIconActive.value = !isIconActive.value;
 
       // Realiza una solicitud al backend para actualizar el estado del equipo
-      await axios.put(`http://localhost:3000/api/teams/${props.teamOwnerId}/favorite`, {
+      await axios.put(`${API_BASE_URL}:3000/api/teams/${props.teamOwnerId}/favorite`, {
         teamId: props.teamId, // Asegúrate de que el ID del equipo esté disponible
         favorite: isIconActive.value,
       });
@@ -113,7 +114,7 @@
 
     try {
       // Llamar al backend para eliminar el equipo
-      await axios.delete(`http://localhost:3000/api/teams/${props.teamId}`);
+      await axios.delete(`${API_BASE_URL}:3000/api/teams/${props.teamId}`);
       emit('delete-team', props.teamId);
     } catch (error) {
       console.error('Error deleting team:', error);

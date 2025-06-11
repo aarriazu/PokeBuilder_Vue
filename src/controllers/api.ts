@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+export const API_BASE_URL = 'https://desktop-6lecrfo'; 
+
 const API = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  //baseURL: 'http://localhost:3000/api',
+  baseURL: `${API_BASE_URL}:3000/api`,
   headers: {
     'Content-Type': 'application/json',
   },
